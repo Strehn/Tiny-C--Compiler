@@ -41,10 +41,42 @@ token :    //// put first token in language here
 
 int main(int argc, char *argv[])
 {
-
-////  some of your stuff here
-
-    yyparse();
-
+    // expected format [filename] -c
+    //                  arg0    arg1
+    // in case no filename listed
+    if(argc == 1)
+    {
+        printf("No file listed\n");
+        exit(1);
+    }
+    else // continue with parser.
+    {
+        // we know argument will be a file.
+        yyfilename = malloc((strlen( argv[0] )+4));
+        // try to open the file
+        if(( yyin =  idkhowtoopenthefilebutthatgoeshere
+        {
+            // file successfully open so start parsing
+            yyparse();
+            line_num = 1;
+            // print file being parsed
+            printf( "File: %s\n", yyfilename );
+            // start printing leximes
+            if ( idkwhatgoeshere == NULL ) { // no tokens
+                printf( "No Tokens\n" );
+            } else { // tokens able to be parsed
+                // idk what goes here
+            }
+            // close the file
+            fclose( yyin );
+            yyin = NULL;
+        }
+        else // unable to open file
+        {
+            printf("arg: %s\n", argv[i]);
+            printf("ERROR(-c): can't open %s\n", argv[i]);
+            return 1;
+        }
+    }
     return 0;
 }
