@@ -1,11 +1,11 @@
 %{
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <stdbool.h>
 #include "scanType.h"
 #include "parser.tab.h"
 
-#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno;
+static int line = 1;
 
 // get the string from the tokenString
 std::string getString(char *input)
@@ -50,7 +50,7 @@ std::string getString(char *input)
 // get value from tokenstring
 int getValue(char *input)
 {
-    char const;
+    char temp;
     int len = strlen(input);
     // make sure warning works for escaped first char
     if(input[1] == '\\')
@@ -58,35 +58,35 @@ int getValue(char *input)
         switch(input[2])
         {
         case '0':
-            const = '\0';
+            temp = '\0';
             break;
         case 'n':
-            const = '\n';
+            temp = '\n';
             break;
         default:
-            const = input[2];
+            temp = input[2];
         }
     }
     else if(len > 3)
     {
-        printf("WARNING(%d): character is %d characters long and not a single character: '%s'. The first char will be used.\n", line, len - 2, raw);
+        printf("WARNING(%d): character is %d characters long and not a single character: '%s'. The first char will be used.\n", line, len - 2, input);
         if(input[1] == '\\')
         {
             switch(input[2])
             {
             case '0':
-                const = '\0';
+                temp = '\0';
                 break;
             case 'n':
-                const = '\n';
+                temp = '\n';
                 break;
             default:
-                const = input[2];
+                temp = input[2];
             }
         }
         else
         {
-            const = input[1];
+            temp = input[1];
         }
     }
     else if(len == 2)
@@ -96,9 +96,9 @@ int getValue(char *input)
     }
     else
     {
-        const = input[1];
+        temp = input[1];
     }
-    return (int)const;
+    return (int)temp;
 }
 
 // builds the token
@@ -107,8 +107,8 @@ static int newToken(int tokenClass, char *tokenString)
   
     yylval.tokenData = new TokenData;
     yylval.tokenData->tokenclass = tokenClass;
-    yylval.tokenData->linenum = yylineno;
-    yylval.tokenData->tokenstr = srtdup(tokenString);
+    yylval.tokenData->linenum = line;
+    yylval.tokenData->tokenstr = strdup(tokenString);
     
   
     switch(tokenClass)
@@ -117,16 +117,16 @@ static int newToken(int tokenClass, char *tokenString)
             yylval.tokenData->nvalue = atoi(tokenString);
             break;
         case BOOLCONST:
-            yylval.tokenData->nvalue = (strcmp(tokenString, "false") == 0 ? 0 : 1;)
+            yylval.tokenData->nvalue = (strcmp(tokenString, "false") == 0 ? 0 : 1);
             break;
         case STRINGCONST:
             yylval.tokenData->svalue = getString(tokenString);
             break;
         case CHARCONST:
-            int const = getValue(tokenString);
-                if(const == -1)
+            int temp = getValue(tokenString);
+                if(temp == -1)
                     return -1;
-            yylval.tokenData->cValue = (char)const;
+            yylval.tokenData->cvalue = (char)temp;
             break;
     }
     
@@ -136,7 +136,6 @@ static int newToken(int tokenClass, char *tokenString)
 %}
 
 %option noyywrap
-%option yylineno
 
 letter [a-zA-Z]
 digit [0-9]
@@ -185,9 +184,9 @@ letdig [0-9a-zA-Z]
 "and"                                { return newToken(AND, yytext); }
 "or"                                 { return newToken(OR, yytext); }
 "not"                                { return newToken(NOT, yytext); }
-"true"                               { return newToken(BOOLCONST, yytext); } 
+"true"                               { return newToken(BOOLCONST, yytext); }
 "false"                              { return newToken(BOOLCONST, yytext); }
-[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or                                       misplaced input character: '%c'. Character Ignored.\n",                                    line, yytext[0]); }
+[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or                                       misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
 \n                                   { line++; }
 .                                    ;
 %%
