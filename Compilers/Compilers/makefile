@@ -4,26 +4,25 @@
 # January 22, 2021
 #
 
+BIN = parser
+CC = g++
+OUT = c-
+FLAGS = -DCPLUSPLUS -g
 
-# Basing this on the calculator makefile from Sophmore Year
-cc = gcc
-ccopts = -ly
-lex = lex
-lexopts =
-lexgens = lex.yy.c
-yacc = yacc
-yaccopts = -d
-yaccgens = y.tab.c y.tab.h
-prj = calc
+$(BIN) : lex.yy.c $(BIN).tab.c $(BIN).tab.h
+	$(CC) $(FLAGS) lex.yy.c $(BIN).tab.c -o $(OUT)
 
-$(prj): $(lexgens) $(yaccgens)
-	$(cc) $(lexgens) $(yaccgens) $(ccopts) -o $(prj)
+$(BIN).tab.c $(BIN).tab.h : $(BIN).y scanType.h
+	bison -v -t -d $(BIN).y
 
-clean:
-	rm $(lexgens) $(yaccgens) $(prj)
+lex.yy.c : $(BIN).l $(BIN).tab.h scanType.h
+	flex $(BIN).l
 
-$(yaccgens): $(prj).y scanType.h
-	$(yacc) $(yaccopts) $(prj).y
+run :
+	cat test.c- | ./$(OUT)
 
-$(lexgens): $(prj).l $(yaccgens) scanType.h
-	$(lex) $(lexopts) $(prj).l
+tar :
+	tar -cvf $(BIN).tar $(BIN).y $(BIN).l scanType.h makefile
+
+clean :
+	rm $(BIN).tab.c $(BIN).tab.h lex.yy.c $(OUT) $(BIN).output

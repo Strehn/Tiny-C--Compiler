@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A00BBB125C12871004A0DB0 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A00BBB025C12871004A0DB0 /* test.c */; };
 		7A5032C125BB9F2800478758 /* parser.l in Sources */ = {isa = PBXBuildFile; fileRef = 7A5032C025BB9F2800478758 /* parser.l */; };
 		7A5032C325BB9F6500478758 /* parser.y in Sources */ = {isa = PBXBuildFile; fileRef = 7A5032C225BB9F6500478758 /* parser.y */; };
 		7A5032C625BB9F8B00478758 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 7A5032C525BB9F8B00478758 /* makefile */; };
@@ -25,6 +26,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7A00BBB025C12871004A0DB0 /* test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = test.c; sourceTree = "<group>"; };
 		7A5032B625BB9BB400478758 /* Compilers */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Compilers; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A5032C025BB9F2800478758 /* parser.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = parser.l; sourceTree = "<group>"; };
 		7A5032C225BB9F6500478758 /* parser.y */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.yacc; path = parser.y; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 				7A5032C225BB9F6500478758 /* parser.y */,
 				7A5032C425BB9F7400478758 /* scanType.h */,
 				7A5032C525BB9F8B00478758 /* makefile */,
+				7A00BBB025C12871004A0DB0 /* test.c */,
 			);
 			path = Compilers;
 			sourceTree = "<group>";
@@ -130,6 +133,7 @@
 				7A5032C325BB9F6500478758 /* parser.y in Sources */,
 				7A5032C625BB9F8B00478758 /* makefile in Sources */,
 				7A5032C125BB9F2800478758 /* parser.l in Sources */,
+				7A00BBB125C12871004A0DB0 /* test.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
