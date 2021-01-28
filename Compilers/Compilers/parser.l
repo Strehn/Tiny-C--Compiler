@@ -1,13 +1,126 @@
 %{
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include <stdbool.h>
-#include <stdlib.h>
 #include "scanType.h"
 #include "parser.tab.h"
 
 int line = 1;
-   
+
+using namespace std;
+
+char* strParser(char* tokenString)
+{
+    // expected input "string"
+    int i, j, count;
+    count = 0;
+    bool isEscape = false;
+    int sLength = strlen(tokenString);
+    std::string temp;
+    char *result;
+    
+    for(i = 0; i < sLength; i++)
+    {
+        if(!isEscape)
+        {
+            if(tokenString[i] == '\\')
+            {
+                isEscape = true;
+                count++;
+                //dont add since we ignore the escape
+            }
+            else
+            {
+                temp.append(1, tokenString[i]);
+            }
+        }
+        else
+        {
+            isEscape = false;
+            switch(tokenString[i])
+            {
+                case 'n': // new line character
+                    temp.append(1, '\n');
+                    break;
+                case '0': // null character
+                    temp.append(1, '\0');
+                    break;
+                default:
+                    temp.append(1, tokenString[i]);
+            }
+        }
+    }
+    
+    // get temp length
+    i = 0;
+    j = 0;
+    while(temp[i])
+    {
+        j++;
+        i++;
+    }
+    
+    result = strcpy(((char*)malloc(j+1)), temp.c_str());
+    yylval.tokenData->strlen = j - count -1; // account for escaped characters
+    
+    return result;
+}
+
+// find character constant escape functions
+int charParser(char *tokenString)
+{
+    // expected input 'c'
+    char c;
+    int sLength = strlen(tokenString);
+    
+    // check for escape characters
+    if(tokenString[1] == '\\')
+    {
+        switch(tokenString[2])
+        {
+            case 'n': // new line character
+                c = '\n';
+                break;
+            case '0': // null character
+                c = '\0';
+                break;
+            default:
+                c = tokenString[2];
+        }
+    }
+    else if(sLength == 2) // ''
+    {
+        printf("ERROR(%d): Empty character ''. Characters ignored.\n", line);
+        return -1;
+    }
+    else if(sLength > 3) // cant have this in the first one in case string doesn't start with escape character
+    {
+        printf("WARNING(%d): character is %d characters long and not a single character: '%s'. The first char will be used.\n", line, sLength - 2, tokenString);
+        // recheck for escape characters
+        if(tokenString[1] == '\\')
+        {
+            switch(tokenString[2])
+            {
+                case 'n': // new line character
+                c = '\n';
+                break;
+                case '0': // null character
+                c = '\0';
+                break;
+                default:
+                c = tokenString[2];
+            }
+        }
+    }
+    else
+    {
+        c = tokenString[1];
+    }
+    
+    return (int)c;
+}
+
 // builds the token
 static int newToken(int tokenClass, char *tokenString)
 {
@@ -25,10 +138,15 @@ static int newToken(int tokenClass, char *tokenString)
             yylval.tokenData->nvalue = (strcmp(tokenString, "false") == 0 ? 0 : 1);
             break;
         case STRINGCONST:
-            yylval.tokenData->svalue = tokenString;
+            yylval.tokenData->svalue = strParser(tokenString);
             break;
         case CHARCONST:
-            yylval.tokenData->cvalue = tokenString[0];
+            int charData = charParser(tokenString);
+            if(charData == -1)
+            {
+                return COMMENT;
+            }
+            yylval.tokenData->cvalue = (char)charData;
             break;
     }
     return tokenClass;
@@ -79,7 +197,7 @@ letdig [0-9a-zA-Z]
 {digit}+                             { return newToken(NUMCONST, yytext); }
 [^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
 '([^\n\\']|\\.)*'                    { return newToken(CHARCONST, yytext); }
-\"([^\\\"\n]|\\.)*\"                 { return newToken(STRINGCONST, yytext); }
+\"(\\\"|[^\n"])*\"                 { return newToken(STRINGCONST, yytext); }
 \n                                   { line++; }
 .                                    ;
 %%

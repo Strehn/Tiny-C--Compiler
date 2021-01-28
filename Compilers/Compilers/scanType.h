@@ -12,5 +12,6 @@ struct TokenData {
     char cvalue;            // any character value
     int  nvalue;            // any numeric value or Boolean value
     char *svalue;           // any string value e.g. an id
+    int  strlen;            // length of the parsed token
 };
 #endif
