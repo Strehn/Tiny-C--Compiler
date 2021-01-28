@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <iostream>
 #include "scanType.h"
 
 #ifdef CPLUSPLUS
@@ -38,9 +37,7 @@ tokenlist     : token
 token : BOOLCONST         { printf("Line %d Token: BOOLCONST Value: %d  Input: %s\n", $1->linenum, $1->nvalue, $1->tokenstr); }
       | NUMCONST          { printf("Line %d Token: NUMCONST Value: %d  Input: %s\n", $1->linenum, $1->nvalue, $1->tokenstr); }
       | CHARCONST         { printf("Line %d Token: CHARCONST Value: '%c' Input: %s\n", $1->linenum, $1->cvalue, $1->tokenstr); }
-      | STRINGCONST       { printf("Line %d Token: STRINGCONST Value: \"", $1->linenum);
-        std::cout << $1->svalue;
-        printf("\"  Input: %s\n", $1->tokenstr); }
+      | STRINGCONST       { printf("Line %d Token: STRINGCONST Value: \"", $1->linenum); $1->svalue; printf("\"  Input: %s\n", $1->tokenstr); }
       | ID                { printf("Line %d Token: ID Value: %s\n", $1->linenum, $1->tokenstr); }
       | IF                { printf("Line %d Token: IF\n", $1->linenum); }
       | WHILE             { printf("Line %d Token: WHILE\n", $1->linenum); }

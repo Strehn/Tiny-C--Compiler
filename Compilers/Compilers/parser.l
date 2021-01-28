@@ -2,27 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "scanType.h"
 #include "parser.tab.h"
 
 int line = 1;
-
+   
 // builds the token
 static int newToken(int tokenClass, char *tokenString)
 {
-    int len = strlen(tokenString);
-    char temp;
-    int i;
-    bool continueb = false;
-    char* slash = '/';
-    char* nullc = '/0';
-    char* newl = '/n';
     yylval.tokenData = new TokenData;
     yylval.tokenData->tokenclass = tokenClass;
     yylval.tokenData->linenum = line;
     yylval.tokenData->tokenstr = strdup(tokenString);
     
-  
     switch(tokenClass)
     {
         case NUMCONST:
@@ -32,84 +25,10 @@ static int newToken(int tokenClass, char *tokenString)
             yylval.tokenData->nvalue = (strcmp(tokenString, "false") == 0 ? 0 : 1);
             break;
         case STRINGCONST:
-            for( i = 1; i < len - 1; i++)
-            {
-                if(!continueb)
-                {
-                    if(tokenString[i] == slash)
-                    {
-                        continueb = true;
-                    }
-                    else
-                    {
-                        temp[i] = tokenString[i];
-                    }
-                }
-                else
-                {
-                    continueb = false;
-                    switch(tokenString[i])
-                    {
-                        case '0':
-                            temp = nullc;
-                            break;
-                        case 'n':
-                            temp[i] = newl;
-                            break;
-                        default:
-                            temp[i] = tokenString[i];
-                    }
-                }
-            }
-            yylval.tokenData->svalue = temp;
+            yylval.tokenData->svalue = tokenString;
             break;
         case CHARCONST:
-            if(tokenString[1] == slash)
-            {
-                switch(tokenString[2])
-                {
-                    case '0':
-                        temp = nullc;
-                        break;
-                    case 'n':
-                        temp = newl;
-                        break;
-                    default:
-                        temp = tokenString[2];
-                }
-            }
-            else if(len > 3)
-            {
-                printf("WARNING(%d): character is %d characters long and not a single character: '%s'. The first char will be used.\n", line, len - 2, tokenString);
-                if(tokenString[1] == slash)
-                {
-                    switch(tokenString[2])
-                    {
-                    case '0':
-                        temp = nullc;
-                        break;
-                    case 'n':
-                        temp = newl;
-                        break;
-                    default:
-                        temp = tokenString[2];
-                    }
-                }
-                else
-                {
-                    temp = tokenString[1];
-                }
-            }
-            else if(len == 2)
-            {
-                printf("ERROR(%d): Empty character ''. Characters ignored.\n", line);
-                return -1;
-            }
-            else
-            {
-                temp = tokenString[1];
-            }
-            yylval.tokenData->cvalue = (char)temp;
+            yylval.tokenData->cvalue = tokenString[0];
             break;
     }
     return tokenClass;
@@ -124,14 +43,11 @@ digit [0-9]
 letdig [0-9a-zA-Z]
 
 %%
-
-{letter}{letdig}*                    { return newToken(ID, yytext); }
-{digit}+                             { return newToken(NUMCONST, yytext); }
+[;,:\[\]\(\)={\<>\+\-\*/%\?}&\|!]    { return newToken(SYMBOL, yytext); }
 "=="                                 { return newToken(EQ, yytext); }
 "!="                                 { return newToken(NEQ, yytext); }
 "<="                                 { return newToken(LEQ, yytext); }
 ">="                                 { return newToken(GEQ, yytext); }
-">"                                  { return newToken(GT, yytext); }
 "+="                                 { return newToken(ADDTO, yytext); }
 "-="                                 { return newToken(SUBTO, yytext); }
 "*="                                 { return newToken(MULTO, yytext); }
@@ -159,10 +75,11 @@ letdig [0-9a-zA-Z]
 "not"                                { return newToken(NOT, yytext); }
 "true"                               { return newToken(BOOLCONST, yytext); }
 "false"                              { return newToken(BOOLCONST, yytext); }
-[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or                                       misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
-\n                                   { line++; }
-[;,:\[\]\(\)={\<>\+\-\*/%\?}&\|!]    { return newToken(SYMBOL, yytext); }
+{letter}{letdig}*                    { return newToken(ID, yytext); }
+{digit}+                             { return newToken(NUMCONST, yytext); }
+[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
 '([^\n\\']|\\.)*'                    { return newToken(CHARCONST, yytext); }
 \"([^\\\"\n]|\\.)*\"                 { return newToken(STRINGCONST, yytext); }
+\n                                   { line++; }
 .                                    ;
 %%
