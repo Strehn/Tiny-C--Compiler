@@ -62,7 +62,7 @@ char* strParser(char* tokenString)
     }
     
     result = strcpy(((char*)malloc(j+1)), temp.c_str());
-    yylval.tokenData->strlen = j - count -1; // account for escaped characters
+    yylval.tokenData->strlen = sLength - count -2; // account for escaped characters
     
     return result;
 }
@@ -96,7 +96,7 @@ int charParser(char *tokenString)
     }
     else if(sLength > 3) // cant have this in the first one in case string doesn't start with escape character
     {
-        printf("WARNING(%d): character is %d characters long and not a single character: '%s'. The first char will be used.\n", line, sLength - 2, tokenString);
+        printf("WARNING(%d): character is %d characters long and not a single character: '%s'.  The first char will be used.\n", line, sLength - 2, tokenString);
         // recheck for escape characters
         if(tokenString[1] == '\\')
         {
@@ -111,6 +111,10 @@ int charParser(char *tokenString)
                 default:
                 c = tokenString[2];
             }
+        }
+        else
+        {
+            c = tokenString[1];
         }
     }
     else
@@ -161,15 +165,15 @@ digit [0-9]
 letdig [0-9a-zA-Z]
 
 %%
-[;,:\[\]\(\)={\<>\+\-\*/%\?}&\|!]    { return newToken(SYMBOL, yytext); }
+[;,:\[\]\(\)={\<>\+\-\*/%\?}]    { return newToken(SYMBOL, yytext); }
 "=="                                 { return newToken(EQ, yytext); }
 "!="                                 { return newToken(NEQ, yytext); }
 "<="                                 { return newToken(LEQ, yytext); }
 ">="                                 { return newToken(GEQ, yytext); }
-"+="                                 { return newToken(ADDTO, yytext); }
-"-="                                 { return newToken(SUBTO, yytext); }
-"*="                                 { return newToken(MULTO, yytext); }
-"/="                                 { return newToken(DIVTO, yytext); }
+"+="                                 { return newToken(ADDASS, yytext); }
+"-="                                 { return newToken(SUBASS, yytext); }
+"*="                                 { return newToken(MULASS, yytext); }
+"/="                                 { return newToken(DIVASS, yytext); }
 ":>:"                                { return newToken(MAX, yytext); }
 ":<:"                                { return newToken(MIN, yytext); }
 "--"                                 { return newToken(DEC, yytext); }
@@ -179,13 +183,13 @@ letdig [0-9a-zA-Z]
 "bool"                               { return newToken(BOOL, yytext); }
 "char"                               { return newToken(CHAR, yytext); }
 "if"                                 { return newToken(IF, yytext); }
+"to"                                 { return newToken(THEN, yytext); }
 "then"                               { return newToken(THEN, yytext); }
 "else"                               { return newToken(ELSE, yytext); }
 "while"                              { return newToken(WHILE, yytext); }
 "do"                                 { return newToken(DO, yytext); }
 "for"                                { return newToken(FOR, yytext); }
 "by"                                 { return newToken(BY, yytext); }
-"to"                                 { return newToken(TO, yytext); }
 "return"                             { return newToken(RETURN, yytext); }
 "break"                              { return newToken(BREAK, yytext); }
 "and"                                { return newToken(AND, yytext); }
