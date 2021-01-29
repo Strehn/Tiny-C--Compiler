@@ -193,6 +193,7 @@ letdig [0-9a-zA-Z]
 "not"                                { return newToken(NOT, yytext); }
 "true"                               { return newToken(BOOLCONST, yytext); }
 "false"                              { return newToken(BOOLCONST, yytext); }
+"//".*                               { return buildToken(COMMENT, yytext); }
 {letter}{letdig}*                    { return newToken(ID, yytext); }
 {digit}+                             { return newToken(NUMCONST, yytext); }
 [^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }

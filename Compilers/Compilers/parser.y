@@ -41,6 +41,8 @@ token : BOOLCONST         { printf("Line %d Token: BOOLCONST Value: %d  Input: %
 | STRINGCONST       { printf("Line %d Token: STRINGCONST Value: %s Len: %d Input: %s\n", $1->linenum, $1->svalue, $1->strlen, $1->tokenstr); }
       | ID                { printf("Line %d Token: ID Value: %s\n", $1->linenum, $1->tokenstr); }
       | IF                { printf("Line %d Token: IF\n", $1->linenum); }
+      | THEN              { printf("Line %d Token: THEN\n", $1->linenum); }
+      | ELSE              { printf("Line %d Token: ELSE\n", $1->linenum); }
       | WHILE             { printf("Line %d Token: WHILE\n", $1->linenum); }
       | DEC               { printf("Line %d Token: DEC\n", $1->linenum); }
       | INC               { printf("Line %d Token: INC\n", $1->linenum); }
@@ -54,7 +56,6 @@ token : BOOLCONST         { printf("Line %d Token: BOOLCONST Value: %d  Input: %
       | BOOL              { printf("Line %d Token: BOOL\n", $1->linenum); }
       | CHAR              { printf("Line %d Token: CHAR\n", $1->linenum); }
       | IN                { printf("Line %d Token: IN\n", $1->linenum); }
-      | ELSE              { printf("Line %d Token: ELSE\n", $1->linenum); }
       | RETURN            { printf("Line %d Token: RETURN\n", $1->linenum); }
       | BREAK             { printf("Line %d Token: BREAK\n", $1->linenum); }
       | SYMBOL            { printf("Line %d Token: %s\n", $1->linenum, $1->tokenstr); }
@@ -63,7 +64,19 @@ token : BOOLCONST         { printf("Line %d Token: BOOLCONST Value: %d  Input: %
       | GEQ               { printf("Line %d Token: GEQ\n", $1->linenum); }
       | NEQ               { printf("Line %d Token: NEQ\n", $1->linenum); }
       | COMMENT           {}
-      ;
+      | MAX               { printf("Line %d Token: MAX\n", $1->linenum); }
+      | MIN               { printf("Line %d Token: MIN\n", $1->linenum); }
+      | OR                { printf("Line %d Token: OR\n", $1->linenum); }
+      | NOT               { printf("Line %d Token: NOT\n", $1->linenum); }
+      | AND               { printf("Line %d Token: AND\n", $1->linenum); }
+      | ADDTO             { printf("Line %d Token: ADDTO\n", $1->linenum); }
+      | SUBTO             { printf("Line %d Token: SUBTO\n", $1->linenum); }
+      | MULTO             { printf("Line %d Token: MULTO\n", $1->linenum); }
+      | DIVTO             { printf("Line %d Token: DIVTO\n", $1->linenum); }
+      | DO                { printf("Line %d Token: DO\n", $1->linenum); }
+      | BY                { printf("Line %d Token: BY\n", $1->linenum); }
+      | TO                { printf("Line %d Token: TO\n", $1->linenum); }
+    ;
 %%
 
 
