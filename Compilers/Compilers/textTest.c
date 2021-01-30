@@ -1,0 +1,3 @@
+Professor Farnsworth: "Amy, technology isn't intrinsically good or
+evil. It's how it's used. Like the Death Ray."
+

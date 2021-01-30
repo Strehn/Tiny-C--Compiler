@@ -23,10 +23,10 @@ void yyerror(const char *msg) {
     
 }
 
-%token <tokenData> BOOLCONST NUMCONST CHARCONST STRINGCONST ID
+%token <tokenData> BOOLCONST NUMCONST CHARCONST STRINGCONST ID THEN
 %token <tokenData> IF WHILE FOR STATIC INT BOOL CHAR IN ELSE RETURN BREAK COMMENT
 %token <tokenData> SYMBOL EQ ADDASS SUBASS DIVASS MULASS LEQ GEQ NEQ DEC INC
-%token <tokenData> LT GT MUL MAX MIN ADD DIV THEN DO BY
+%token <tokenData> LT GT MUL MAX MIN ADD DIV DO BY TO
 %token <tokenData> AND OR NOT
 %start tokenlist
 
@@ -42,6 +42,7 @@ token : BOOLCONST         { printf("Line %d Token: BOOLCONST Value: %d  Input: %
       | ID                { printf("Line %d Token: ID Value: %s\n", $1->linenum, $1->tokenstr); }
       | IF                { printf("Line %d Token: IF\n", $1->linenum); }
       | THEN              { printf("Line %d Token: THEN\n", $1->linenum); }
+      | TO                { printf("Line %d Token: THEN\n", $1->linenum); }
       | ELSE              { printf("Line %d Token: ELSE\n", $1->linenum); }
       | WHILE             { printf("Line %d Token: WHILE\n", $1->linenum); }
       | DEC               { printf("Line %d Token: DEC\n", $1->linenum); }
