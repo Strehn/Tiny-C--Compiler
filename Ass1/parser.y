@@ -38,11 +38,11 @@ tokenlist     : token
 token : BOOLCONST         { printf("Line %d Token: BOOLCONST Value: %d  Input: %s\n", $1->linenum, $1->nvalue, $1->tokenstr); }
       | NUMCONST          { printf("Line %d Token: NUMCONST Value: %d  Input: %s\n", $1->linenum, $1->nvalue, $1->tokenstr); }
       | CHARCONST         { printf("Line %d Token: CHARCONST Value: '%c'  Input: %s\n", $1->linenum, $1->cvalue, $1->tokenstr); }
-| STRINGCONST       { printf("Line %d Token: STRINGCONST Value: %s  Len: %d  Input: %s\n", $1->linenum, $1->svalue, $1->strlen, $1->tokenstr); }
+      | STRINGCONST       { printf("Line %d Token: STRINGCONST Value: %s  Len: %d  Input: %s\n", $1->linenum,                         $1->svalue, $1->strlen, $1->tokenstr); }
       | ID                { printf("Line %d Token: ID Value: %s\n", $1->linenum, $1->tokenstr); }
       | IF                { printf("Line %d Token: IF\n", $1->linenum); }
       | THEN              { printf("Line %d Token: THEN\n", $1->linenum); }
-      | TO                { printf("Line %d Token: THEN\n", $1->linenum); }
+      | TO                { printf("Line %d Token: TO\n", $1->linenum); }
       | ELSE              { printf("Line %d Token: ELSE\n", $1->linenum); }
       | WHILE             { printf("Line %d Token: WHILE\n", $1->linenum); }
       | DEC               { printf("Line %d Token: DEC\n", $1->linenum); }

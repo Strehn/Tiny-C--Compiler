@@ -1,2 +1,0 @@
-Quotes I Have Enjoyed
-

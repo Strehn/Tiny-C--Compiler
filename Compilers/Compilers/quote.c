@@ -1,5 +1,0 @@
-
-The art of programming is the art of organizing complexity.
-        -- E.W.Dijkstra
-
-
