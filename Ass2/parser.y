@@ -6,7 +6,7 @@
 #include <string.h>
 #include <string>
 #include "scanType.h"
-#include "ourgetopt.h"
+#include "ourgetopt.hpp"
 
 
 extern int yylex();
@@ -34,8 +34,8 @@ treeNode *tree;
 %token <tokenData> BOOLCONST NUMCONST CHARCONST STRINGCONST ID THEN
 %token <tokenData> IF WHILE FOR STATIC INT BOOL CHAR IN ELSE RETURN BREAK COMMENT
 %token <tokenData> SYMBOL EQ ADDASS SUBASS DIVASS MULASS LEQ GEQ NEQ DEC INC
-%token <tokenData> LT GT MUL MAX MIN ADD DIV DO BY TO
-%token <tokenData> AND OR NOT
+%token <tokenData> LT GT MUL MAX MIN ADD DIV DO BY TO MOD RAND
+%token <tokenData> AND OR NOT ASS
 %start program
 
 %type <treeNode> program declList decl
@@ -95,11 +95,20 @@ scopedVarDecl : STATIC typeSpec varDeclList ';'
     }
     ;
 
-varDeclInit : varDeclID
+varDeclList : varDeclList ',' varDeclInit
+    {
+        $$->append($3);
+    }
+    | varDeclInit
+    {
+        $$ = $1;
+    };
+
+varDeclInit : varDeclId
     {
         $$ = $1;
     }
-    | varDeclID ':' simpleExp
+    | varDeclId ':' simpleExp
     {
         $$ = $1;
         $$->addChild($3, 0);
@@ -142,7 +151,7 @@ funDecl : typeSpec ID '(' parms ')' stmt
     }
     ;
 
-parms : parmList E
+parms : parmList
     {
         $$ = $1;
     }
@@ -156,7 +165,7 @@ parmList : parmList ';' parmTypeList
     {
         $$->append($3);
     }
-    | paramTypeList
+    | parmTypeList
     {
         $$ = $1;
     }
@@ -169,23 +178,23 @@ parmTypeList : typeSpec parmIdList
     }
     ;
 
-parmIdList : parmIDList ',' parmId
+parmIdList : parmIdList ',' parmId
     {
         $$->append($3);
     }
-    | paramId
+    | parmId
     {
         $$ = $1;
     }
     ;
 
-parmID : ID
+parmId : ID
     {
-        
+        $$ = new Par($1, false);
     }
     | ID '[' ']'
     {
-    
+        $$ = new Par($1, true);
     }
     ;
 
@@ -258,29 +267,29 @@ selectStmt : IF '(' simpleExp ')' stmt
         $$ = new If(@1.first_line, $3, $5);
         
     }
-    | IF '(' simpleExp ')' then stmt ELSE stmt
+    | IF '(' simpleExp ')' THEN stmt ELSE stmt
     {
         $$ = new If(@1.first_line, $3, $5, $7);
     }
     ;
 
-iterStmt : WHILE '(' simpleExxp ')' do stmt
+iterStmt : WHILE '(' simpleExp ')' DO stmt
     {
         $$ = new While(@1.first_line, $3, $5);
     }
-    | FOR '(' ID IN ID ')'  iterRange do stmt
+    | FOR '(' ID IN ID ')'  iterRange DO stmt
     {
         $$ = new For(@1.first_line, $3, $5, $7);
     }
     ;
 
-iterRange : simpleExp to simpleExt
+iterRange : simpleExp TO simpleExp
     {
-    
+        $$ = new Iter(@1.first_line, $1, $3);
     }
-    | simpleExp to simpleExp by simpleExp
+    | simpleExp TO simpleExp BY simpleExp
     {
-    
+        $$ = new Iter(@1.first_line, , $1, $3, $5);
     }
     ;
 
@@ -302,7 +311,7 @@ breakStmt : BREAK ';'
 
 /* ----- expressions ----- */
 
-exp : mutable ASS expressions
+exp : mutable ASS exp
     {
         $$ = new Operation($2, $1, $3);
     }
@@ -324,11 +333,11 @@ exp : mutable ASS expressions
     }
     | mutable INC
     {
-        $$ = new Operation($2, $1, $3);
+        $$ = new Operation($2, $1);
     }
     | mutable DEC
     {
-        $$ = new Operation($2, $1, $3);
+        $$ = new Operation($2, $1);
     }
     | simpleExp
     {
@@ -431,11 +440,11 @@ sumExp : sumExp sumop mulExp
         $$ = $1;
     }
 
-sumop : ADD
+sumop : ADDASS
     {
         $$ = $1;
     }
-    SUB
+    | SUBASS
     {
         $$ = $1;
     }
@@ -443,7 +452,7 @@ sumop : ADD
 
 mulExp : mulExp mulop unaryExp
     {
-        $$ = Operation($2, $1, $3);
+        $$ = new Operation($2, $1, $3);
     }
     | unaryExp
     {
@@ -451,11 +460,11 @@ mulExp : mulExp mulop unaryExp
     }
     ;
 
-mulop : MUL
+mulop : MULASS
     {
         $$ = $1;
     }
-    | DIV
+    | DIVASS
     {
         $$ = $1;
     }
@@ -474,11 +483,11 @@ unaryExp : unaryop unaryExp
         $$ = $1;
     }
 
-unaryop : SUB
+unaryop : SUBASS
     {
         $$ = $1;
     }
-    | MUL
+    | MULASS
     {
         $$ = $1;
     }

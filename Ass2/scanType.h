@@ -45,9 +45,10 @@ class treeNode
 // Using inheritance for the class treeNode
 
 // consistantly use the same variables for my sanity
+// need to be sepeate functions so I can call them to do things initially
+// ----- Variables -----
 
-// Variables
- class variables: public treeNode
+ class Var: public treeNode
 {
     int arrSize;
     int line;
@@ -57,17 +58,29 @@ class treeNode
     bool isArray;
     
 public:
-    variable(tokenData *);
-    variable(tokenData *, tokenData *);
-    variableA(tokenData *);
-    variableA(int, treeNode *, treeNode *);
+    Var(TokenData *);
+    Var(TokenData *, TokenData *);
     void setTypeAndStatic(char *, bool);
     virtual void print();
-    virtual void printa();
 };
 
+class VarAccess: public treeNode
+{
+
+    char *name;
+    bool isArray;
+    int line;
+
+public:
+    VarAccess(TokenData *);
+    VarAccess(int, treeNode *, treeNode *);
+    virtual void print();
+};
+
+
+
 // Functions
-class functions: public treeNode
+class Parm: public treeNode
 {
     int line;
     char *name;
@@ -75,40 +88,110 @@ class functions: public treeNode
     bool isArray;
     
 public:
-    Parm(tokenData *, bool);
+    Parm(TokenData *, bool);
     void setType(char *);
-    virtual void printParm();
+    virtual void print();
+};
+
+class FunDecl: public treeNode
+{
+    int line;
+    char *name;
+    char *type;
+    bool isArray;
+    
+public:
     FunDecl(TokenData *, TokenData *, treeNode *, treeNode *);
     FunDecl(TokenData *, treeNode *, treeNode *);
-    virtual void printDecl();
+    virtual void print();
+    
+};
+    
+class Call: public treeNode
+{
+    int line;
+    char *name;
+    char *type;
+    bool isArray;
+        
+public:
     Call(TokenData *, treeNode *);
-    virtual void printCall();
+    virtual void print();
+
 };
 
 // Statmenets
-class statement: public treeNode
+class CompoundStatement: public treeNode
 {
     int line;
     
 public:
     CompoundStatement(int, treeNode *, treeNode *);
-    virtual void CompoundPrint();
+    virtual void Print();   
+};
+
+class If: public treeNode
+{
+    int line;
+    
+public:
     If(int, treeNode *, treeNode *, treeNode *);
     If(int, treeNode *, treeNode *);
-    virtual void IfPrint();
+    virtual void Print();
+};
+
+class While: public treeNode
+{
+    int line;
+    
+public:
     While(int, treeNode *, treeNode *);
-    virtual void WhilePrint();
+    virtual void Print();
+};
+
+class Return: public treeNode
+{
+    int line;
+    
+public:
     Return(int);
     Return(int, treeNode *);
-    virtual void ReturnPrint();
-    For(int, TokenData *, TokenData *, AST *);
-    virtual void ForPrint();
+    virtual void Print();
+    
+};
+
+class For: public treeNode
+{
+    int line;
+    
+public:
+    For(int, TokenData *, TokenData *, treeNode *);
+    virtual void Print();
+};
+
+class Iter: public treeNode
+{
+    int line;
+    
+public:
+    Iter(int, TokenData *, TokenData *);
+    Iter(int, TokenData *, TokenData *, TokenData *);
+    virtual void Print();
+};
+
+class Break: public treeNode
+{
+    int line;
+    
+public:
+    
     Break(int);
-    virtual void BreakPrint();
+    virtual void Print();
+    
 };
 
 // expressions
-class expression: public treeNode
+class Relation: public treeNode
 {
     int type;
     char *str;
@@ -117,17 +200,50 @@ class expression: public treeNode
     
 public:
     Relation(TokenData *, treeNode *, treeNode*);
-    virtual void printRelation();
+    virtual void print();
+
+};
+
+class LogicExpression: public treeNode
+{
+    int type;
+    char *str;
+    int line;
+    TokenData *data;
+    
+public:
     LogicExpression(TokenData *, treeNode *, treeNode *);
     LogicExpression(TokenData *, treeNode *);
-    virtual void printLogic();
+    virtual void print();
+    
+};
+
+class Operation: public treeNode
+{
+    int type;
+    char *str;
+    int line;
+    TokenData *data;
+    
+public:
     Operation(TokenData *, treeNode *, treeNode *);
     Operation(TokenData *, treeNode *);
-    virtual void printOper();
-    Constant(TokenData *);
-    virtual void printConst();
+    virtual void printO();
+    
+};
 
-}
+class Constant: public treeNode
+{
+    int type;
+    char *str;
+    int line;
+    TokenData *data;
+    
+public:
+    Constant(TokenData *);
+    virtual void print();
+    
+};
 
 
 #endif
