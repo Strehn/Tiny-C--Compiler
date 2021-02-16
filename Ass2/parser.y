@@ -6,20 +6,28 @@
 #include <string.h>
 #include <string>
 #include "scanType.h"
+#include "ourgetopt.h"
 
 
 extern int yylex();
 extern FILE *yyin;
 extern int yydebug;
+extern char *yytext;
+extern int yylineno;
 
 void yyerror(const char *msg) {
-    printf("Error while parsing: %s\n", msg);
+    printf("Error: %s while parsing `%s` on line %d.\n", msg, yytext, yylineno);
 }
 
+treeNode *tree;
 %}
 
-%union {
+%locations
+
+%union
+{
     TokenData *tokenData;
+    treeNode *treeNode;
     
 }
 
@@ -28,65 +36,585 @@ void yyerror(const char *msg) {
 %token <tokenData> SYMBOL EQ ADDASS SUBASS DIVASS MULASS LEQ GEQ NEQ DEC INC
 %token <tokenData> LT GT MUL MAX MIN ADD DIV DO BY TO
 %token <tokenData> AND OR NOT
-%start tokenlist
+%start program
+
+%type <treeNode> program declList decl
+%type <treeNode> varDecl scopedVarDecl varDeclList varDeclInit varDeclId
+%type <treeNode> funDecl parms parmList parmTypeList parmIdList parmId
+%type <treeNode> stmt expStmt compoundStmt localDecls stmtList selectStmt iterStmt iterRange returnStmt breakStmt
+%type <treeNode> exp simpleExp andExp unaryRelExp relExp minmaxExp minmaxop sumExp mulExp unaryExp factor mutable immutable call args argList
+%type <tokenData> constant typeSpec relop unaryop mulop sumop
 
 %%
-tokenlist     : token
-              | tokenlist token
-              ;
 
-token : BOOLCONST         { printf("Line %d Token: BOOLCONST Value: %d  Input: %s\n", $1->linenum, $1->nvalue, $1->tokenstr); }
-      | NUMCONST          { printf("Line %d Token: NUMCONST Value: %d  Input: %s\n", $1->linenum, $1->nvalue, $1->tokenstr); }
-      | CHARCONST         { printf("Line %d Token: CHARCONST Value: '%c'  Input: %s\n", $1->linenum, $1->cvalue, $1->tokenstr); }
-      | STRINGCONST       { printf("Line %d Token: STRINGCONST Value: %s  Len: %d  Input: %s\n", $1->linenum,                         $1->svalue, $1->strlen, $1->tokenstr); }
-      | ID                { printf("Line %d Token: ID Value: %s\n", $1->linenum, $1->tokenstr); }
-      | IF                { printf("Line %d Token: IF\n", $1->linenum); }
-      | THEN              { printf("Line %d Token: THEN\n", $1->linenum); }
-      | TO                { printf("Line %d Token: TO\n", $1->linenum); }
-      | ELSE              { printf("Line %d Token: ELSE\n", $1->linenum); }
-      | WHILE             { printf("Line %d Token: WHILE\n", $1->linenum); }
-      | DEC               { printf("Line %d Token: DEC\n", $1->linenum); }
-      | INC               { printf("Line %d Token: INC\n", $1->linenum); }
-      | FOR               { printf("Line %d Token: FOR\n", $1->linenum); }
-      | STATIC            { printf("Line %d Token: STATIC\n", $1->linenum); }
-      | INT               { printf("Line %d Token: INT\n", $1->linenum); }
-      | BOOL              { printf("Line %d Token: BOOL\n", $1->linenum); }
-      | CHAR              { printf("Line %d Token: CHAR\n", $1->linenum); }
-      | IN                { printf("Line %d Token: IN\n", $1->linenum); }
-      | RETURN            { printf("Line %d Token: RETURN\n", $1->linenum); }
-      | BREAK             { printf("Line %d Token: BREAK\n", $1->linenum); }
-      | SYMBOL            { printf("Line %d Token: %s\n", $1->linenum, $1->tokenstr); }
-      | EQ                { printf("Line %d Token: EQ\n", $1->linenum); }
-      | LEQ               { printf("Line %d Token: LEQ\n", $1->linenum); }
-      | GEQ               { printf("Line %d Token: GEQ\n", $1->linenum); }
-      | NEQ               { printf("Line %d Token: NEQ\n", $1->linenum); }
-      | COMMENT           {}
-      | MAX               { printf("Line %d Token: MAX\n", $1->linenum); }
-      | MIN               { printf("Line %d Token: MIN\n", $1->linenum); }
-      | OR                { printf("Line %d Token: OR\n", $1->linenum); }
-      | NOT               { printf("Line %d Token: NOT\n", $1->linenum); }
-      | AND               { printf("Line %d Token: AND\n", $1->linenum); }
-      | ADDASS             { printf("Line %d Token: ADDASS\n", $1->linenum); }
-      | SUBASS             { printf("Line %d Token: SUBASS\n", $1->linenum); }
-      | MULASS            { printf("Line %d Token: MULASS\n", $1->linenum); }
-      | DIVASS             { printf("Line %d Token: DIVASS\n", $1->linenum); }
-      | DO                { printf("Line %d Token: DO\n", $1->linenum); }
-      | BY                { printf("Line %d Token: BY\n", $1->linenum); }
+/* ----- Structure ----- */
+program : declList
+    {
+        $$ = $1;
+    }
+
+declList : declList decl
+    {
+        tree->append($2);
+    }
+    | decl
+    {
+        tree->append($1);
+        $1->setFirst();
+    }
     ;
+
+decl : varDecl
+    {
+        $$ = $1;
+    }
+    | funDecl
+    {
+        $$ = $1;
+    }
+    ;
+
+/* ----- Variables ----- */
+
+varDecl : typeSpec varDeclList ';'
+    {
+        $$ = $2;
+        ((Var *)$$)->setTypeAndStatic($1->tokenString, false);
+    }
+    ;
+
+scopedVarDecl : STATIC typeSpec varDeclList ';'
+    {
+        $$ = $3;
+        ((Var *)$$)->setTypeAndStatic($2->tokenString, true);
+    }
+    | typeSpec varDeclList ';'
+    {
+        $$ = $2;
+        ((Var *)$$)->setTypeAndStatic($1->tokenString, false);
+    }
+    ;
+
+varDeclInit : varDeclID
+    {
+        $$ = $1;
+    }
+    | varDeclID ':' simpleExp
+    {
+        $$ = $1;
+        $$->addChild($3, 0);
+    }
+    ;
+
+varDeclId : ID
+    {
+        $$ = new Var($1);
+    }
+    | ID '[' NUMCONST ']'
+    {
+        $$ = new Var($1, $3);
+    }
+    ;
+
+typeSpec : INT
+    {
+        $$ = $1;
+    }
+    | BOOL
+    {
+        $$ = $1;
+    }
+    | CHAR
+    {
+        $$ = $1;
+    }
+    ;
+
+/* ----- Functions ----- */
+
+funDecl : typeSpec ID '(' parms ')' stmt
+    {
+        $$ = new FunDeclaration($1, $2, $4, $6);
+    }
+    | ID '(' parms ')' stmt
+    {
+        $$ = new FunDeclaration($1, $3, $5);
+    }
+    ;
+
+parms : parmList E
+    {
+        $$ = $1;
+    }
+    | /* empty */
+    {
+        $$ = NULL;
+    }
+    ;
+
+parmList : parmList ';' parmTypeList
+    {
+        $$->append($3);
+    }
+    | paramTypeList
+    {
+        $$ = $1;
+    }
+    ;
+
+parmTypeList : typeSpec parmIdList
+    {
+        $$ = $2;
+        ((Par *)$$)->setType($1->tokenString);
+    }
+    ;
+
+parmIdList : parmIDList ',' parmId
+    {
+        $$->append($3);
+    }
+    | paramId
+    {
+        $$ = $1;
+    }
+    ;
+
+parmID : ID
+    {
+        
+    }
+    | ID '[' ']'
+    {
+    
+    }
+    ;
+
+/* ----- Statements ----- */
+
+stmt : expStmt
+    {
+        $$ = $1;
+    }
+    | compoundStmt
+    {
+        $$ = $1;
+    }
+    | selectStmt
+    {
+        $$ = $1;
+    }
+    | iterStmt
+    {
+        $$ = $1;
+    }
+    | returnStmt
+    {
+        $$ = $1;
+    }
+    | breakStmt
+    {
+        $$ = $1;
+    }
+    ;
+
+expStmt : exp ';'
+    {
+        $$ = $1;
+    }
+    | ';'
+    {
+        $$ = NULL;
+    }
+    ;
+
+compoundStmt : '{' localDecls stmtList '}'
+    {
+        $$ = new CompoundStatement(@1.first_line, $2, $3);
+    }
+    ;
+
+localDecls : localDecls scopedVarDecl
+    {
+        $$->append($2);
+    }
+    | /* empty */
+    {
+        $$ = new tokenNode();
+    }
+    ;
+
+stmtList : stmtList stmt
+    {
+        $$->append($2);
+    }
+    | /* empty */
+    {
+        $$ = new tokenNode();
+    }
+    ;
+
+selectStmt : IF '(' simpleExp ')' stmt
+    {
+        $$ = new If(@1.first_line, $3, $5);
+        
+    }
+    | IF '(' simpleExp ')' then stmt ELSE stmt
+    {
+        $$ = new If(@1.first_line, $3, $5, $7);
+    }
+    ;
+
+iterStmt : WHILE '(' simpleExxp ')' do stmt
+    {
+        $$ = new While(@1.first_line, $3, $5);
+    }
+    | FOR '(' ID IN ID ')'  iterRange do stmt
+    {
+        $$ = new For(@1.first_line, $3, $5, $7);
+    }
+    ;
+
+iterRange : simpleExp to simpleExt
+    {
+    
+    }
+    | simpleExp to simpleExp by simpleExp
+    {
+    
+    }
+    ;
+
+returnStmt : RETURN ';'
+    {
+        $$ = new Return(@1.first_line);
+    }
+    | RETURN exp ';'
+    {
+        $$ = new Return(@1.first_line, $2);
+    }
+    ;
+
+breakStmt : BREAK ';'
+    {
+        $$ = new Break(@1.first_line);
+    }
+    ;
+
+/* ----- expressions ----- */
+
+exp : mutable ASS expressions
+    {
+        $$ = new Operation($2, $1, $3);
+    }
+    | mutable ADDASS exp
+    {
+        $$ = new Operation($2, $1, $3);
+    }
+    | mutable SUBASS exp
+    {
+        $$ = new Operation($2, $1, $3);
+    }
+    | mutable MULASS exp
+    {
+        $$ = new Operation($2, $1, $3);
+    }
+    | mutable DIVASS exp
+    {
+        $$ = new Operation($2, $1, $3);
+    }
+    | mutable INC
+    {
+        $$ = new Operation($2, $1, $3);
+    }
+    | mutable DEC
+    {
+        $$ = new Operation($2, $1, $3);
+    }
+    | simpleExp
+    {
+        $$ = $1;
+    }
+    ;
+
+simpleExp : simpleExp OR andExp
+    {
+        $$ = new LogicExpression($2, $1, $3);
+    }
+    | andExp
+    {
+        $$ = $1;
+    }
+    ;
+
+andExp : andExp AND unaryRelExp
+    {
+        $$ = new LogicExpression($2, $1, $3);
+    }
+    | unaryRelExp
+    {
+        $$ = $1;
+    }
+    ;
+
+unaryRelExp : NOT unaryRelExp
+    {
+        $$ = new LogicExpression($1, $2);
+    }
+    | relExp
+    {
+        $$ = $1;
+    }
+    ;
+
+relExp : minmaxExp relop minmaxExp
+    {
+        $$ = new Relation($2, $1, $3);
+    }
+    | minmaxExp
+    {
+        $$ = $1
+    }
+    ;
+
+relop : LEQ
+    {
+        $$ = $1;
+    }
+    | LT
+    {
+        $$ = $1;
+    }
+    | GT
+    {
+        $$ = $1;
+    }
+    | GEQ
+    {
+        $$ = $1;
+    }
+    | EQ
+    {
+        $$ = $1;
+    }
+    | NEQ
+    {
+        $$ = $1;
+    }
+    ;
+
+minmaxExp : minmaxExp minmaxop sumExp
+    {
+        $$ = new Operation($2, $1, $3);
+    }
+    | sumExp
+    {
+        $$ = $1;
+    }
+    ;
+
+minmaxop : MIN
+    {
+        $$ = $1;
+    }
+    | MAX
+    {
+        $$ = $1;
+    }
+    ;
+
+sumExp : sumExp sumop mulExp
+    {
+        $$ = new Operation($2, $1, $3);
+    }
+    | mulExp
+    {
+        $$ = $1;
+    }
+
+sumop : ADD
+    {
+        $$ = $1;
+    }
+    SUB
+    {
+        $$ = $1;
+    }
+    ;
+
+mulExp : mulExp mulop unaryExp
+    {
+        $$ = Operation($2, $1, $3);
+    }
+    | unaryExp
+    {
+        $$ = $1;
+    }
+    ;
+
+mulop : MUL
+    {
+        $$ = $1;
+    }
+    | DIV
+    {
+        $$ = $1;
+    }
+    | MOD
+    {
+        $$ = $1;
+    }
+    ;
+
+unaryExp : unaryop unaryExp
+    {
+        $$ = Operation($1, $2);
+    }
+    | factor
+    {
+        $$ = $1;
+    }
+
+unaryop : SUB
+    {
+        $$ = $1;
+    }
+    | MUL
+    {
+        $$ = $1;
+    }
+    | RAND
+    {
+        $$ = $1;
+    }
+    ;
+
+factor : immutable
+    {
+        $$ = $1;
+    }
+    | mutable
+    {
+        $$ = $1;
+    }
+    ;
+
+mutable : ID
+    {
+        $$ = VarAccess($1);
+    }
+    | mutable '[' exp ']'
+    {
+        $$ = VarAccess(@2.first_line, $1, $3);
+    }
+    ;
+
+immutable : '(' exp ')'
+    {
+        $$ = $2;
+    }
+    | call
+    {
+        $$ = $1;
+    }
+    | constant
+    {
+        $$ = Constant($1);
+    }
+    ;
+
+call : ID '(' args ')'
+    {
+        $$ = new Call($1, $3);
+    }
+    ;
+
+args : argList
+    {
+        $$ = $1;
+    }
+    | // empty
+    {
+        $$ = NULL;
+    }
+    ;
+
+argList : argList ',' exp
+    {
+        $$ = append($3);
+    }
+    | exp
+    {
+        $$ = $1;
+    }
+    ;
+
+constant :  NUMCONST
+    {
+        $$ = $1;
+    }
+    | CHARCONST
+    {
+        $$ = $1;
+    }
+    |STRINGCONST
+    {
+        $$ = $1;
+    }
+    |BOOLCONST
+    {
+        $$ = $1;
+    }
+    ;
+
 %%
 
 
 int main(int argc, char *argv[])
 {
-    // expected format [filename] -c
-    //                  arg0    arg1
-    // in case no filename listed
-   if(argc == 1)
-        yyparse();
-    else {
-        yyin = fopen(argv[1], "r");
-        yyparse();
-        fclose(yyin);
+    tree = new treeNode();
+    tree -> index = -1;
+    
+    int debugger = 0, printTree = 0;
+    int c;
+    
+    while((c = getOperation(argc, argv, (char *)"dp")) != -1)
+    {
+        switch(C)
+        {
+            case 'd':
+                debugger = 1;
+                breakl
+            case 'p':
+                printTree = 1;
+            case '?':
+                fprintf(stderr, "usage: c- [-d] [-p] file\n");
+                return -1;
+        }
     }
+    
+    if(debugger)
+    {
+        yydebug = 1;
+    }
+    
+    if(optionID < argc)
+    {
+        yyin = fopen(argv[optionID], "r");
+        yyparse();
+        fclose(yying);
+    }
+    else
+    {
+        yyparse();
+    }
+    
+    tree->getData();
+    
+    if(printTree)
+    {
+        tree->print();
+    }
+    
     return 0;
+        
 }
