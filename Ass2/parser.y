@@ -79,19 +79,19 @@ decl : varDecl
 varDecl : typeSpec varDeclList ';'
     {
         $$ = $2;
-        ((Var *)$$)->setTypeAndStatic($1->tokenString, false);
+        ((Var *)$$)->setTypeAndStatic($1->tokenstr, false);
     }
     ;
 
 scopedVarDecl : STATIC typeSpec varDeclList ';'
     {
         $$ = $3;
-        ((Var *)$$)->setTypeAndStatic($2->tokenString, true);
+        ((Var *)$$)->setTypeAndStatic($2->tokenstr, true);
     }
     | typeSpec varDeclList ';'
     {
         $$ = $2;
-        ((Var *)$$)->setTypeAndStatic($1->tokenString, false);
+        ((Var *)$$)->setTypeAndStatic($1->tokenstr, false);
     }
     ;
 
@@ -143,11 +143,11 @@ typeSpec : INT
 
 funDecl : typeSpec ID '(' parms ')' stmt
     {
-        $$ = new FunDeclaration($1, $2, $4, $6);
+        $$ = new FunDecl($1, $2, $4, $6);
     }
     | ID '(' parms ')' stmt
     {
-        $$ = new FunDeclaration($1, $3, $5);
+        $$ = new FunDecl($1, $3, $5);
     }
     ;
 
@@ -174,7 +174,7 @@ parmList : parmList ';' parmTypeList
 parmTypeList : typeSpec parmIdList
     {
         $$ = $2;
-        ((Par *)$$)->setType($1->tokenString);
+        ((Parm *)$$)->setType($1->tokenstr);
     }
     ;
 
@@ -190,11 +190,11 @@ parmIdList : parmIdList ',' parmId
 
 parmId : ID
     {
-        $$ = new Par($1, false);
+        $$ = new Parm($1, false);
     }
     | ID '[' ']'
     {
-        $$ = new Par($1, true);
+        $$ = new Parm($1, true);
     }
     ;
 
@@ -248,7 +248,7 @@ localDecls : localDecls scopedVarDecl
     }
     | /* empty */
     {
-        $$ = new tokenNode();
+        $$ = new treeNode();
     }
     ;
 
@@ -258,18 +258,18 @@ stmtList : stmtList stmt
     }
     | /* empty */
     {
-        $$ = new tokenNode();
+        $$ = new treeNode();
     }
     ;
 
 selectStmt : IF '(' simpleExp ')' stmt
     {
-        $$ = new If(@1.first_line, $3, $5);
+        $$ = new IFS(@1.first_line, $3, $5);
         
     }
     | IF '(' simpleExp ')' THEN stmt ELSE stmt
     {
-        $$ = new If(@1.first_line, $3, $5, $7);
+        $$ = new IFS(@1.first_line, $3, $5, $7);
     }
     ;
 
@@ -586,15 +586,16 @@ int main(int argc, char *argv[])
     int debugger = 0, printTree = 0;
     int c;
     
-    while((c = getOperation(argc, argv, (char *)"dp")) != -1)
+    while((c = Operation(argc, argv, (char *)"dp")) != -1)
     {
-        switch(C)
+        switch(c)
         {
             case 'd':
                 debugger = 1;
-                breakl
+                break;
             case 'p':
                 printTree = 1;
+                break;
             case '?':
                 fprintf(stderr, "usage: c- [-d] [-p] file\n");
                 return -1;
@@ -606,11 +607,11 @@ int main(int argc, char *argv[])
         yydebug = 1;
     }
     
-    if(optionID < argc)
+    if(optid < argc)
     {
-        yyin = fopen(argv[optionID], "r");
+        yyin = fopen(argv[optid], "r");
         yyparse();
-        fclose(yying);
+        fclose(yyin);
     }
     else
     {
@@ -621,7 +622,7 @@ int main(int argc, char *argv[])
     
     if(printTree)
     {
-        tree->print();
+        tree->printTree();
     }
     
     return 0;

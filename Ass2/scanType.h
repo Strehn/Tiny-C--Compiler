@@ -130,13 +130,13 @@ public:
     virtual void Print();   
 };
 
-class If: public treeNode
+class IFS: public treeNode
 {
     int line;
     
 public:
-    If(int, treeNode *, treeNode *, treeNode *);
-    If(int, treeNode *, treeNode *);
+    IFS(int, treeNode *, treeNode *, treeNode *);
+    IFS(int, treeNode *, treeNode *);
     virtual void Print();
 };
 

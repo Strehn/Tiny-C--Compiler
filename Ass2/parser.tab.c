@@ -1687,7 +1687,7 @@ yyreduce:
 #line 80 "parser.y"
     {
         (yyval.treeNode) = (yyvsp[(2) - (3)].treeNode);
-        ((Var *)(yyval.treeNode))->setTypeAndStatic((yyvsp[(1) - (3)].tokenData)->tokenString, false);
+        ((Var *)(yyval.treeNode))->setTypeAndStatic((yyvsp[(1) - (3)].tokenData)->tokenstr, false);
     ;}
     break;
 
@@ -1695,7 +1695,7 @@ yyreduce:
 #line 87 "parser.y"
     {
         (yyval.treeNode) = (yyvsp[(3) - (4)].treeNode);
-        ((Var *)(yyval.treeNode))->setTypeAndStatic((yyvsp[(2) - (4)].tokenData)->tokenString, true);
+        ((Var *)(yyval.treeNode))->setTypeAndStatic((yyvsp[(2) - (4)].tokenData)->tokenstr, true);
     ;}
     break;
 
@@ -1703,7 +1703,7 @@ yyreduce:
 #line 92 "parser.y"
     {
         (yyval.treeNode) = (yyvsp[(2) - (3)].treeNode);
-        ((Var *)(yyval.treeNode))->setTypeAndStatic((yyvsp[(1) - (3)].tokenData)->tokenString, false);
+        ((Var *)(yyval.treeNode))->setTypeAndStatic((yyvsp[(1) - (3)].tokenData)->tokenstr, false);
     ;}
     break;
 
@@ -1774,14 +1774,14 @@ yyreduce:
   case 19:
 #line 145 "parser.y"
     {
-        (yyval.treeNode) = new FunDeclaration((yyvsp[(1) - (6)].tokenData), (yyvsp[(2) - (6)].tokenData), (yyvsp[(4) - (6)].treeNode), (yyvsp[(6) - (6)].treeNode));
+        (yyval.treeNode) = new FunDecl((yyvsp[(1) - (6)].tokenData), (yyvsp[(2) - (6)].tokenData), (yyvsp[(4) - (6)].treeNode), (yyvsp[(6) - (6)].treeNode));
     ;}
     break;
 
   case 20:
 #line 149 "parser.y"
     {
-        (yyval.treeNode) = new FunDeclaration((yyvsp[(1) - (5)].tokenData), (yyvsp[(3) - (5)].treeNode), (yyvsp[(5) - (5)].treeNode));
+        (yyval.treeNode) = new FunDecl((yyvsp[(1) - (5)].tokenData), (yyvsp[(3) - (5)].treeNode), (yyvsp[(5) - (5)].treeNode));
     ;}
     break;
 
@@ -1817,7 +1817,7 @@ yyreduce:
 #line 175 "parser.y"
     {
         (yyval.treeNode) = (yyvsp[(2) - (2)].treeNode);
-        ((Par *)(yyval.treeNode))->setType((yyvsp[(1) - (2)].tokenData)->tokenString);
+        ((Parm *)(yyval.treeNode))->setType((yyvsp[(1) - (2)].tokenData)->tokenstr);
     ;}
     break;
 
@@ -1838,14 +1838,14 @@ yyreduce:
   case 28:
 #line 192 "parser.y"
     {
-        (yyval.treeNode) = new Par((yyvsp[(1) - (1)].tokenData), false);
+        (yyval.treeNode) = new Parm((yyvsp[(1) - (1)].tokenData), false);
     ;}
     break;
 
   case 29:
 #line 196 "parser.y"
     {
-        (yyval.treeNode) = new Par((yyvsp[(1) - (3)].tokenData), true);
+        (yyval.treeNode) = new Parm((yyvsp[(1) - (3)].tokenData), true);
     ;}
     break;
 
@@ -1922,7 +1922,7 @@ yyreduce:
   case 40:
 #line 250 "parser.y"
     {
-        (yyval.treeNode) = new tokenNode();
+        (yyval.treeNode) = new treeNode();
     ;}
     break;
 
@@ -1936,14 +1936,14 @@ yyreduce:
   case 42:
 #line 260 "parser.y"
     {
-        (yyval.treeNode) = new tokenNode();
+        (yyval.treeNode) = new treeNode();
     ;}
     break;
 
   case 43:
 #line 266 "parser.y"
     {
-        (yyval.treeNode) = new If((yylsp[(1) - (5)]).first_line, (yyvsp[(3) - (5)].treeNode), (yyvsp[(5) - (5)].treeNode));
+        (yyval.treeNode) = new IFS((yylsp[(1) - (5)]).first_line, (yyvsp[(3) - (5)].treeNode), (yyvsp[(5) - (5)].treeNode));
         
     ;}
     break;
@@ -1951,7 +1951,7 @@ yyreduce:
   case 44:
 #line 271 "parser.y"
     {
-        (yyval.treeNode) = new If((yylsp[(1) - (8)]).first_line, (yyvsp[(3) - (8)].treeNode), (yyvsp[(5) - (8)].tokenData), (yyvsp[(7) - (8)].tokenData));
+        (yyval.treeNode) = new IFS((yylsp[(1) - (8)]).first_line, (yyvsp[(3) - (8)].treeNode), (yyvsp[(5) - (8)].tokenData), (yyvsp[(7) - (8)].tokenData));
     ;}
     break;
 
@@ -2630,15 +2630,16 @@ int main(int argc, char *argv[])
     int debugger = 0, printTree = 0;
     int c;
     
-    while((c = getOperation(argc, argv, (char *)"dp")) != -1)
+    while((c = Operation(argc, argv, (char *)"dp")) != -1)
     {
-        switch(C)
+        switch(c)
         {
             case 'd':
                 debugger = 1;
-                breakl
+                break;
             case 'p':
                 printTree = 1;
+                break;
             case '?':
                 fprintf(stderr, "usage: c- [-d] [-p] file\n");
                 return -1;
@@ -2650,11 +2651,11 @@ int main(int argc, char *argv[])
         yydebug = 1;
     }
     
-    if(optionID < argc)
+    if(optionid < argc)
     {
-        yyin = fopen(argv[optionID], "r");
+        yyin = fopen(argv[optionid], "r");
         yyparse();
-        fclose(yying);
+        fclose(yyin);
     }
     else
     {
@@ -2665,7 +2666,7 @@ int main(int argc, char *argv[])
     
     if(printTree)
     {
-        tree->print();
+        tree->printTree();
     }
     
     return 0;

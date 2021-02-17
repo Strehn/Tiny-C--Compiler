@@ -249,17 +249,17 @@ virtual void CompoundStatement::Print()
     treeNode::print();
 }
 
-If::If(int linen, treeNode *condition, treeNode *stmt)
+IFS::IFS(int linen, treeNode *condition, treeNode *stmt)
 {
     line = linen;
     addChild(condition, 0);
     addChild(stmt, 1);
 }
-If::If(int linen, treeNode *condition, treeNode *stmt, treeNode *elseStmt): If(l, condition, stmt)
+IFS::IFS(int linen, treeNode *condition, treeNode *stmt, treeNode *elseStmt): If(l, condition, stmt)
 {
     addChild(eleStmt, 2);
 }
-virtual void If::Print()
+virtual void IFS::Print()
 {
     printPrefix();
     printf("If [line: %d]\n", line);
