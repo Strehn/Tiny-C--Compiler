@@ -165,7 +165,6 @@ digit [0-9]
 letdig [0-9a-zA-Z]
 
 %%
-[;,:\[\]\(\)={\<>\+\-\*/%\?}]    { return newToken(SYMBOL, yytext); }
 "=="                                 { return newToken(EQ, yytext); }
 "!="                                 { return newToken(NEQ, yytext); }
 "<="                                 { return newToken(LEQ, yytext); }
@@ -178,9 +177,21 @@ letdig [0-9a-zA-Z]
 ":<:"                                { return newToken(MIN, yytext); }
 "--"                                 { return newToken(DEC, yytext); }
 "++"                                 { return newToken(INC, yytext); }
-"%"                                  { return newToken(MOD, yytext); }
-"\?"                                 { return newToken(RAND, yytext); }
-"="                                  { return newToken(ASS, yytext); }
+
+
+\+                                   { return newToken(ADD, yytext); }
+\-                                   { return newToken(SUB, yytext); }
+\<                                   { return newToken(LT, yytext); }
+\>                                   { return newToken(GT, yytext); }
+\*                                   { return newToken(MUL, yytext); }
+\/                                   { return newToken(DIV, yytext); }
+%                                    { return newToken(MOD, yytext); }
+\?                                   { return newToken(RAND, yytext); }
+=                                    { return newToken(ASS, yytext); }
+&                                    { return newToken(AND, yytext); }
+\|                                   { return newToken(OR, yytext); }
+!                                    { return newToken(NOT, yytext); }
+
 "static"                             { return newToken(STATIC, yytext); }
 "int"                                { return newToken(INT, yytext); }
 "bool"                               { return newToken(BOOL, yytext); }
@@ -201,11 +212,17 @@ letdig [0-9a-zA-Z]
 "true"                               { return newToken(BOOLCONST, yytext); }
 "false"                              { return newToken(BOOLCONST, yytext); }
 "//".*                               { return newToken(COMMENT, yytext); }
+
+[;,:\[\]\(\){}]                      { return yytext[0]; }
 {letter}{letdig}*                    { return newToken(ID, yytext); }
+
 {digit}+                             { return newToken(NUMCONST, yytext); }
-[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
 '([^\n\\']|\\.)*'                    { return newToken(CHARCONST, yytext); }
-\"(\\\"|[^\n"])*\"                 { return newToken(STRINGCONST, yytext); }
+\"([^\\\"\n]|\\.)*\"                 { return newToken(STRINGCONST, yytext); }
 \n                                   { line++; }
-.                                    ;
+
+
+[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
+.|\n                                    ;
+
 %%

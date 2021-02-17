@@ -7,10 +7,12 @@
 BIN = parser
 CC = g++
 OUT = c-
+LIBS = scanType.h ourgetopt.hpp
 FLAGS = -DCPLUSPLUS -g
+OBJS = scanType.o ourgetopt.o
 
-$(BIN) : lex.yy.c $(BIN).tab.c $(BIN).tab.h
-	$(CC) $(FLAGS) lex.yy.c $(BIN).tab.c -o $(OUT)
+$(BIN) : lex.yy.c $(BIN).tab.c $(BIN).tab.h $(OBJS)
+	$(CC) $(FLAGS) lex.yy.c $(BIN).tab.c $(OBJS) -o $(OUT)
 
 $(BIN).tab.c $(BIN).tab.h : $(BIN).y scanType.h
 	bison -v -t -d $(BIN).y

@@ -1,11 +1,14 @@
 //
-//  scanFunctions.cpp
+//  scanType.cpp
 //  
 //
 //  Created by Sydney Petrehn on 2/10/21.
 //
 
 #include <stdio.h>
+#include "scanType.h"
+#include <iostream>
+#include "parser.tab.h"
 
 treeNode::treeNode()
 {
@@ -16,18 +19,18 @@ treeNode::treeNode()
     isFirst = false;
 }
 
-void treeNode::print()
+void treeNode::printTree()
 {
     for(int i = 0; i < MAX_CHILDREN; i++)
     {
         if(children[i] != NULL)
         {
-            children[i]->print();
+            children[i]->printTree();
         }
     }
     if(sibling != NULL)
     {
-        sibling -> print();
+        sibling -> printTree();
     }
 }
 
@@ -110,18 +113,18 @@ void treeNode::printPrefix()
 
 
 // ----- VARIABLES -----
-Var::Var(tokenData *data)
+Var::Var(TokenData *data)
 {
-    name = strdup(data->tokenString);
-    line = data->line;
+    name = strdup(data->tokenstr);
+    line = data->linenum;
     isArray = false;
     isStatic = false;
     type = (char *)"undefined";
 }
 
-Var::Var(tokenData *data, tokenData *size)
+Var::Var(TokenData *data, TokenData *size)
 {
-    arraySize = size->nValue;
+    arrSize = size->nvalue;
     isArray = true;
 }
 
@@ -130,10 +133,10 @@ void Var::setTypeAndStatic(char * ttype, bool sstatic)
     type = strdup(ttype);
     isStatic = sstatic;
     if(sibling != NULL)
-        ((variables *)sibling)->setTypeAndStatic(ttype, sstatic);
+        ((Var *)sibling)->setTypeAndStatic(ttype, sstatic);
 }
 
-virtual void Var::print()
+void Var::print()
 {
     printPrefix();
     if(strcmp(type, "undefined") != 0)
@@ -151,15 +154,15 @@ virtual void Var::print()
     {
         printf("Var %s of undefined type [line: %d]\n", name, line);
     }
-    treeNode::print();
+    treeNode::printTree();
 }
 
 
-VarAccess::VarAccess(tokenData *data)
+VarAccess::VarAccess(TokenData *data)
 {
-    name = strdup(data->tokenString);
+    name = strdup(data->tokenstr);
     isArray = false;
-    line = data->line;
+    line = data->linenum;
 }
 
 VarAccess::VarAccess(int linen, treeNode *variable, treeNode *location)
@@ -169,21 +172,21 @@ VarAccess::VarAccess(int linen, treeNode *variable, treeNode *location)
     addChild(location, 1);
     isArray = true;
 }
-virtual void VarAccess::printa()
+void VarAccess::print()
 {
     printPrefix();
     if(children[1] == NULL)
         printf("Id: %s [line: %d]\n", name, line);
     else
         printf("Op: [ [line: %d]\n", line);
-    treeNode::print();
+    treeNode::printTree();
 }
 
 // ----- FUNCTIONS -----
-Parm::Parm(tokenData *data, bool isArr)
+Parm::Parm(TokenData *data, bool isArr)
 {
-    name = strdup(data->tokenString);
-    line = data->line;
+    name = strdup(data->tokenstr);
+    line = data->linenum;
     isArray = isArr;
 }
 void Parm::setType(char * c)
@@ -191,47 +194,48 @@ void Parm::setType(char * c)
     type = strdup(c);
     if(sibling != NULL)
     {
-        ((functions *)sibling)->setType(c);
+        ((Parm *)sibling)->setType(c);
     }
 }
-virtual void Parm::print()
+void Parm::print()
 {
     printPrefix();
     if(isArray)
         printf("Param %s is array of type %s [line: %d]\n", name, type, line);
     else
         printf("Param %s of type %s [line: %d]\n", name, type, line);
-    treeNode::print();
+    treeNode::printTree();
 }
 FunDecl::FunDecl(TokenData *n, treeNode *pars, treeNode *stmt)
 {
-    name = strdup(n->tokenString);
-    line = n->line;
+    name = strdup(n->tokenstr);
+    line = n->linenum;
     addChild(pars, 0);
-    addChild(string, 1);
+    addChild(stmt, 1);
     type = (char *)"void";
 }
-FunDecl::FunDecl(TokenData *t, TokenData *n, treeNode *p, treeNode *s): FunDeclaration(n, p, s)
+FunDecl::FunDecl(TokenData *t, TokenData *n, treeNode *p, treeNode *s)
 {
-    type = strdup(t->tokenString);
+    FunDecl(n, p, s);
+    type = strdup(t->tokenstr);
 }
-virtual void Decl::print()
+void FunDecl::print()
 {
     printPrefix();
     printf("Func %s returns type %s [line: %d]\n", name, type, line);
-    treeNode::print();
+    treeNode::printTree();
 }
 Call::Call(TokenData *data, treeNode *args)
 {
-    name = strdup(data->tokenString);
-    line = data->line;
+    name = strdup(data->tokenstr);
+    line = data->linenum;
     addChild(args, 0);
 }
-virtual void Call::print()
+void Call::print()
 {
     printPrefix();
     printf("Call: %s [line: %d]\n", name, line);
-    treeNode::print();
+    treeNode::printTree();
 }
 
 // ----- Statements ------
@@ -242,40 +246,41 @@ CompoundStatement::CompoundStatement(int linen, treeNode *vars, treeNode *stmt)
     addChild(stmt->sibling, 1);
 }
 
-virtual void CompoundStatement::Print()
+void CompoundStatement::Print()
 {
     printPrefix();
     printf("Compound [line: %d]\n", line);
-    treeNode::print();
+    treeNode::printTree();
 }
 
-IFS::IFS(int linen, treeNode *condition, treeNode *stmt)
+If::If(int linen, treeNode *condition, treeNode *stmt)
 {
     line = linen;
     addChild(condition, 0);
     addChild(stmt, 1);
 }
-IFS::IFS(int linen, treeNode *condition, treeNode *stmt, treeNode *elseStmt): If(l, condition, stmt)
+If::If(int linen, treeNode *condition, treeNode *stmt, treeNode *elseStmt)
 {
-    addChild(eleStmt, 2);
+    If(linen, condition, stmt);
+    addChild(elseStmt, 2);
 }
-virtual void IFS::Print()
+void If::Print()
 {
     printPrefix();
     printf("If [line: %d]\n", line);
-    treeNode::print();
+    treeNode::printTree();
 }
-While::While(int l, treeNode *cond, treeNode *stmt)
+WHILe::WHILe(int l, treeNode *cond, treeNode *stmt)
 {
     line = l;
     addChild(cond, 0);
     addChild(stmt, 1);
 }
-virtual void While::Print()
+void WHILe::Print()
 {
     printPrefix();
-    printf("While [line: %d]\n", line);
-    treeNode::print();
+    printf("To [line: %d]\n", line);
+    treeNode::printTree();
 }
 Return::Return(int l)
 {
@@ -286,11 +291,11 @@ Return::Return(int l, treeNode *stmt)
     addChild(stmt, 0);
     line = l;
 }
-virtual void Return::Print()
+void Return::Print()
 {
     printPrefix();
     printf("Return [line: %d]\n", line);
-    treeNode::print();
+    treeNode::printTree();
 }
 For::For(int l, TokenData *itr, TokenData *arr, treeNode *stmt)
 {
@@ -299,85 +304,71 @@ For::For(int l, TokenData *itr, TokenData *arr, treeNode *stmt)
     addChild(new VarAccess(arr), 1);
     addChild(stmt, 2);
 }
-virtual void For::Print()
+void For::Print()
 {
     printPrefix();
     printf("For [line: %d]\n", line);
-    treeNode::print();
-}
-Iter::Iter(int l, TokenData * starti, TokenData * endi)
-{
-    line = l;
-}
-Iter::Iter(int l, TokenData * starti, TokenData * endi, TokenData * byi)
-{
-    line = l;
-    addChild(starti, 0);
-    addChild(endi, 1);
-    addChild(byi, 2);
-}
-virtual void Iter::Print()
-{
-    printPrefix();
-    printf("To [line: %d]\n", line);
-    treeNode::print();
+    treeNode::printTree();
 }
 Break::Break(int l)
 {
     line = l;
 }
-virtual void Break::Print()
+void Break::Print()
 {
     printPrefix();
     printf("Break [line: %d]\n", line);
-    treeNode::print();
+    treeNode::printTree();
 }
 
 // Expressions
 Relation::Relation(TokenData *data, treeNode *left, treeNode *right)
 {
-    type = data->tokenClass;
+    type = data->tokenclass;
     addChild(left, 0);
     addChild(right, 1);
-    str = strdup(data->tokenString);
-    line = data->line;
+    str = strdup(data->tokenstr);
+    line = data->linenum;
 }
-virtual void Relation::print()
+void Relation::print()
 {
     printPrefix();
     printf("Op: %s [line: %d]\n", str, line);
-    treeNode::print();
+    treeNode::printTree();
 }
-LogicExpression::LogicExpression(TokenData *data, treeNode *left, treeNode *right): LogicExpression(data, left) {
+LogicExpression::LogicExpression(TokenData *data, treeNode *left, treeNode *right)
+{
+    LogicExpression(data, left);
     addChild(right, 1);
     
 }
 LogicExpression::LogicExpression(TokenData *data, treeNode *left)
 {
     addChild(left, 0);
-    type = data->tokenClass;
-    str = strdup(data->tokenString);
-    line = data->line;
+    type = data->tokenclass;
+    str = strdup(data->tokenstr);
+    line = data->linenum;
 }
-virtual void LogicExpression::print()
+void LogicExpression::print()
 {
     printPrefix();
     printf("Op: %s [line: %d]\n", str, line);
-    AST::print();
+    treeNode::printTree();
 }
-Operation::Operation((TokenData *data, treeNode *left)
+Operation::Operation(TokenData *data, treeNode *left)
 {
     addChild(left, 0);
-    type = data->tokenClass;
-    str = strdup(data->tokenString);
-    line = data->line;
+    type = data->tokenclass;
+    str = strdup(data->tokenstr);
+    line = data->linenum;
 }
 
-Operation::Operation(TokenData *data, treeNode *left, treeNode *right): Operation(data, left)
+Operation::Operation(TokenData *data, treeNode *left, treeNode *right)
 {
+    Operation(data, left);
     addChild(right, 1);
 }
-virtual void Operation::print()
+void Operation::print()
 {
     printPrefix();
         if(strcmp(str, "=") == 0 || strcmp(str, "++") == 0 || strcmp(str, "--") == 0 || strcmp(str, "+=") == 0 || strcmp(str, "-=") == 0
@@ -393,26 +384,26 @@ virtual void Operation::print()
         {
             printf("Op: %s [line: %d]\n", str, line);
         }
-        treeNode::print();
+        treeNode::printTree();
 }
-Constant::Constant(TokenData *)
+Constant::Constant(TokenData *temp)
 {
-    data = td;
+    data = temp;
 }
-virtual void Constant::print()
+void Constant::print()
 {
     printPrefix();
-    switch(data->tokenClass) {
+    switch(data->tokenclass) {
     case CHARCONST:
-        printf("Const: '%c' [line: %d]\n", data->cValue, data->line);
+        printf("Const: '%c' [line: %d]\n", data->cvalue, data->linenum);
         break;
     case STRINGCONST:
-        std::cout << "Const: \"" << data->sValue << "\" [line: " << data->line << "]\n";
+        std::cout << "Const: \"" << data->svalue << "\" [line: " << data->linenum << "]\n";
         break;
     default:
-        printf("Const: %s [line: %d]\n", data->tokenString, data->line);
+        printf("Const: %s [line: %d]\n", data->tokenstr, data->linenum);
     }
-    treeNode::print();
+    treeNode::printTree();
 }
 
 

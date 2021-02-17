@@ -2,16 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <iostream>
 #include <cstring>
 #include <string.h>
 #include <string>
 #include "scanType.h"
 #include "ourgetopt.hpp"
+#include "parser.tab.h"
 
 
 extern int yylex();
 extern FILE *yyin;
-extern int yydebug;
 extern char *yytext;
 extern int yylineno;
 
@@ -34,25 +35,21 @@ treeNode *tree;
 %token <tokenData> BOOLCONST NUMCONST CHARCONST STRINGCONST ID THEN
 %token <tokenData> IF WHILE FOR STATIC INT BOOL CHAR IN ELSE RETURN BREAK COMMENT
 %token <tokenData> SYMBOL EQ ADDASS SUBASS DIVASS MULASS LEQ GEQ NEQ DEC INC
-%token <tokenData> LT GT MUL MAX MIN ADD DIV DO BY TO MOD RAND
+%token <tokenData> LT GT MUL MAX MIN ADD DIV DO BY TO MOD RAND SUB
 %token <tokenData> AND OR NOT ASS
-%start program
+%start declList
 
-%type <treeNode> program declList decl
+%type <treeNode> declList decl
 %type <treeNode> varDecl scopedVarDecl varDeclList varDeclInit varDeclId
 %type <treeNode> funDecl parms parmList parmTypeList parmIdList parmId
-%type <treeNode> stmt expStmt compoundStmt localDecls stmtList selectStmt iterStmt iterRange returnStmt breakStmt
-%type <treeNode> exp simpleExp andExp unaryRelExp relExp minmaxExp minmaxop sumExp mulExp unaryExp factor mutable immutable call args argList
-%type <tokenData> constant typeSpec relop unaryop mulop sumop
+%type <treeNode> stmt expStmt compoundStmt localDecls stmtList returnStmt breakStmt
+%type <treeNode> matched unmatched matchedselectStmt unmatchedselectStmt matchediterStmt unmatchediterStmt
+%type <treeNode> exp simpleExp andExp unaryRelExp relExp minmaxExp sumExp mulExp unaryExp factor mutable immutable call args argList
+%type <tokenData> constant typeSpec relop unaryop mulop sumop minmaxop
 
 %%
 
 /* ----- Structure ----- */
-program : declList
-    {
-        $$ = $1;
-    }
-
 declList : declList decl
     {
         tree->append($2);
@@ -199,8 +196,19 @@ parmId : ID
     ;
 
 /* ----- Statements ----- */
+// Need to break up into Yes and Nos since loops are either matched or unmatched
+//If there is an If ELSE that is matched if is unmatched. While DO is matched otherwise unmatched.
+stmt :  matched
+    {
+        $$ = $1;
+    }
+    | unmatched
+    {
+        $$ = $1;
+    }
+    ;
 
-stmt : expStmt
+matched : expStmt
     {
         $$ = $1;
     }
@@ -208,11 +216,11 @@ stmt : expStmt
     {
         $$ = $1;
     }
-    | selectStmt
+    | matchedselectStmt
     {
         $$ = $1;
     }
-    | iterStmt
+    | matchediterStmt
     {
         $$ = $1;
     }
@@ -221,6 +229,16 @@ stmt : expStmt
         $$ = $1;
     }
     | breakStmt
+    {
+        $$ = $1;
+    }
+    ;
+
+unmatched : unmatchedselectStmt
+    {
+        $$ = $1;
+    }
+    | unmatchediterStmt
     {
         $$ = $1;
     }
@@ -262,34 +280,41 @@ stmtList : stmtList stmt
     }
     ;
 
-selectStmt : IF '(' simpleExp ')' stmt
+matchedselectStmt : IF '(' simpleExp ')' matched ELSE matched
     {
-        $$ = new IFS(@1.first_line, $3, $5);
+        $$ = new If(@1.first_line, $3, $5, $7);
         
-    }
-    | IF '(' simpleExp ')' THEN stmt ELSE stmt
-    {
-        $$ = new IFS(@1.first_line, $3, $5, $7);
     }
     ;
 
-iterStmt : WHILE '(' simpleExp ')' DO stmt
+unmatchedselectStmt : IF '(' simpleExp ')' stmt
     {
-        $$ = new While(@1.first_line, $3, $5);
+        $$ = new If(@1.first_line, $3, $5);
+    
     }
-    | FOR '(' ID IN ID ')'  iterRange DO stmt
+    | IF '(' simpleExp ')' matched ELSE unmatched
+    {
+        $$ = new If(@1.first_line, $3, $5, $7);
+    }
+    ;
+
+matchediterStmt : WHILE '(' simpleExp ')' matched
+    {
+        $$ = new WHILe(@1.first_line, $3, $5);
+    }
+    | FOR '(' ID IN ID ')' matched
     {
         $$ = new For(@1.first_line, $3, $5, $7);
     }
     ;
 
-iterRange : simpleExp TO simpleExp
+unmatchediterStmt : WHILE '(' simpleExp ')' unmatched
     {
-        $$ = new Iter(@1.first_line, $1, $3);
+        $$ = new WHILe(@1.first_line, $3, $5);
     }
-    | simpleExp TO simpleExp BY simpleExp
+    | FOR '(' ID IN ID ')'  unmatched
     {
-        $$ = new Iter(@1.first_line, , $1, $3, $5);
+        $$ = new For(@1.first_line, $3, $5, $7);
     }
     ;
 
@@ -476,7 +501,7 @@ mulop : MULASS
 
 unaryExp : unaryop unaryExp
     {
-        $$ = Operation($1, $2);
+        $$ = new Operation($1, $2);
     }
     | factor
     {
@@ -509,11 +534,11 @@ factor : immutable
 
 mutable : ID
     {
-        $$ = VarAccess($1);
+        $$ = new VarAccess($1);
     }
     | mutable '[' exp ']'
     {
-        $$ = VarAccess(@2.first_line, $1, $3);
+        $$ = new VarAccess(@2.first_line, $1, $3);
     }
     ;
 
@@ -527,7 +552,7 @@ immutable : '(' exp ')'
     }
     | constant
     {
-        $$ = Constant($1);
+        $$ = new Constant($1);
     }
     ;
 
@@ -549,7 +574,7 @@ args : argList
 
 argList : argList ',' exp
     {
-        $$ = append($3);
+        $$->append($3);
     }
     | exp
     {
@@ -586,7 +611,7 @@ int main(int argc, char *argv[])
     int debugger = 0, printTree = 0;
     int c;
     
-    while((c = Operation(argc, argv, (char *)"dp")) != -1)
+    while((c = ourGetopt(argc, argv, (char *)"dp")) != -1)
     {
         switch(c)
         {
@@ -607,9 +632,9 @@ int main(int argc, char *argv[])
         yydebug = 1;
     }
     
-    if(optid < argc)
+    if(optind < argc)
     {
-        yyin = fopen(argv[optid], "r");
+        yyin = fopen(argv[optind], "r");
         yyparse();
         fclose(yyin);
     }

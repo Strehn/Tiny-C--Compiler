@@ -80,10 +80,11 @@
      TO = 296,
      MOD = 297,
      RAND = 298,
-     AND = 299,
-     OR = 300,
-     NOT = 301,
-     ASS = 302
+     SUB = 299,
+     AND = 300,
+     OR = 301,
+     NOT = 302,
+     ASS = 303
    };
 #endif
 /* Tokens.  */
@@ -128,24 +129,25 @@
 #define TO 296
 #define MOD 297
 #define RAND 298
-#define AND 299
-#define OR 300
-#define NOT 301
-#define ASS 302
+#define SUB 299
+#define AND 300
+#define OR 301
+#define NOT 302
+#define ASS 303
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 28 "parser.y"
+#line 29 "parser.y"
 {
     TokenData *tokenData;
     treeNode *treeNode;
     
 }
 /* Line 1529 of yacc.c.  */
-#line 149 "parser.tab.h"
+#line 151 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

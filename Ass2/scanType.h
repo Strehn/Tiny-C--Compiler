@@ -6,6 +6,10 @@
 //  Sydney Petrehn
 //  Feburary 10, 2021
 //
+
+#include <iostream>
+//#include "parser.tab.h"
+
 struct TokenData {
     int  tokenclass;        // token class
     int  linenum;           // line where found
@@ -130,22 +134,22 @@ public:
     virtual void Print();   
 };
 
-class IFS: public treeNode
+class If: public treeNode
 {
     int line;
     
 public:
-    IFS(int, treeNode *, treeNode *, treeNode *);
-    IFS(int, treeNode *, treeNode *);
+    If(int, treeNode *, treeNode *);
+    If(int, treeNode *, treeNode *, treeNode *);
     virtual void Print();
 };
 
-class While: public treeNode
+class WHILe: public treeNode
 {
     int line;
     
 public:
-    While(int, treeNode *, treeNode *);
+    WHILe(int, treeNode *, treeNode *);
     virtual void Print();
 };
 
@@ -166,16 +170,6 @@ class For: public treeNode
     
 public:
     For(int, TokenData *, TokenData *, treeNode *);
-    virtual void Print();
-};
-
-class Iter: public treeNode
-{
-    int line;
-    
-public:
-    Iter(int, TokenData *, TokenData *);
-    Iter(int, TokenData *, TokenData *, TokenData *);
     virtual void Print();
 };
 
@@ -228,7 +222,7 @@ class Operation: public treeNode
 public:
     Operation(TokenData *, treeNode *, treeNode *);
     Operation(TokenData *, treeNode *);
-    virtual void printO();
+    virtual void print();
     
 };
 
