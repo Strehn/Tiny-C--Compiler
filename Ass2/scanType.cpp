@@ -201,9 +201,9 @@ void Parm::print()
 {
     printPrefix();
     if(isArray)
-        printf("Param %s is array of type %s [line: %d]\n", name, type, line);
+        printf("Parm %s is array of type %s [line: %d]\n", name, type, line);
     else
-        printf("Param %s of type %s [line: %d]\n", name, type, line);
+        printf("Parm %s of type %s [line: %d]\n", name, type, line);
     treeNode::printTree();
 }
 FunDecl::FunDecl(TokenData *n, treeNode *pars, treeNode *stmt)
@@ -279,9 +279,31 @@ WHILe::WHILe(int l, treeNode *cond, treeNode *stmt)
 void WHILe::Print()
 {
     printPrefix();
-    printf("To [line: %d]\n", line);
+    printf("While [line: %d]\n", line);
     treeNode::printTree();
 }
+
+Range::Range(int l, treeNode *t1, treeNode *t2)
+{
+    line = l;
+    addChild(t1, 0);
+    addChild(t2, 1);
+}
+Range::Range(int l, treeNode *t1, treeNode *t2, treeNode *t3)
+{
+    line = l;
+    addChild(t1, 0);
+    addChild(t2, 1);
+    addChild(t3, 3);
+}
+
+void Range::Print()
+{
+    printPrefix();
+    printf("Range [line: %d]\n", line);
+    treeNode::printTree();
+}
+
 Return::Return(int l)
 {
     line = l;
@@ -297,11 +319,11 @@ void Return::Print()
     printf("Return [line: %d]\n", line);
     treeNode::printTree();
 }
-For::For(int l, TokenData *itr, TokenData *arr, treeNode *stmt)
+For::For(int l, TokenData *itr, treeNode *arr, treeNode *stmt)
 {
     line = l;
     addChild(new Var(itr), 0);
-    addChild(new VarAccess(arr), 1);
+    addChild(arr, 1);
     addChild(stmt, 2);
 }
 void For::Print()

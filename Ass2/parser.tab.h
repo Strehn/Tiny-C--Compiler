@@ -91,7 +91,9 @@
      RP = 307,
      LB = 308,
      RB = 309,
-     COMMA = 310
+     COMMA = 310,
+     LCB = 311,
+     RCB = 312
    };
 #endif
 /* Tokens.  */
@@ -148,6 +150,8 @@
 #define LB 308
 #define RB 309
 #define COMMA 310
+#define LCB 311
+#define RCB 312
 
 
 
@@ -161,7 +165,7 @@ typedef union YYSTYPE
     
 }
 /* Line 1529 of yacc.c.  */
-#line 165 "parser.tab.h"
+#line 169 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

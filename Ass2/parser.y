@@ -36,7 +36,7 @@ treeNode *tree;
 %token <tokenData> IF WHILE FOR STATIC INT BOOL CHAR IN ELSE RETURN BREAK COMMENT
 %token <tokenData> SYMBOL EQ ADDASS SUBASS DIVASS MULASS LEQ GEQ NEQ DEC INC
 %token <tokenData> LT GT MUL MAX MIN ADD DIV DO BY TO MOD RAND SUB
-%token <tokenData> AND OR NOT ASS SEMICOLON COLON LP RP LB RB COMMA
+%token <tokenData> AND OR NOT ASS SEMICOLON COLON LP RP LB RB COMMA LCB RCB
 %start declList
 
 %type <treeNode> declList decl
@@ -44,7 +44,7 @@ treeNode *tree;
 %type <treeNode> funDecl parms parmList parmTypeList parmIdList parmId
 %type <treeNode> stmt expStmt compoundStmt localDecls stmtList returnStmt breakStmt
 %type <treeNode> matched unmatched matchedselectStmt unmatchedselectStmt matchediterStmt unmatchediterStmt
-%type <treeNode> exp simpleExp andExp unaryRelExp relExp minmaxExp sumExp mulExp unaryExp factor mutable immutable call args argList
+%type <treeNode> exp simpleExp andExp unaryRelExp relExp minmaxExp sumExp mulExp unaryExp factor mutable iterrange immutable call args argList
 %type <tokenData> constant typeSpec relop unaryop mulop sumop minmaxop
 
 %%
@@ -198,6 +198,8 @@ parmId : ID
 /* ----- Statements ----- */
 // Need to break up into Yes and Nos since loops are either matched or unmatched
 //If there is an If ELSE that is matched if is unmatched. While DO is matched otherwise unmatched.
+// shift reduce error
+
 stmt :  matched
     {
         $$ = $1;
@@ -254,9 +256,9 @@ expStmt : exp SEMICOLON
     }
     ;
 
-compoundStmt : LB localDecls stmtList RB
+compoundStmt : LCB localDecls stmtList RCB
     {
-        $$ = new CompoundStatement(@1.first_line, $2, $3);
+        $$ = new CompoundStatement(yylineno, $2, $3);
     }
     ;
 
@@ -280,57 +282,68 @@ stmtList : stmtList stmt
     }
     ;
 
-matchedselectStmt : IF LP simpleExp RP matched ELSE matched
+matchedselectStmt : IF simpleExp THEN matched ELSE matched
     {
-        $$ = new If(@1.first_line, $3, $5, $7);
+        $$ = new If(yylineno, $2, $4, $6);
         
     }
     ;
 
-unmatchedselectStmt : IF LP simpleExp RP stmt
+unmatchedselectStmt : IF simpleExp THEN stmt
     {
-        $$ = new If(@1.first_line, $3, $5);
+        $$ = new If(yylineno, $2, $4);
     
     }
-    | IF LP simpleExp RP matched ELSE unmatched
+    | IF simpleExp THEN matched ELSE unmatched
     {
-        $$ = new If(@1.first_line, $3, $5, $7);
+        $$ = new If(yylineno, $2, $4, $6);
     }
     ;
 
-matchediterStmt : WHILE LP simpleExp RP matched
+matchediterStmt : WHILE simpleExp DO matched
     {
-        $$ = new WHILe(@1.first_line, $3, $5);
+        $$ = new WHILe(yylineno, $2, $4);
     }
-    | FOR LP ID IN ID RP matched
+    | FOR ID ASS iterrange DO matched
     {
-        $$ = new For(@1.first_line, $3, $5, $7);
+        $$ = new For(yylineno, $2, $4, $6);
     }
     ;
 
-unmatchediterStmt : WHILE LP simpleExp RP unmatched
+unmatchediterStmt : WHILE simpleExp DO unmatched
     {
-        $$ = new WHILe(@1.first_line, $3, $5);
+        $$ = new WHILe(yylineno, $2, $4);
     }
-    | FOR LP ID IN ID RP  unmatched
+    | FOR ID ASS iterrange DO unmatched
     {
-        $$ = new For(@1.first_line, $3, $5, $7);
+        $$ = new For(yylineno, $2, $4, $6);
+    }
+    ;
+
+iterrange : simpleExp TO simpleExp
+    {
+        $$ = new Range(yylineno, $1, $3);
+    }
+    ;
+    | simpleExp TO simpleExp BY simpleExp
+    {
+        $$ = new Range(yylineno, $1, $3, $5);
     }
     ;
 
 returnStmt : RETURN SEMICOLON
     {
-        $$ = new Return(@1.first_line);
+        $$ = new Return(yylineno);
     }
     | RETURN exp SEMICOLON
     {
-        $$ = new Return(@1.first_line, $2);
+        $$ = new Return(yylineno, $2);
     }
     ;
 
 breakStmt : BREAK SEMICOLON
     {
-        $$ = new Break(@1.first_line);
+        $$ = new Break(yylineno);
     }
     ;
 
@@ -465,11 +478,11 @@ sumExp : sumExp sumop mulExp
         $$ = $1;
     }
 
-sumop : ADDASS
+sumop : ADD
     {
         $$ = $1;
     }
-    | SUBASS
+    | SUB
     {
         $$ = $1;
     }
@@ -485,11 +498,11 @@ mulExp : mulExp mulop unaryExp
     }
     ;
 
-mulop : MULASS
+mulop : MUL
     {
         $$ = $1;
     }
-    | DIVASS
+    | DIV
     {
         $$ = $1;
     }
@@ -508,11 +521,11 @@ unaryExp : unaryop unaryExp
         $$ = $1;
     }
 
-unaryop : SUBASS
+unaryop : SUB
     {
         $$ = $1;
     }
-    | MULASS
+    | MUL
     {
         $$ = $1;
     }
@@ -538,7 +551,7 @@ mutable : ID
     }
     | mutable LB exp RB
     {
-        $$ = new VarAccess(@2.first_line, $1, $3);
+        $$ = new VarAccess(yylineno, $1, $3);
     }
     ;
 
@@ -606,9 +619,9 @@ constant :  NUMCONST
 int main(int argc, char *argv[])
 {
     tree = new treeNode();
-    tree -> index = -1;
+    tree->index = -1;
     
-    int debugger = 0, printTree = 0;
+    int d = 0, p = 0;
     int c;
     
     while((c = ourGetopt(argc, argv, (char *)"dp")) != -1)
@@ -616,10 +629,10 @@ int main(int argc, char *argv[])
         switch(c)
         {
             case 'd':
-                debugger = 1;
+                d = 1;
                 break;
             case 'p':
-                printTree = 1;
+                p = 1;
                 break;
             case '?':
                 fprintf(stderr, "usage: c- [-d] [-p] file\n");
@@ -627,7 +640,7 @@ int main(int argc, char *argv[])
         }
     }
     
-    if(debugger)
+    if(d == 1)
     {
         yydebug = 1;
     }
@@ -645,7 +658,7 @@ int main(int argc, char *argv[])
     
     tree->getData();
     
-    if(printTree)
+    if(p == 1)
     {
         tree->printTree();
     }

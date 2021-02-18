@@ -200,11 +200,11 @@ letdig [0-9a-zA-Z]
 "--"                                 { return newToken(DEC, yytext); }
 "++"                                 { return newToken(INC, yytext); }
 "+"                                  { return newToken(ADD, yytext); }
-"-"                                  { return newToken(SUB, yytext); }
-"<"                                  { return newToken(LT, yytext); }
-">"                                  { return newToken(GT, yytext); }
-"*"                                  { return newToken(MUL, yytext); }
-"/"                                  { return newToken(DIV, yytext); }
+"\-"                                 { return newToken(SUB, yytext); }
+"\<"                                 { return newToken(LT, yytext); }
+"\>"                                 { return newToken(GT, yytext); }
+"\*"                                 { return newToken(MUL, yytext); }
+"\/"                                 { return newToken(DIV, yytext); }
 "%"                                  { return newToken(MOD, yytext); }
 "?"                                  { return newToken(RAND, yytext); }
 "="                                  { return newToken(ASS, yytext); }
@@ -218,8 +218,9 @@ letdig [0-9a-zA-Z]
 "["                                  { return newToken(LB, yytext); }
 "]"                                  { return newToken(RB, yytext); }
 ","                                  { return newToken(COMMA, yytext); }
-"{"                                  {  }
-"}"                                  {  }
+"{"                                  { return newToken(LCB, yytext); }
+"}"                                  { return newToken(RCB, yytext); }
+
 {letter}{letdig}*                    { return newToken(ID, yytext); }
 {digit}+                             { return newToken(NUMCONST, yytext); }
 '([^\n\\']|\\.)*'                    { return newToken(CHARCONST, yytext); }

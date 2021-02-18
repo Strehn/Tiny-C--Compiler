@@ -1,5 +1,6 @@
 #ifndef _SCANTYPE_H_
 #define _SCANTYPE_H_
+
 #define MAX_CHILDREN 3
 //
 //  SCANNER TOKENDATA
@@ -8,7 +9,11 @@
 //
 
 #include <iostream>
-//#include "parser.tab.h"
+#include <stdbool.h>
+#include <string>
+#include <string.h>
+
+
 
 struct TokenData {
     int  tokenclass;        // token class
@@ -20,22 +25,16 @@ struct TokenData {
     int  strlen;            // length of the parsed token
 };
 
-typedef enum { STMT_K, EXP_K } NodeKind;
-typedef enum { EXPRESSION_K, COMPOUND_K, RETURN_K, BREAK_K, SELECTION_K, ITERATION_K } StmtKind;
-typedef enum { OP_K, CONST_K, ID_K } ExpKind;
-typedef enum { INT_T, BOOL_T, CHAR_T } ExpType;
-
-
 class treeNode
 {
-    public:
+public:
     treeNode *children[MAX_CHILDREN];
     treeNode *sibling;
     int index, depth;
     bool isChild, isFirst;
     
     treeNode();
-    void printTree();
+    virtual void printTree();
     void append(treeNode *);
     void addChild(treeNode *, int);
     void setFirst();
@@ -50,6 +49,7 @@ class treeNode
 
 // consistantly use the same variables for my sanity
 // need to be sepeate functions so I can call them to do things initially
+
 // ----- Variables -----
 
  class Var: public treeNode
@@ -153,6 +153,17 @@ public:
     virtual void Print();
 };
 
+class Range: public treeNode
+{
+    int line;
+    
+public:
+    Range(int, treeNode *, treeNode *);
+    Range(int, treeNode *, treeNode *, treeNode *);
+    virtual void Print();
+};
+
+
 class Return: public treeNode
 {
     int line;
@@ -169,7 +180,7 @@ class For: public treeNode
     int line;
     
 public:
-    For(int, TokenData *, TokenData *, treeNode *);
+    For(int, TokenData *, treeNode *, treeNode *);
     virtual void Print();
 };
 

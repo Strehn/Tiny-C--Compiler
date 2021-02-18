@@ -1215,53 +1215,53 @@ YY_RULE_SETUP
 case 53:
 YY_RULE_SETUP
 #line 221 "parser.l"
-{  }
+{ return newToken(LCB, yytext); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 222 "parser.l"
-{  }
+{ return newToken(RCB, yytext); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 223 "parser.l"
+#line 224 "parser.l"
 { return newToken(ID, yytext); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 224 "parser.l"
+#line 225 "parser.l"
 { return newToken(NUMCONST, yytext); }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 225 "parser.l"
+#line 226 "parser.l"
 { return newToken(CHARCONST, yytext); }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 226 "parser.l"
+#line 227 "parser.l"
 { return newToken(STRINGCONST, yytext); }
 	YY_BREAK
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
-#line 227 "parser.l"
+#line 228 "parser.l"
 { line++; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 228 "parser.l"
+#line 229 "parser.l"
 { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
 	YY_BREAK
 case 61:
 /* rule 61 can match eol */
 YY_RULE_SETUP
-#line 229 "parser.l"
+#line 230 "parser.l"
 ;
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 230 "parser.l"
+#line 231 "parser.l"
 ECHO;
 	YY_BREAK
 #line 1268 "lex.yy.c"
@@ -2261,7 +2261,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 230 "parser.l"
+#line 231 "parser.l"
 
 
 
