@@ -165,32 +165,7 @@ digit [0-9]
 letdig [0-9a-zA-Z]
 
 %%
-"=="                                 { return newToken(EQ, yytext); }
-"!="                                 { return newToken(NEQ, yytext); }
-"<="                                 { return newToken(LEQ, yytext); }
-">="                                 { return newToken(GEQ, yytext); }
-"+="                                 { return newToken(ADDASS, yytext); }
-"-="                                 { return newToken(SUBASS, yytext); }
-"*="                                 { return newToken(MULASS, yytext); }
-"/="                                 { return newToken(DIVASS, yytext); }
-":>:"                                { return newToken(MAX, yytext); }
-":<:"                                { return newToken(MIN, yytext); }
-"--"                                 { return newToken(DEC, yytext); }
-"++"                                 { return newToken(INC, yytext); }
-
-
-\+                                   { return newToken(ADD, yytext); }
-\-                                   { return newToken(SUB, yytext); }
-\<                                   { return newToken(LT, yytext); }
-\>                                   { return newToken(GT, yytext); }
-\*                                   { return newToken(MUL, yytext); }
-\/                                   { return newToken(DIV, yytext); }
-%                                    { return newToken(MOD, yytext); }
-\?                                   { return newToken(RAND, yytext); }
-=                                    { return newToken(ASS, yytext); }
-&                                    { return newToken(AND, yytext); }
-\|                                   { return newToken(OR, yytext); }
-!                                    { return newToken(NOT, yytext); }
+"//".*                               { line++; }
 
 "static"                             { return newToken(STATIC, yytext); }
 "int"                                { return newToken(INT, yytext); }
@@ -211,18 +186,45 @@ letdig [0-9a-zA-Z]
 "not"                                { return newToken(NOT, yytext); }
 "true"                               { return newToken(BOOLCONST, yytext); }
 "false"                              { return newToken(BOOLCONST, yytext); }
-"//".*                               { return newToken(COMMENT, yytext); }
-
-[;,:\[\]\(\){}]                      { return yytext[0]; }
+"in"                                 { return newToken(IN, yytext); }
+"=="                                 { return newToken(EQ, yytext); }
+"!="                                 { return newToken(NEQ, yytext); }
+"<="                                 { return newToken(LEQ, yytext); }
+">="                                 { return newToken(GEQ, yytext); }
+"+="                                 { return newToken(ADDASS, yytext); }
+"-="                                 { return newToken(SUBASS, yytext); }
+"*="                                 { return newToken(MULASS, yytext); }
+"/="                                 { return newToken(DIVASS, yytext); }
+":>:"                                { return newToken(MAX, yytext); }
+":<:"                                { return newToken(MIN, yytext); }
+"--"                                 { return newToken(DEC, yytext); }
+"++"                                 { return newToken(INC, yytext); }
+"+"                                  { return newToken(ADD, yytext); }
+"-"                                  { return newToken(SUB, yytext); }
+"<"                                  { return newToken(LT, yytext); }
+">"                                  { return newToken(GT, yytext); }
+"*"                                  { return newToken(MUL, yytext); }
+"/"                                  { return newToken(DIV, yytext); }
+"%"                                  { return newToken(MOD, yytext); }
+"?"                                  { return newToken(RAND, yytext); }
+"="                                  { return newToken(ASS, yytext); }
+"&"                                  { return newToken(AND, yytext); }
+"|"                                  { return newToken(OR, yytext); }
+"!"                                  { return newToken(NOT, yytext); }
+";"                                  { return newToken(SEMICOLON, yytext); }
+":"                                  { return newToken(COLON, yytext); }
+"("                                  { return newToken(LP, yytext); }
+")"                                  { return newToken(RP, yytext); }
+"["                                  { return newToken(LB, yytext); }
+"]"                                  { return newToken(RB, yytext); }
+","                                  { return newToken(COMMA, yytext); }
+"{"                                  {  }
+"}"                                  {  }
 {letter}{letdig}*                    { return newToken(ID, yytext); }
-
 {digit}+                             { return newToken(NUMCONST, yytext); }
 '([^\n\\']|\\.)*'                    { return newToken(CHARCONST, yytext); }
 \"([^\\\"\n]|\\.)*\"                 { return newToken(STRINGCONST, yytext); }
 \n                                   { line++; }
-
-
 [^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
 .|\n                                    ;
-
 %%

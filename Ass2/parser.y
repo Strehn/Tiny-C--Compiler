@@ -36,7 +36,7 @@ treeNode *tree;
 %token <tokenData> IF WHILE FOR STATIC INT BOOL CHAR IN ELSE RETURN BREAK COMMENT
 %token <tokenData> SYMBOL EQ ADDASS SUBASS DIVASS MULASS LEQ GEQ NEQ DEC INC
 %token <tokenData> LT GT MUL MAX MIN ADD DIV DO BY TO MOD RAND SUB
-%token <tokenData> AND OR NOT ASS
+%token <tokenData> AND OR NOT ASS SEMICOLON COLON LP RP LB RB COMMA
 %start declList
 
 %type <treeNode> declList decl
@@ -73,26 +73,26 @@ decl : varDecl
 
 /* ----- Variables ----- */
 
-varDecl : typeSpec varDeclList ';'
+varDecl : typeSpec varDeclList SEMICOLON
     {
         $$ = $2;
         ((Var *)$$)->setTypeAndStatic($1->tokenstr, false);
     }
     ;
 
-scopedVarDecl : STATIC typeSpec varDeclList ';'
+scopedVarDecl : STATIC typeSpec varDeclList SEMICOLON
     {
         $$ = $3;
         ((Var *)$$)->setTypeAndStatic($2->tokenstr, true);
     }
-    | typeSpec varDeclList ';'
+    | typeSpec varDeclList SEMICOLON
     {
         $$ = $2;
         ((Var *)$$)->setTypeAndStatic($1->tokenstr, false);
     }
     ;
 
-varDeclList : varDeclList ',' varDeclInit
+varDeclList : varDeclList COMMA varDeclInit
     {
         $$->append($3);
     }
@@ -105,7 +105,7 @@ varDeclInit : varDeclId
     {
         $$ = $1;
     }
-    | varDeclId ':' simpleExp
+    | varDeclId COLON simpleExp
     {
         $$ = $1;
         $$->addChild($3, 0);
@@ -116,7 +116,7 @@ varDeclId : ID
     {
         $$ = new Var($1);
     }
-    | ID '[' NUMCONST ']'
+    | ID LB NUMCONST RB
     {
         $$ = new Var($1, $3);
     }
@@ -138,11 +138,11 @@ typeSpec : INT
 
 /* ----- Functions ----- */
 
-funDecl : typeSpec ID '(' parms ')' stmt
+funDecl : typeSpec ID LP parms RP stmt
     {
         $$ = new FunDecl($1, $2, $4, $6);
     }
-    | ID '(' parms ')' stmt
+    | ID LP parms RP stmt
     {
         $$ = new FunDecl($1, $3, $5);
     }
@@ -158,7 +158,7 @@ parms : parmList
     }
     ;
 
-parmList : parmList ';' parmTypeList
+parmList : parmList SEMICOLON parmTypeList
     {
         $$->append($3);
     }
@@ -175,7 +175,7 @@ parmTypeList : typeSpec parmIdList
     }
     ;
 
-parmIdList : parmIdList ',' parmId
+parmIdList : parmIdList COMMA parmId
     {
         $$->append($3);
     }
@@ -189,7 +189,7 @@ parmId : ID
     {
         $$ = new Parm($1, false);
     }
-    | ID '[' ']'
+    | ID LB RB
     {
         $$ = new Parm($1, true);
     }
@@ -244,17 +244,17 @@ unmatched : unmatchedselectStmt
     }
     ;
 
-expStmt : exp ';'
+expStmt : exp SEMICOLON
     {
         $$ = $1;
     }
-    | ';'
+    | SEMICOLON
     {
         $$ = NULL;
     }
     ;
 
-compoundStmt : '{' localDecls stmtList '}'
+compoundStmt : LB localDecls stmtList RB
     {
         $$ = new CompoundStatement(@1.first_line, $2, $3);
     }
@@ -280,55 +280,55 @@ stmtList : stmtList stmt
     }
     ;
 
-matchedselectStmt : IF '(' simpleExp ')' matched ELSE matched
+matchedselectStmt : IF LP simpleExp RP matched ELSE matched
     {
         $$ = new If(@1.first_line, $3, $5, $7);
         
     }
     ;
 
-unmatchedselectStmt : IF '(' simpleExp ')' stmt
+unmatchedselectStmt : IF LP simpleExp RP stmt
     {
         $$ = new If(@1.first_line, $3, $5);
     
     }
-    | IF '(' simpleExp ')' matched ELSE unmatched
+    | IF LP simpleExp RP matched ELSE unmatched
     {
         $$ = new If(@1.first_line, $3, $5, $7);
     }
     ;
 
-matchediterStmt : WHILE '(' simpleExp ')' matched
+matchediterStmt : WHILE LP simpleExp RP matched
     {
         $$ = new WHILe(@1.first_line, $3, $5);
     }
-    | FOR '(' ID IN ID ')' matched
+    | FOR LP ID IN ID RP matched
     {
         $$ = new For(@1.first_line, $3, $5, $7);
     }
     ;
 
-unmatchediterStmt : WHILE '(' simpleExp ')' unmatched
+unmatchediterStmt : WHILE LP simpleExp RP unmatched
     {
         $$ = new WHILe(@1.first_line, $3, $5);
     }
-    | FOR '(' ID IN ID ')'  unmatched
+    | FOR LP ID IN ID RP  unmatched
     {
         $$ = new For(@1.first_line, $3, $5, $7);
     }
     ;
 
-returnStmt : RETURN ';'
+returnStmt : RETURN SEMICOLON
     {
         $$ = new Return(@1.first_line);
     }
-    | RETURN exp ';'
+    | RETURN exp SEMICOLON
     {
         $$ = new Return(@1.first_line, $2);
     }
     ;
 
-breakStmt : BREAK ';'
+breakStmt : BREAK SEMICOLON
     {
         $$ = new Break(@1.first_line);
     }
@@ -536,13 +536,13 @@ mutable : ID
     {
         $$ = new VarAccess($1);
     }
-    | mutable '[' exp ']'
+    | mutable LB exp RB
     {
         $$ = new VarAccess(@2.first_line, $1, $3);
     }
     ;
 
-immutable : '(' exp ')'
+immutable : LP exp RP
     {
         $$ = $2;
     }
@@ -556,7 +556,7 @@ immutable : '(' exp ')'
     }
     ;
 
-call : ID '(' args ')'
+call : ID LP args RP
     {
         $$ = new Call($1, $3);
     }
@@ -572,7 +572,7 @@ args : argList
     }
     ;
 
-argList : argList ',' exp
+argList : argList COMMA exp
     {
         $$->append($3);
     }

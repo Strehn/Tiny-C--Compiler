@@ -84,7 +84,14 @@
      AND = 300,
      OR = 301,
      NOT = 302,
-     ASS = 303
+     ASS = 303,
+     SEMICOLON = 304,
+     COLON = 305,
+     LP = 306,
+     RP = 307,
+     LB = 308,
+     RB = 309,
+     COMMA = 310
    };
 #endif
 /* Tokens.  */
@@ -134,6 +141,13 @@
 #define OR 301
 #define NOT 302
 #define ASS 303
+#define SEMICOLON 304
+#define COLON 305
+#define LP 306
+#define RP 307
+#define LB 308
+#define RB 309
+#define COMMA 310
 
 
 
@@ -147,7 +161,7 @@ typedef union YYSTYPE
     
 }
 /* Line 1529 of yacc.c.  */
-#line 151 "parser.tab.h"
+#line 165 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
