@@ -7,7 +7,7 @@
 #include <string.h>
 #include <string>
 #include "scanType.h"
-#include "ourgetopt.hpp"
+#include "ourgetopt.h"
 #include "parser.tab.h"
 
 
@@ -20,7 +20,7 @@ void yyerror(const char *msg) {
     printf("Error: %s while parsing `%s` on line %d.\n", msg, yytext, yylineno);
 }
 
-treeNode *tree;
+class treeNode *tree;
 %}
 
 %locations
@@ -28,7 +28,7 @@ treeNode *tree;
 %union
 {
     TokenData *tokenData;
-    treeNode *treeNode;
+    class treeNode *treeNode;
     
 }
 
@@ -37,9 +37,9 @@ treeNode *tree;
 %token <tokenData> SYMBOL EQ ADDASS SUBASS DIVASS MULASS LEQ GEQ NEQ DEC INC
 %token <tokenData> LT GT MUL MAX MIN ADD DIV DO BY TO MOD RAND SUB
 %token <tokenData> AND OR NOT ASS SEMICOLON COLON LP RP LB RB COMMA LCB RCB
-%start declList
+%start program
 
-%type <treeNode> declList decl
+%type <treeNode> program declList decl
 %type <treeNode> varDecl scopedVarDecl varDeclList varDeclInit varDeclId
 %type <treeNode> funDecl parms parmList parmTypeList parmIdList parmId
 %type <treeNode> stmt expStmt compoundStmt localDecls stmtList returnStmt breakStmt
@@ -50,6 +50,11 @@ treeNode *tree;
 %%
 
 /* ----- Structure ----- */
+program : declList
+    {
+        $$ = $1;
+    }
+    ;
 declList : declList decl
     {
         tree->append($2);
@@ -624,7 +629,7 @@ int main(int argc, char *argv[])
     int d = 0, p = 0;
     int c;
     
-    while((c = ourGetopt(argc, argv, (char *)"dp")) != -1)
+    while((c = ourGetopt(argc, argv, (char *)"dp?")) != -1)
     {
         switch(c)
         {
@@ -661,6 +666,7 @@ int main(int argc, char *argv[])
     if(p == 1)
     {
         tree->printTree();
+
     }
     
     return 0;

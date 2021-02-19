@@ -1,11 +1,56 @@
 //
-//  ourgetopt.cpp
-//  
+//  ourGetopt.c:    Derived from AT&T public domain source of ourGetopt(3),
+//         modified for use with MS C 6.0 on MS DOS systems. For
+//         unknown reasons the variable optopt is exported here.
 //
-//  Created by Sydney Petrehn on 2/15/21.
+//     Note that each option may occur more than once in the command
+//     line, this may require special action like occurence counting.
+//     Each option is indicated by a single character in opts string
+//     followed by : if an option argument is required. So for "abo:"
+//     the following combinations are possible:
+//         -a -b -o value    sets a, b, and argument value for o
+//         -ab -o value    equivalent
+//         -ab -ovalue    equivalent, but not recommended
+//         -abovalue    equivalent, but not recommended
+//         -a -- -b    sets only a, optind advanced to -b
+//         -a - -b     sets only a, optind stays at single -
+//         -A        error message for A, returned as ?
+//         -o        error message if no more arguments
 //
-
-#include "ourgetopt.hpp"
+//  example use acode:
+//     ...
+//     extern int ourGetopt( int, char **, char*);
+//     ...
+//     int main( int argc, char *argv[] )
+//     {
+//         extern int   opterr;
+//         extern int   optind;
+//         extern char *optarg;
+//         int c,    aset = 0,  bset = 0;
+//         char *oarg = NULL;
+//
+//         while (( c = ourGetopt( argc, argv, (char *)"abo:" ) != -1 ) {
+//         switch ( c )
+//         {    case 'a':
+//                 ++aset;     break;
+//             case 'b':
+//                 ++bset;     break;
+//             case 'o':
+//                 oarg = optarg;    break;
+//             default:
+//                    ...        return 1;
+//
+//                case '?': NOT EXPLICITLY NEEDED WITH DEFAULT
+//
+//                case ':': WILL NEVER HAPPEN, ':' NOT ALLOWED
+//
+//                case '-': WILL NEVER HAPPEN, '-' NOT ALLOWED
+//              }
+//            }
+//              ...
+//      }
+//
+//
 
 #include    <string.h>
 #include    <stdio.h>

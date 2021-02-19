@@ -161,7 +161,7 @@ typedef union YYSTYPE
 #line 29 "parser.y"
 {
     TokenData *tokenData;
-    treeNode *treeNode;
+    class treeNode *treeNode;
     
 }
 /* Line 1529 of yacc.c.  */

@@ -7,7 +7,7 @@
 BIN = parser
 CC = g++
 OUT = c-
-LIBS = scanType.h ourgetopt.hpp
+LIBS = scanType.h ourgetopt.h
 FLAGS = -DCPLUSPLUS -g
 OBJS = scanType.o ourgetopt.o
 
