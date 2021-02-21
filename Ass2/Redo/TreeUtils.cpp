@@ -39,7 +39,8 @@ TreeNode *newDeclNode(DeclKind kind,
         }
         temp->sibling = NULL;
         temp->nodekind = DeclK;
-        temp->attr.string = token->svalue;
+        temp->attr.string = token->tokenstr;
+        temp->attr.name = token->svalue;
         temp->lineno = token->linenum;
         temp->subkind.decl = kind;
         temp->child[0] = c0;
@@ -75,7 +76,8 @@ TreeNode *newStmtNode(StmtKind kind,
         temp->sibling = NULL;
         temp->nodekind = StmtK;
         temp->lineno = token->linenum;
-        temp->attr.string = token->svalue;
+        temp->attr.string = token->tokenstr;
+        temp->attr.name = token->svalue;
         temp->subkind.stmt = kind;
         temp->child[0] = c0;
         temp->child[1] = c1;
@@ -161,17 +163,23 @@ void setType(TreeNode *t, ExpType type, bool isStatic)
 /* Variable indentno is used by printTree to
  * store current number of spaces to indent
  */
-static int indentno = 0;
+static int indentno = -1;
 
 /* macros to increase/decrease indentation */
-#define INDENT indentno+=2
-#define UNINDENT indentno-=2
+#define INDENT indentno+=1
+#define UNINDENT indentno-=1
+
+// used to keep track if the node being printed is a child
+bool tisChild = false;
+
+// used to keep track if the node being printed is a sibling
+bool tisSibling = false;
 
 /* printSpaces indents by printing spaces */
 static void printSpaces(void)
 { int i;
   for (i=0;i<indentno;i++)
-    printf(".  ");
+    printf(".   ");
 }
 
 // using recursion print the tree
@@ -185,34 +193,49 @@ void printTree(TreeNode *tree)
     while (tree != NULL)
     {
         printSpaces();
+        
+        // ------ If child print out child prefix -----
+        
+        if(tisChild == true)
+        {
+            printf("Child: [%d] ", i);
+            tisChild = false;
+        }
+        
+        if(tisSibling == true)
+        {
+            printf("Sibling: ");
+            tisSibling = false;
+        }
+
         if (tree->nodekind==StmtK)
         {
             // StmtKind {NullK, IfK, WhileK, ForK, CompoundK, ReturnK, BreakK, RangeK};
             switch (tree->subkind.stmt)
             {
                 case NullK:
-                    printf("Null\n");
+                    printf("Null [line: %d]\n", tree->lineno);
                     break;
                 case IfK:
-                    printf("If\n");
+                    printf("If [line: %d]\n", tree->lineno);
                     break;
                 case WhileK:
-                    printf("While\n");
+                    printf("While [line: %d]\n", tree->lineno);
                     break;
                 case ForK:
-                    printf("For to: \n");
+                    printf("For [line: %d]\n", tree->lineno);
                     break;
                 case CompoundK:
-                    printf("Read: \n");
+                    printf("Compound [line: %d]\n", tree->lineno);
                     break;
                 case ReturnK:
-                    printf("Return\n");
+                    printf("Return [line: %d]\n", tree->lineno);
                     break;
                 case BreakK:
-                    printf("Break\n");
+                    printf("Break [line: %d]\n", tree->lineno);
                     break;
                 case RangeK:
-                    printf("Range\n");
+                    printf("Range [line: %d]\n", tree->lineno);
                     break;
                 default:
                     printf("Unknown ExpNode kind\n");
@@ -226,7 +249,13 @@ void printTree(TreeNode *tree)
             switch (tree->subkind.exp)
             {
                 case OpK:
-                    printf("Op: \n");
+                    if((tree->attr.string == "=") || (tree->attr.string == "++") || (tree->attr.string == "--") || (tree->attr.string == "+=") || (tree->attr.string == "-=")
+                    || (tree->attr.string == "*=")|| (tree->attr.string == "/="))
+                            printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+                        else if((tree->attr.string == "-") && tree->child[0] == NULL) // if there is no right child then it's unary minus
+                            printf("Op: chsign [line: %d]\n", tree->lineno);
+                        else
+                            printf("Op: %s [line: %d]\n", tree->attr.string , tree->lineno);
                     break;
                 case ConstantK:
                     switch(tree->attr.op)
@@ -242,16 +271,19 @@ void printTree(TreeNode *tree)
                     }
                     break;
                 case IdK:
-                    printf("Id: \n");
+                    if(tree->child[0] == NULL)
+                            printf("Id: %s [line: %d]\n", tree->attr.name, tree->lineno);
+                        else
+                            printf("Op: [ [line: %d]\n", tree->lineno);
                     break;
                 case AssignK:
-                    printf("AssignK: \n");
+                    printf("Assign: %s [line: %d]\n", tree->attr.name, tree->lineno);
                     break;
                 case InitK:
-                    printf("InitK: \n");
+                    printf("Op: %s [line: %d]\n", tree->attr.name, tree->lineno);
                     break;
                 case CallK:
-                    printf("CallK: \n");
+                    printf("Call: %s [line: %d]\n", tree->attr.string, tree->lineno);
                     break;
                 default:
                     printf("Unknown ExpNode kind\n");
@@ -282,10 +314,14 @@ void printTree(TreeNode *tree)
                     }
                     break;
                 case FuncK:
-                    printf("FuncK: \n");
+                    printf("Func %s returns type %s [line: %d]\n", tree->attr.string, tree->attr.name, tree->lineno);
                     break;
                 case ParamK:
-                    printf("Id: \n");
+                    if(tree->isArray)
+                            printf("Param %s is array of type %s [line: %d]\n", tree->attr.string, tree->attr.name, tree->lineno);
+                        else
+                            printf("Param %s of type %s [line: %d]\n", tree->attr.string, tree->attr.name, tree->lineno);
+                        
                     break;
                 default:
                     printf("Unknown DeclNode kind\n");
@@ -296,11 +332,19 @@ void printTree(TreeNode *tree)
         
         for (i=0;i<MAXCHILDREN;i++)
         {
-             printTree(tree->child[i]);
+            if(tree->child[i] != NULL)
+            {
+                tisChild = true;
+                printTree(tree->child[i]);
+            }
         }
         
+        i = 0;
+        tisChild = false;
         tree = tree->sibling;
+        tisSibling = true;
       }
+    tisSibling = false;
     UNINDENT;
 }
 

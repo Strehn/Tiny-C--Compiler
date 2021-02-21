@@ -162,7 +162,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 36 "parser.y"
+#line 34 "parser.y"
 {
     ExpType type;            // for passing types.  typespec to pass up a type in decl like int or bool
     TokenData *tokenData;    // for terminals.  token data comes from yylex() in the $ variables
