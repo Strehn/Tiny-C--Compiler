@@ -38,9 +38,9 @@ static TreeNode *syntaxTree;
 }
 
 %token <tokenData> BOOLCONST NUMCONST CHARCONST STRINGCONST ID THEN
-%token <tokenData> IF WHILE FOR STATIC INT BOOL CHAR IN ELSE RETURN BREAK COMMENT
-%token <tokenData> SYMBOL EQ ADDASS SUBASS DIVASS MULASS LEQ GEQ NEQ DEC INC
-%token <tokenData> LT GT SIZEOF MAX MIN ADD DIV DO BY TO MOD RAND CHSIGN SUB MUL
+%token <tokenData> IF WHILE FOR STATIC INT BOOL CHAR ELSE RETURN BREAK COMMENT
+%token <tokenData> EQ ADDASS SUBASS DIVASS MULASS LEQ GEQ NEQ DEC INC
+%token <tokenData> LT GT MAX MIN ADD DIV DO BY TO MOD RAND SUB MUL CHSIGN SIZEOF
 %token <tokenData> AND OR NOT ASS SEMICOLON COLON LP RP LB RB COMMA LCB RCB
 %start program
 
@@ -88,7 +88,7 @@ decl : varDecl
 varDecl : typeSpec varDeclList SEMICOLON
     {
         $$ = $2;
-        setType($$, $1, false);
+        setType($2, $1, false);
     }
     ;
 
@@ -157,10 +157,13 @@ typeSpec : INT
 funDecl : typeSpec ID LP parms RP stmt
     {
         $$ = newDeclNode(FuncK, $1, $2, $4, $6);
+        $$->attr.tmp = $2->idIndex;
+        setType($$, $1, true);
     }
     | ID LP parms RP stmt
     {
         $$ = newDeclNode(FuncK, Void, $1, $3, $5);
+        $$->attr.tmp = $1->idIndex;
     }
     ;
 
@@ -168,7 +171,7 @@ parms : parmList
     {
         $$ = $1;
     }
-    | /* empty */
+    |
     {
         $$ = NULL;
     }
@@ -233,19 +236,19 @@ matched : expStmt
     {
         $$ = $1;
     }
-    | matchedselectStmt
-    {
-        $$ = $1;
-    }
-    | matchediterStmt
-    {
-        $$ = $1;
-    }
     | returnStmt
     {
         $$ = $1;
     }
     | breakStmt
+    {
+        $$ = $1;
+    }
+    | matchedselectStmt
+    {
+        $$ = $1;
+    }
+    | matchediterStmt
     {
         $$ = $1;
     }
@@ -281,7 +284,7 @@ localDecls : localDecls scopedVarDecl
     {
         $$ = addSibling($1, $2);
     }
-    | /* empty */
+    |
     {
         $$ = NULL;
     }
@@ -291,7 +294,7 @@ stmtList : stmtList stmt
     {
         $$ = addSibling($1, $2);
     }
-    | /* empty */
+    |
     {
         $$ = NULL;
     }
@@ -322,7 +325,7 @@ matchediterStmt : WHILE simpleExp DO matched
     | FOR ID ASS iterrange DO matched
     {
         $$ = newStmtNode(ForK, $2, $4, $6);
-        $$->attr.tmp = $2->idIndex
+        $$->attr.tmp = $2->idIndex;
     }
     ;
 
@@ -480,11 +483,11 @@ minmaxExp : minmaxExp minmaxop sumExp
     }
     ;
 
-minmaxop : MIN
+minmaxop : MAX
     {
         $$ = newExpNode(OpK, $1);
     }
-    | MAX
+    | MIN
     {
         $$ = newExpNode(OpK, $1);
     }
@@ -627,7 +630,7 @@ args : argList
 argList : argList COMMA exp
     {
         $$ = addSibling($1, $3);
-        //$$->attr.op = $2->opp;
+        $$->attr.op = $2->opp;
     }
     | exp
     {

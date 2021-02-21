@@ -136,28 +136,29 @@ static int newToken(int tokenClass, char *tokenString)
     yylval.tokenData->tokenclass = tokenClass;
     yylval.tokenData->linenum = line;
     yylval.tokenData->tokenstr = strdup(tokenString);
+    int charData;
     
     switch(tokenClass)
     {
-        case ID:
-            yylval.tokenData->idIndex = strParser(tokenString);
-            break;
         case NUMCONST:
             yylval.tokenData->nvalue = atoi(tokenString);
             break;
         case BOOLCONST:
             yylval.tokenData->nvalue = (strcmp(tokenString, "false") == 0 ? 0 : 1);
             break;
-        case STRINGCONST:
-            yylval.tokenData->svalue = strParser(tokenString);
-            break;
         case CHARCONST:
-            int charData = charParser(tokenString);
+            charData = charParser(tokenString);
             if(charData == -1)
             {
                 return COMMENT;
             }
             yylval.tokenData->cvalue[0] = (char)charData;
+            break;
+        case STRINGCONST:
+            yylval.tokenData->svalue = strParser(tokenString);
+            break;
+        case ID:
+            yylval.tokenData->idIndex = strdup(tokenString);
             break;
     }
     return tokenClass;
@@ -179,6 +180,7 @@ letdig [0-9a-zA-Z]
 "!="                                 { return newToken(NEQ, yytext); }
 "<="                                 { return newToken(LEQ, yytext); }
 ">="                                 { return newToken(GEQ, yytext); }
+"="                                  { return newToken(ASS, yytext); }
 "+="                                 { return newToken(ADDASS, yytext); }
 "-="                                 { return newToken(SUBASS, yytext); }
 "*="                                 { return newToken(MULASS, yytext); }
@@ -195,7 +197,6 @@ letdig [0-9a-zA-Z]
 "\/"                                 { return newToken(DIV, yytext); }
 "%"                                  { return newToken(MOD, yytext); }
 "?"                                  { return newToken(RAND, yytext); }
-"="                                  { return newToken(ASS, yytext); }
 "&"                                  { return newToken(AND, yytext); }
 "|"                                  { return newToken(OR, yytext); }
 "!"                                  { return newToken(NOT, yytext); }
@@ -228,11 +229,13 @@ letdig [0-9a-zA-Z]
 "true"                               { return newToken(BOOLCONST, yytext); }
 "false"                              { return newToken(BOOLCONST, yytext); }
 
-{letter}{letdig}*                    { return newToken(ID, yytext); }
 {digit}+                             { return newToken(NUMCONST, yytext); }
-[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
+{letter}{letdig}*                    { return newToken(ID, yytext); }
 '([^\n\\']|\\.)*'                    { return newToken(CHARCONST, yytext); }
 \"(\\\"|[^\n"])*\"                 { return newToken(STRINGCONST, yytext); }
+
+[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
+
 \n                                   { line++; }
 .                                    ;
 %%

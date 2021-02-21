@@ -1,10 +1,8 @@
 Terminals which are not used
 
-   IN
    COMMENT
-   SYMBOL
-   SIZEOF
    CHSIGN
+   SIZEOF
 
 
 Grammar
@@ -59,10 +57,10 @@ Grammar
 
    31 matched: expStmt
    32        | compoundStmt
-   33        | matchedselectStmt
-   34        | matchediterStmt
-   35        | returnStmt
-   36        | breakStmt
+   33        | returnStmt
+   34        | breakStmt
+   35        | matchedselectStmt
+   36        | matchediterStmt
 
    37 unmatched: unmatchedselectStmt
    38          | unmatchediterStmt
@@ -128,8 +126,8 @@ Grammar
    80 minmaxExp: minmaxExp minmaxop sumExp
    81          | sumExp
 
-   82 minmaxop: MIN
-   83         | MAX
+   82 minmaxop: MAX
+   83         | MIN
 
    84 sumExp: sumExp sumop mulExp
    85       | mulExp
@@ -192,156 +190,154 @@ STATIC (267) 7
 INT (268) 15
 BOOL (269) 16
 CHAR (270) 17
-IN (271)
-ELSE (272) 46 48
-RETURN (273) 55 56
-BREAK (274) 57
-COMMENT (275)
-SYMBOL (276)
-EQ (277) 78
-ADDASS (278) 59
-SUBASS (279) 60
-DIVASS (280) 62
-MULASS (281) 61
-LEQ (282) 74
-GEQ (283) 77
-NEQ (284) 79
-DEC (285) 64
-INC (286) 63
-LT (287) 75
-GT (288) 76
-SIZEOF (289)
-MAX (290) 83
-MIN (291) 82
-ADD (292) 86
-DIV (293) 91
-DO (294) 49 50 51 52
-BY (295) 54
-TO (296) 53 54
-MOD (297) 92
-RAND (298) 97
-CHSIGN (299)
-SUB (300) 87 95
-MUL (301) 90 96
-AND (302) 68
-OR (303) 66
-NOT (304) 70
-ASS (305) 50 52 58
-SEMICOLON (306) 6 7 8 22 39 40 55 56 57
-COLON (307) 12
-LP (308) 18 19 102 105
-RP (309) 18 19 102 105
-LB (310) 14 28 101
-RB (311) 14 28 101
-COMMA (312) 9 25 108
-LCB (313) 41
-RCB (314) 41
+ELSE (271) 46 48
+RETURN (272) 55 56
+BREAK (273) 57
+COMMENT (274)
+EQ (275) 78
+ADDASS (276) 59
+SUBASS (277) 60
+DIVASS (278) 62
+MULASS (279) 61
+LEQ (280) 74
+GEQ (281) 77
+NEQ (282) 79
+DEC (283) 64
+INC (284) 63
+LT (285) 75
+GT (286) 76
+MAX (287) 82
+MIN (288) 83
+ADD (289) 86
+DIV (290) 91
+DO (291) 49 50 51 52
+BY (292) 54
+TO (293) 53 54
+MOD (294) 92
+RAND (295) 97
+SUB (296) 87 95
+MUL (297) 90 96
+CHSIGN (298)
+SIZEOF (299)
+AND (300) 68
+OR (301) 66
+NOT (302) 70
+ASS (303) 50 52 58
+SEMICOLON (304) 6 7 8 22 39 40 55 56 57
+COLON (305) 12
+LP (306) 18 19 102 105
+RP (307) 18 19 102 105
+LB (308) 14 28 101
+RB (309) 14 28 101
+COMMA (310) 9 25 108
+LCB (311) 41
+RCB (312) 41
 
 
 Nonterminals, with rules where they appear
 
-$accept (60)
+$accept (58)
     on left: 0
-program (61)
+program (59)
     on left: 1, on right: 0
-declList (62)
+declList (60)
     on left: 2 3, on right: 1 2
-decl (63)
+decl (61)
     on left: 4 5, on right: 2 3
-varDecl (64)
+varDecl (62)
     on left: 6, on right: 4
-scopedVarDecl (65)
+scopedVarDecl (63)
     on left: 7 8, on right: 42
-varDeclList (66)
+varDeclList (64)
     on left: 9 10, on right: 6 7 8 9
-varDeclInit (67)
+varDeclInit (65)
     on left: 11 12, on right: 9 10
-varDeclId (68)
+varDeclId (66)
     on left: 13 14, on right: 11 12
-typeSpec (69)
+typeSpec (67)
     on left: 15 16 17, on right: 6 7 8 18 24
-funDecl (70)
+funDecl (68)
     on left: 18 19, on right: 5
-parms (71)
+parms (69)
     on left: 20 21, on right: 18 19
-parmList (72)
+parmList (70)
     on left: 22 23, on right: 20 22
-parmTypeList (73)
+parmTypeList (71)
     on left: 24, on right: 22 23
-parmIdList (74)
+parmIdList (72)
     on left: 25 26, on right: 24 25
-parmId (75)
+parmId (73)
     on left: 27 28, on right: 25 26
-stmt (76)
+stmt (74)
     on left: 29 30, on right: 18 19 44 47
-matched (77)
+matched (75)
     on left: 31 32 33 34 35 36, on right: 29 46 48 49 50
-unmatched (78)
+unmatched (76)
     on left: 37 38, on right: 30 48 51 52
-expStmt (79)
+expStmt (77)
     on left: 39 40, on right: 31
-compoundStmt (80)
+compoundStmt (78)
     on left: 41, on right: 32
-localDecls (81)
+localDecls (79)
     on left: 42 43, on right: 41 42
-stmtList (82)
+stmtList (80)
     on left: 44 45, on right: 41 44
-matchedselectStmt (83)
-    on left: 46, on right: 33
-unmatchedselectStmt (84)
+matchedselectStmt (81)
+    on left: 46, on right: 35
+unmatchedselectStmt (82)
     on left: 47 48, on right: 37
-matchediterStmt (85)
-    on left: 49 50, on right: 34
-unmatchediterStmt (86)
+matchediterStmt (83)
+    on left: 49 50, on right: 36
+unmatchediterStmt (84)
     on left: 51 52, on right: 38
-iterrange (87)
+iterrange (85)
     on left: 53 54, on right: 50 52
-returnStmt (88)
-    on left: 55 56, on right: 35
-breakStmt (89)
-    on left: 57, on right: 36
-exp (90)
+returnStmt (86)
+    on left: 55 56, on right: 33
+breakStmt (87)
+    on left: 57, on right: 34
+exp (88)
     on left: 58 59 60 61 62 63 64 65, on right: 39 56 58 59 60 61 62
     101 102 108 109
-simpleExp (91)
+simpleExp (89)
     on left: 66 67, on right: 12 46 47 48 49 51 53 54 65 66
-andExp (92)
+andExp (90)
     on left: 68 69, on right: 66 67 68
-unaryRelExp (93)
+unaryRelExp (91)
     on left: 70 71, on right: 68 69 70
-relExp (94)
+relExp (92)
     on left: 72 73, on right: 71
-relop (95)
+relop (93)
     on left: 74 75 76 77 78 79, on right: 72
-minmaxExp (96)
+minmaxExp (94)
     on left: 80 81, on right: 72 73 80
-minmaxop (97)
+minmaxop (95)
     on left: 82 83, on right: 80
-sumExp (98)
+sumExp (96)
     on left: 84 85, on right: 80 81 84
-sumop (99)
+sumop (97)
     on left: 86 87, on right: 84
-mulExp (100)
+mulExp (98)
     on left: 88 89, on right: 84 85 88
-mulop (101)
+mulop (99)
     on left: 90 91 92, on right: 88
-unaryExp (102)
+unaryExp (100)
     on left: 93 94, on right: 88 89 93
-unaryop (103)
+unaryop (101)
     on left: 95 96 97, on right: 93
-factor (104)
+factor (102)
     on left: 98 99, on right: 94
-mutable (105)
+mutable (103)
     on left: 100 101, on right: 58 59 60 61 62 63 64 99
-immutable (106)
+immutable (104)
     on left: 102 103 104, on right: 98
-call (107)
+call (105)
     on left: 105, on right: 103
-args (108)
+args (106)
     on left: 106 107, on right: 105
-argList (109)
+argList (107)
     on left: 108 109, on right: 106 108
-constant (110)
+constant (108)
     on left: 110 111 112 113, on right: 104
 
 
@@ -1193,9 +1189,9 @@ state 73
 
 state 74
 
-   33 matched: matchedselectStmt .
+   35 matched: matchedselectStmt .
 
-    $default  reduce using rule 33 (matched)
+    $default  reduce using rule 35 (matched)
 
 
 state 75
@@ -1207,9 +1203,9 @@ state 75
 
 state 76
 
-   34 matched: matchediterStmt .
+   36 matched: matchediterStmt .
 
-    $default  reduce using rule 34 (matched)
+    $default  reduce using rule 36 (matched)
 
 
 state 77
@@ -1221,16 +1217,16 @@ state 77
 
 state 78
 
-   35 matched: returnStmt .
+   33 matched: returnStmt .
 
-    $default  reduce using rule 35 (matched)
+    $default  reduce using rule 33 (matched)
 
 
 state 79
 
-   36 matched: breakStmt .
+   34 matched: breakStmt .
 
-    $default  reduce using rule 36 (matched)
+    $default  reduce using rule 34 (matched)
 
 
 state 80
@@ -1521,16 +1517,16 @@ state 97
 
 state 98
 
-   83 minmaxop: MAX .
+   82 minmaxop: MAX .
 
-    $default  reduce using rule 83 (minmaxop)
+    $default  reduce using rule 82 (minmaxop)
 
 
 state 99
 
-   82 minmaxop: MIN .
+   83 minmaxop: MIN .
 
-    $default  reduce using rule 82 (minmaxop)
+    $default  reduce using rule 83 (minmaxop)
 
 
 state 100

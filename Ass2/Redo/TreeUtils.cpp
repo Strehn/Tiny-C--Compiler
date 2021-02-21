@@ -28,6 +28,7 @@ TreeNode *newDeclNode(DeclKind kind,
     // ----- Variables -----
     TreeNode *temp = (TreeNode *)malloc(sizeof(TreeNode));
     int i;
+    
     // ----- Make the new node and return it to $$ -----
     if( temp == NULL)
     {
@@ -35,19 +36,24 @@ TreeNode *newDeclNode(DeclKind kind,
     }
     else
     {
-        for (i=0;i<MAXCHILDREN;i++)
-        {
-            temp->child[i] = NULL;
-        }
+        // ------ Add Data for New Node -----
         temp->sibling = NULL;
         temp->nodekind = DeclK;
-        temp->attr.string = token->tokenstr;
-        temp->attr.name = token->svalue;
         temp->lineno = token->linenum;
         temp->subkind.decl = kind;
+        temp->expType = type;
         temp->child[0] = c0;
         temp->child[1] = c1;
         temp->child[2] = c2;
+        
+        // ----- Get Data From Token -----
+        
+        temp->attr.string = token->svalue;
+        temp->attr.name = token->idIndex;
+        temp->attr.value = token->nvalue;
+        temp->attr.cvalue = token->cvalue;
+        temp->attr.tmp = token->tokenstr;
+
     }
     
     return temp;
@@ -71,19 +77,22 @@ TreeNode *newStmtNode(StmtKind kind,
     }
     else
     {
-        for (i=0;i<MAXCHILDREN;i++)
-        {
-            temp->child[i] = NULL;
-        }
+        // ------ Add Data for New Node -----
         temp->sibling = NULL;
         temp->nodekind = StmtK;
         temp->lineno = token->linenum;
-        temp->attr.string = token->tokenstr;
-        temp->attr.name = token->svalue;
         temp->subkind.stmt = kind;
         temp->child[0] = c0;
         temp->child[1] = c1;
         temp->child[2] = c2;
+        
+        // ----- Get Data From Token -----
+        
+        temp->attr.string = token->svalue;
+        temp->attr.name = token->idIndex;
+        temp->attr.value = token->nvalue;
+        temp->attr.cvalue = token->cvalue;
+        temp->attr.tmp = token->tokenstr;
     }
     
     return temp;
@@ -95,61 +104,33 @@ TreeNode *newExpNode(ExpKind kind,
                      TreeNode *c1)
 {
     // ----- Variables -----
-    c0 = (TreeNode *)malloc(sizeof(TreeNode));
+    TreeNode *temp = (TreeNode *)malloc(sizeof(TreeNode));
     int i;
-    
-    for (i=0;i<MAXCHILDREN;i++)
-    {
-        c0->child[i] = NULL;
-    }
-    
     // ----- Make the new node and return it to $$ -----
-    if( c0 == NULL)
+    if( temp == NULL)
     {
         printf("ERROR(SYSTEM): never add a NULL to a node list. \n");
     }
     else
     {
-        switch(kind)
-        {
-            case OpK:
-                c0->attr.op = token->tokenclass;
-                break;
-            case ConstantK:
-                switch(token->tokenclass)
-                {
-                    case NUMCONST:
-                        c0->attr.value = token->nvalue;
-                        break;
-                    case BOOLCONST:
-                        c0->attr.value = token->nvalue;
-                        break;
-                    case CHARCONST:
-                        c0->attr.cvalue = token->cvalue;
-                        break;
-                    case STRINGCONST:
-                        c0->attr.string = token->svalue;
-                        break;
-                }
-                break;
-            case IdK:
-                c0->attr.string = token->svalue;
-                break;
-            case AssignK:
-                c0->attr.string = token->svalue;
-                break;
-            case InitK:
-                c0->attr.string = token->svalue;
-                break;
-            case CallK:
-                c0->attr.string = token->svalue;
-                break;
-               
-        }
-        c0->child[0] = c1;
+        // ------ Add Data for New Node -----
+        temp->sibling = NULL;
+        temp->nodekind = ExpK;
+        temp->lineno = token->linenum;
+        temp->subkind.exp = kind;
+        temp->child[0] = c0;
+        temp->child[1] = c1;
+        
+        // ----- Get Data From Token -----
+        
+        temp->attr.string = token->svalue;
+        temp->attr.name = token->idIndex;
+        temp->attr.value = token->nvalue;
+        temp->attr.cvalue = token->cvalue;
+        temp->attr.tmp = token->tokenstr;
     }
     
-    return c0;
+    return temp;
 }
 
 // add a TreeNode to a list of siblings.
@@ -211,8 +192,11 @@ bool tisChild = false;
 
 int childcounter = 0;
 int siblingcounter = 0;
-int savedstate;
-bool isFirst = true;
+int csavedstate;
+int ssavedstate;
+bool cisFirst = true;
+bool sisFirst = true;
+
 
 // used to keep track if the node being printed is a sibling
 bool tisSibling = false;
@@ -240,15 +224,67 @@ void getType(TreeNode *tree)
         case 4:
             printf("string ");
             break;
-        case 5:
+        default:
             printf("void ");
             break;
-        case 6:
-            printf("charint ");
-            break;
-        case 7:
-            printf("equal ");
-            break;
+    }
+}
+
+void printOp(TreeNode *tree)
+{
+    if(strcmp("=",tree->attr.string)==0)
+    {
+        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        
+    }
+    else if(strcmp("++",tree->attr.string)==0)
+    {
+        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        
+    }
+    else if(strcmp("==",tree->attr.string)==0)
+    {
+        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        
+    }
+    else if(strcmp("--",tree->attr.string)==0)
+    {
+        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        
+    }
+    else if(strcmp("+=",tree->attr.string)==0)
+    {
+        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        
+    }
+    else if(strcmp("-=",tree->attr.string)==0)
+    {
+        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        
+    }
+    else if(strcmp("*=",tree->attr.string)==0)
+    {
+        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        
+    }
+    else if(strcmp("-=",tree->attr.string)==0)
+    {
+        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        
+    }
+    else if(strcmp("/=",tree->attr.string)==0)
+    {
+        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        
+    }
+    else if(strcmp("-",tree->attr.string)==0 && tree->child[0] == NULL)
+    {
+        printf("Op: chsign [line: %d]\n", tree->lineno);
+        
+    }
+    else
+    {
+        printf("Op: %s [line: %d]\n", tree->attr.string , tree->lineno);
     }
 }
 
@@ -257,7 +293,7 @@ void printTree(TreeNode *tree)
 {
     // ----- Varaibles -----
     int i;
-    
+    siblingcounter = 0;
     INDENT;
     
     while (tree != NULL)
@@ -268,20 +304,20 @@ void printTree(TreeNode *tree)
         
         if(tisChild == true)
         {
-            if(isFirst == true)
+            if(cisFirst == true)
             {
-                savedstate = childcounter;
+                csavedstate = childcounter;
                 childcounter = 0;
-                isFirst = false;
+                cisFirst = false;
             }
-            printf("Child: %d ", childcounter);
-            childcounter = savedstate;
+            printf("Child: %d  ", childcounter);
+            childcounter = csavedstate;
             tisChild = false;
         }
         
         if(tisSibling == true)
         {
-            printf("Sibling: %d ", siblingcounter);
+            printf("Sibling: %d  ", siblingcounter);
             tisSibling = false;
         }
 
@@ -319,68 +355,30 @@ void printTree(TreeNode *tree)
                     break;
             }
         }
-        else if (tree->nodekind==ExpK)
+        else if (tree->nodekind == ExpK)
         {
             // ExpKind {OpK, ConstantK, IdK, AssignK, InitK, CallK};
-
             switch (tree->subkind.exp)
             {
                 case OpK:
-                    /*
-                    if((tree->attr.string == "=") || (tree->attr.string == "++") || (tree->attr.string == "--") || (tree->attr.string == "+=") || (tree->attr.string == "-=")
-                    || (tree->attr.string == "*=")|| (tree->attr.string == "/="))
-                            printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
-                        else if((tree->attr.string == "-") && tree->child[0] == NULL) // if there is no right child then it's unary minus
-                            printf("Op: chsign [line: %d]\n", tree->lineno);
-                        else
-                            printf("Op: %s [line: %d]\n", tree->attr.string , tree->lineno);
-                     */
+                    printOp(tree);
                     break;
                 case ConstantK:
                     printf("Const ");
                     switch(tree->expType)
                     {
+                        case Integer:
+                            printf("of type int: %d \n", tree->attr.value);
+                            break;
+                        case Boolean:
+                            printf("of type bool %d \n", tree->attr.value);
+                            break;
                         case Char:
-                            if(strcmp("\'\\n\'",tree->attr.cvalue)==0)
-                            {
-                                printf("char: '\n' [line: %d]\n", tree->lineno);
-                                
-                            }
-                            else if(strcmp("\'\\t\'",tree->attr.cvalue)==0)
-                            {
-                                printf("char: 't' [line: %d]\n", tree->lineno);
-                                
-                            }
-                            else if(strcmp((char*)"\'\\\'\'",tree->attr.cvalue)==0)
-                            {
-                                printf("char: '%c' [line: %d]\n",'\'', tree->lineno);
-                                
-                            }
-                            else if(strcmp((char*)"\'\\0\'",tree->attr.cvalue)==0)
-                            {
-                                printf("char: '%c' [line: %d]\n",'\0', tree->lineno);
-                                
-                            }
-                            else if(strcmp( (char*)"\'\\\"\'", tree->attr.cvalue) ==0)
-                            {
-                                printf("char: '%c' [line: %d]\n",'\"', tree->lineno);}
-                                                            
-                            else
-                            {
-                                printf("char: %s [line: %d]\n", tree->attr.cvalue, tree->lineno);
-                            }
+                            printf("of type char: '%c' \n", tree->attr.cvalue);
                             break;
                         case String:
-                                printf("is array of type char: %s [line: %d]\n", tree->attr.string,  tree->lineno);
-                                break;
-                        case Integer:
-                                printf("of type int: %d [line: %d]\n", tree->attr.value,  tree->lineno);
-                                break;
-                        case Boolean:
-                                printf("of type bool: %s [line: %d]\n", tree->attr.cvalue, tree->lineno);
-                                break;
-                        default:
-                                printf("Should not reach this");
+                            printf("is array of type char: \"%s\" \n", tree->attr.tmp);
+                            break;
                     }
                     break;
                 case IdK:
@@ -437,9 +435,9 @@ void printTree(TreeNode *tree)
         }
         else printf("Unknown node kind\n");
         
-        if(isFirst == false)
+        if(cisFirst == false)
         {
-            isFirst = true;
+            cisFirst = true;
         }
         for (i=0;i<MAXCHILDREN;i++)
         {
@@ -450,14 +448,16 @@ void printTree(TreeNode *tree)
                 childcounter++;
             }
         }
-        isFirst = false;
+        cisFirst = false;
         childcounter = 0;
         i = 0;
         tisChild = false;
+        
         tree = tree->sibling;
         tisSibling = true;
         siblingcounter++;
       }
+    
     tisSibling = false;
     UNINDENT;
 }

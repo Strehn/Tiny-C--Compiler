@@ -374,19 +374,19 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[121] =
     {   0,
-        0,    0,   62,   56,   60,   59,   25,   56,   20,   23,
-       56,   28,   29,   18,   14,   32,   15,   19,   55,   27,
-       26,   16,   22,   17,   21,   54,   30,   31,   54,   54,
-       54,   54,   54,   54,   54,   54,   54,   54,   54,   54,
-       54,   33,   24,   34,    3,    0,   58,    0,    0,   57,
-        0,    8,   13,    6,   12,    7,    1,    9,   55,    0,
-        0,    4,    2,    5,   54,   54,   54,   54,   46,   54,
-       44,   54,   54,   54,   39,   54,   54,   50,   54,   54,
-       54,   40,   54,   54,   58,    1,   11,   10,   49,   54,
-       54,   54,   54,   54,   45,   36,   51,   54,   54,   54,
+        0,    0,   62,   58,   60,   59,   25,   58,   21,   23,
+       58,   28,   29,   19,   15,   32,   16,   20,   54,   27,
+       26,   17,    6,   18,   22,   55,   30,   31,   55,   55,
+       55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
+       55,   33,   24,   34,    3,    0,   57,    0,    0,   56,
+        0,    9,   14,    7,   13,    8,    1,   10,   54,    0,
+        0,    4,    2,    5,   55,   55,   55,   55,   46,   55,
+       44,   55,   55,   55,   39,   55,   55,   50,   55,   55,
+       55,   40,   55,   55,   57,    1,   12,   11,   49,   55,
+       55,   55,   55,   55,   45,   36,   51,   55,   55,   55,
 
-       54,   54,   37,   54,   38,   42,   54,   54,   54,   41,
-       52,   54,   48,   53,   54,   54,   43,   47,   35,    0
+       55,   55,   37,   55,   38,   42,   55,   55,   55,   41,
+       52,   55,   48,   53,   55,   55,   43,   47,   35,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -667,34 +667,35 @@ static int newToken(int tokenClass, char *tokenString)
     yylval.tokenData->tokenclass = tokenClass;
     yylval.tokenData->linenum = line;
     yylval.tokenData->tokenstr = strdup(tokenString);
+    int charData;
     
     switch(tokenClass)
     {
-        case ID:
-            yylval.tokenData->idIndex = strParser(tokenString);
-            break;
         case NUMCONST:
             yylval.tokenData->nvalue = atoi(tokenString);
             break;
         case BOOLCONST:
             yylval.tokenData->nvalue = (strcmp(tokenString, "false") == 0 ? 0 : 1);
             break;
-        case STRINGCONST:
-            yylval.tokenData->svalue = strParser(tokenString);
-            break;
         case CHARCONST:
-            int charData = charParser(tokenString);
+            charData = charParser(tokenString);
             if(charData == -1)
             {
                 return COMMENT;
             }
             yylval.tokenData->cvalue[0] = (char)charData;
             break;
+        case STRINGCONST:
+            yylval.tokenData->svalue = strParser(tokenString);
+            break;
+        case ID:
+            yylval.tokenData->idIndex = strdup(tokenString);
+            break;
     }
     return tokenClass;
 }
 
-#line 698 "lex.yy.c"
+#line 699 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -876,10 +877,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 174 "parser.l"
+#line 175 "parser.l"
 
 
-#line 883 "lex.yy.c"
+#line 884 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -964,311 +965,311 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 176 "parser.l"
+#line 177 "parser.l"
 ;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 178 "parser.l"
+#line 179 "parser.l"
 { return newToken(EQ, yytext); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 179 "parser.l"
+#line 180 "parser.l"
 { return newToken(NEQ, yytext); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 180 "parser.l"
+#line 181 "parser.l"
 { return newToken(LEQ, yytext); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 181 "parser.l"
+#line 182 "parser.l"
 { return newToken(GEQ, yytext); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 182 "parser.l"
-{ return newToken(ADDASS, yytext); }
+#line 183 "parser.l"
+{ return newToken(ASS, yytext); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 183 "parser.l"
-{ return newToken(SUBASS, yytext); }
+#line 184 "parser.l"
+{ return newToken(ADDASS, yytext); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 184 "parser.l"
-{ return newToken(MULASS, yytext); }
+#line 185 "parser.l"
+{ return newToken(SUBASS, yytext); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 185 "parser.l"
-{ return newToken(DIVASS, yytext); }
+#line 186 "parser.l"
+{ return newToken(MULASS, yytext); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 186 "parser.l"
-{ return newToken(MAX, yytext); }
+#line 187 "parser.l"
+{ return newToken(DIVASS, yytext); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 187 "parser.l"
-{ return newToken(MIN, yytext); }
+#line 188 "parser.l"
+{ return newToken(MAX, yytext); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 188 "parser.l"
-{ return newToken(DEC, yytext); }
+#line 189 "parser.l"
+{ return newToken(MIN, yytext); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 189 "parser.l"
-{ return newToken(INC, yytext); }
+#line 190 "parser.l"
+{ return newToken(DEC, yytext); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 190 "parser.l"
-{ return newToken(ADD, yytext); }
+#line 191 "parser.l"
+{ return newToken(INC, yytext); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 191 "parser.l"
-{ return newToken(SUB, yytext); }
+#line 192 "parser.l"
+{ return newToken(ADD, yytext); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 192 "parser.l"
-{ return newToken(LT, yytext); }
+#line 193 "parser.l"
+{ return newToken(SUB, yytext); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 193 "parser.l"
-{ return newToken(GT, yytext); }
+#line 194 "parser.l"
+{ return newToken(LT, yytext); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 194 "parser.l"
-{ return newToken(MUL, yytext); }
+#line 195 "parser.l"
+{ return newToken(GT, yytext); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 195 "parser.l"
-{ return newToken(DIV, yytext); }
+#line 196 "parser.l"
+{ return newToken(MUL, yytext); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 196 "parser.l"
-{ return newToken(MOD, yytext); }
+#line 197 "parser.l"
+{ return newToken(DIV, yytext); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 197 "parser.l"
-{ return newToken(RAND, yytext); }
+#line 198 "parser.l"
+{ return newToken(MOD, yytext); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 198 "parser.l"
-{ return newToken(ASS, yytext); }
+#line 199 "parser.l"
+{ return newToken(RAND, yytext); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 199 "parser.l"
+#line 200 "parser.l"
 { return newToken(AND, yytext); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 200 "parser.l"
+#line 201 "parser.l"
 { return newToken(OR, yytext); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 201 "parser.l"
+#line 202 "parser.l"
 { return newToken(NOT, yytext); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 202 "parser.l"
+#line 203 "parser.l"
 { return newToken(SEMICOLON, yytext); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 203 "parser.l"
+#line 204 "parser.l"
 { return newToken(COLON, yytext); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 204 "parser.l"
+#line 205 "parser.l"
 { return newToken(LP, yytext); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 205 "parser.l"
+#line 206 "parser.l"
 { return newToken(RP, yytext); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 206 "parser.l"
+#line 207 "parser.l"
 { return newToken(LB, yytext); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 207 "parser.l"
+#line 208 "parser.l"
 { return newToken(RB, yytext); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 208 "parser.l"
+#line 209 "parser.l"
 { return newToken(COMMA, yytext); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 209 "parser.l"
+#line 210 "parser.l"
 { return newToken(LCB, yytext); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 210 "parser.l"
+#line 211 "parser.l"
 { return newToken(RCB, yytext); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 211 "parser.l"
+#line 212 "parser.l"
 { return newToken(STATIC, yytext); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 212 "parser.l"
+#line 213 "parser.l"
 { return newToken(INT, yytext); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 213 "parser.l"
+#line 214 "parser.l"
 { return newToken(BOOL, yytext); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 214 "parser.l"
+#line 215 "parser.l"
 { return newToken(CHAR, yytext); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 215 "parser.l"
+#line 216 "parser.l"
 { return newToken(IF, yytext); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 216 "parser.l"
+#line 217 "parser.l"
 { return newToken(TO, yytext); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 217 "parser.l"
+#line 218 "parser.l"
 { return newToken(THEN, yytext); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 218 "parser.l"
+#line 219 "parser.l"
 { return newToken(ELSE, yytext); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 219 "parser.l"
+#line 220 "parser.l"
 { return newToken(WHILE, yytext); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 220 "parser.l"
+#line 221 "parser.l"
 { return newToken(DO, yytext); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 221 "parser.l"
+#line 222 "parser.l"
 { return newToken(FOR, yytext); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 222 "parser.l"
+#line 223 "parser.l"
 { return newToken(BY, yytext); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 223 "parser.l"
+#line 224 "parser.l"
 { return newToken(RETURN, yytext); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 224 "parser.l"
+#line 225 "parser.l"
 { return newToken(BREAK, yytext); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 225 "parser.l"
+#line 226 "parser.l"
 { return newToken(AND, yytext); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 226 "parser.l"
+#line 227 "parser.l"
 { return newToken(OR, yytext); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 227 "parser.l"
+#line 228 "parser.l"
 { return newToken(NOT, yytext); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 228 "parser.l"
+#line 229 "parser.l"
 { return newToken(BOOLCONST, yytext); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 229 "parser.l"
+#line 230 "parser.l"
 { return newToken(BOOLCONST, yytext); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 231 "parser.l"
-{ return newToken(ID, yytext); }
-	YY_BREAK
-case 55:
-YY_RULE_SETUP
 #line 232 "parser.l"
 { return newToken(NUMCONST, yytext); }
 	YY_BREAK
-case 56:
+case 55:
 YY_RULE_SETUP
 #line 233 "parser.l"
-{ if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
+{ return newToken(ID, yytext); }
 	YY_BREAK
-case 57:
+case 56:
 YY_RULE_SETUP
 #line 234 "parser.l"
 { return newToken(CHARCONST, yytext); }
 	YY_BREAK
-case 58:
+case 57:
 YY_RULE_SETUP
 #line 235 "parser.l"
 { return newToken(STRINGCONST, yytext); }
 	YY_BREAK
+case 58:
+YY_RULE_SETUP
+#line 237 "parser.l"
+{ if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
+	YY_BREAK
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
-#line 236 "parser.l"
+#line 239 "parser.l"
 { line++; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 237 "parser.l"
+#line 240 "parser.l"
 ;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 238 "parser.l"
+#line 241 "parser.l"
 ECHO;
 	YY_BREAK
-#line 1272 "lex.yy.c"
+#line 1273 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2265,7 +2266,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 238 "parser.l"
+#line 241 "parser.l"
 
 
 

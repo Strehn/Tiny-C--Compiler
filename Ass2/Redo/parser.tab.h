@@ -52,50 +52,48 @@
      INT = 268,
      BOOL = 269,
      CHAR = 270,
-     IN = 271,
-     ELSE = 272,
-     RETURN = 273,
-     BREAK = 274,
-     COMMENT = 275,
-     SYMBOL = 276,
-     EQ = 277,
-     ADDASS = 278,
-     SUBASS = 279,
-     DIVASS = 280,
-     MULASS = 281,
-     LEQ = 282,
-     GEQ = 283,
-     NEQ = 284,
-     DEC = 285,
-     INC = 286,
-     LT = 287,
-     GT = 288,
-     SIZEOF = 289,
-     MAX = 290,
-     MIN = 291,
-     ADD = 292,
-     DIV = 293,
-     DO = 294,
-     BY = 295,
-     TO = 296,
-     MOD = 297,
-     RAND = 298,
-     CHSIGN = 299,
-     SUB = 300,
-     MUL = 301,
-     AND = 302,
-     OR = 303,
-     NOT = 304,
-     ASS = 305,
-     SEMICOLON = 306,
-     COLON = 307,
-     LP = 308,
-     RP = 309,
-     LB = 310,
-     RB = 311,
-     COMMA = 312,
-     LCB = 313,
-     RCB = 314
+     ELSE = 271,
+     RETURN = 272,
+     BREAK = 273,
+     COMMENT = 274,
+     EQ = 275,
+     ADDASS = 276,
+     SUBASS = 277,
+     DIVASS = 278,
+     MULASS = 279,
+     LEQ = 280,
+     GEQ = 281,
+     NEQ = 282,
+     DEC = 283,
+     INC = 284,
+     LT = 285,
+     GT = 286,
+     MAX = 287,
+     MIN = 288,
+     ADD = 289,
+     DIV = 290,
+     DO = 291,
+     BY = 292,
+     TO = 293,
+     MOD = 294,
+     RAND = 295,
+     SUB = 296,
+     MUL = 297,
+     CHSIGN = 298,
+     SIZEOF = 299,
+     AND = 300,
+     OR = 301,
+     NOT = 302,
+     ASS = 303,
+     SEMICOLON = 304,
+     COLON = 305,
+     LP = 306,
+     RP = 307,
+     LB = 308,
+     RB = 309,
+     COMMA = 310,
+     LCB = 311,
+     RCB = 312
    };
 #endif
 /* Tokens.  */
@@ -112,50 +110,48 @@
 #define INT 268
 #define BOOL 269
 #define CHAR 270
-#define IN 271
-#define ELSE 272
-#define RETURN 273
-#define BREAK 274
-#define COMMENT 275
-#define SYMBOL 276
-#define EQ 277
-#define ADDASS 278
-#define SUBASS 279
-#define DIVASS 280
-#define MULASS 281
-#define LEQ 282
-#define GEQ 283
-#define NEQ 284
-#define DEC 285
-#define INC 286
-#define LT 287
-#define GT 288
-#define SIZEOF 289
-#define MAX 290
-#define MIN 291
-#define ADD 292
-#define DIV 293
-#define DO 294
-#define BY 295
-#define TO 296
-#define MOD 297
-#define RAND 298
-#define CHSIGN 299
-#define SUB 300
-#define MUL 301
-#define AND 302
-#define OR 303
-#define NOT 304
-#define ASS 305
-#define SEMICOLON 306
-#define COLON 307
-#define LP 308
-#define RP 309
-#define LB 310
-#define RB 311
-#define COMMA 312
-#define LCB 313
-#define RCB 314
+#define ELSE 271
+#define RETURN 272
+#define BREAK 273
+#define COMMENT 274
+#define EQ 275
+#define ADDASS 276
+#define SUBASS 277
+#define DIVASS 278
+#define MULASS 279
+#define LEQ 280
+#define GEQ 281
+#define NEQ 282
+#define DEC 283
+#define INC 284
+#define LT 285
+#define GT 286
+#define MAX 287
+#define MIN 288
+#define ADD 289
+#define DIV 290
+#define DO 291
+#define BY 292
+#define TO 293
+#define MOD 294
+#define RAND 295
+#define SUB 296
+#define MUL 297
+#define CHSIGN 298
+#define SIZEOF 299
+#define AND 300
+#define OR 301
+#define NOT 302
+#define ASS 303
+#define SEMICOLON 304
+#define COLON 305
+#define LP 306
+#define RP 307
+#define LB 308
+#define RB 309
+#define COMMA 310
+#define LCB 311
+#define RCB 312
 
 
 
@@ -169,7 +165,7 @@ typedef union YYSTYPE
     TreeNode *tree;          // for nonterminals.   these tree nodes as you build the tree
 }
 /* Line 1529 of yacc.c.  */
-#line 173 "parser.tab.h"
+#line 169 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
