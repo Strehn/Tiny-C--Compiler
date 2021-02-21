@@ -36,7 +36,7 @@ enum  StmtKind {NullK, IfK, WhileK, ForK, CompoundK, ReturnK, BreakK, RangeK};
 enum ExpKind {OpK, ConstantK, IdK, AssignK, InitK, CallK};
 
 // ExpType is used for type checking (Void means no type or value, UndefinedType means undefined)
-enum ExpType {Void, Integer, Boolean, Char, CharInt, Equal, UndefinedType};
+enum ExpType {Void, Integer, Boolean, Char, String, CharInt, Equal, UndefinedType};
 
 // What kind of scoping is used?  (decided during typing)
 enum VarKind {None, Local, Global, Parameter, LocalStatic};
@@ -63,11 +63,13 @@ typedef struct treeNode
     {
         OpKind op;                         // type of token (same as in bison)
     int value;                         // used when an integer constant or boolean
-    unsigned char cvalue;               // used when a character
+    char *cvalue;               // used when a character
     char *string;                      // used when a string constant
     char *name;                        // used when IdK
+    char*tmp;
     } attr;
     ExpType expType;                   // used when ExpK for type checking
+    int aSize;
     bool isArray;                          // is this an array
     bool isStatic;                         // is staticly allocated?
 
@@ -88,7 +90,10 @@ TreeNode *newStmtNode(StmtKind kind,
                       TreeNode *c1=NULL,
                       TreeNode *c2=NULL);
 
-TreeNode *newExpNode(ExpKind kind);
+TreeNode *newExpNode(ExpKind kind,
+                     TokenData *token,
+                     TreeNode *c0=NULL,
+                     TreeNode *c1=NULL);
 
 TreeNode *addSibling(TreeNode *t, TreeNode *s);
 

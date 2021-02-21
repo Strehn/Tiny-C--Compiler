@@ -50,7 +50,7 @@ static TreeNode *syntaxTree;
 %type <tree> stmt expStmt compoundStmt localDecls stmtList returnStmt breakStmt
 %type <tree> matched unmatched matchedselectStmt unmatchedselectStmt matchediterStmt unmatchediterStmt
 %type <tree> exp simpleExp andExp unaryRelExp relExp minmaxExp sumExp mulExp unaryExp factor mutable iterrange immutable call args argList
-%type <tokenData> constant relop unaryop mulop sumop minmaxop
+%type <tree> constant relop unaryop mulop sumop minmaxop
 %type <type> typeSpec
 
 
@@ -59,8 +59,7 @@ static TreeNode *syntaxTree;
 /* ----- Structure ----- */
 program : declList
     {
-        $$ = $1;
-        syntaxTree = $$;
+        syntaxTree = $1;
     }
     ;
 
@@ -100,7 +99,8 @@ scopedVarDecl : STATIC typeSpec varDeclList SEMICOLON
     }
     | typeSpec varDeclList SEMICOLON
     {
-        $$ = newDeclNode(VarK, $1, $3, $2);
+        $$ = $2;
+        setType($2, $1, false);
     }
     ;
 
@@ -119,21 +119,22 @@ varDeclInit : varDeclId
     }
     | varDeclId COLON simpleExp
     {
-        $$ = newDeclNode(VarK, UndefinedType, $2, $3);
+        $$ = $1;
+        addChild($$, $3);
     }
     ;
 
 varDeclId : ID
     {
         $$ = newDeclNode(VarK, UndefinedType, $1);
-        $$->attr.name = $1->svalue;
+        $$->attr.tmp = $1->idIndex;
     }
     | ID LB NUMCONST RB
     {
         $$ = newDeclNode(VarK, UndefinedType, $1);
-        $$->attr.name = $1->svalue;
-        $$->expType = UndefinedType;
-        $$->attr.value = $3->nvalue;
+        $$->isArray = true;
+        $$->aSize = $3->nvalue;
+        $$->attr.tmp = $1->idIndex;
     }
     ;
 
@@ -175,7 +176,7 @@ parms : parmList
 
 parmList : parmList SEMICOLON parmTypeList
     {
-        $$ = newDeclNode(ParamK, Void, $2, $1, $3);
+        $$ = addSibling($1, $3);
     }
     | parmTypeList
     {
@@ -186,7 +187,7 @@ parmList : parmList SEMICOLON parmTypeList
 parmTypeList : typeSpec parmIdList
     {
         $$ = $2;
-        setType($$, $1, true);
+        setType($2, $1, false);
     }
     ;
 
@@ -202,11 +203,13 @@ parmIdList : parmIdList COMMA parmId
 
 parmId : ID
     {
-        $$ = newDeclNode(ParamK, Boolean, $1);
+        $$ = newDeclNode(ParamK, Void, $1);
+        $$->attr.tmp = $1->idIndex;
     }
     | ID LB RB
     {
-        $$ = newDeclNode(ParamK, Boolean, $1);
+        $$ = newDeclNode(ParamK, Void, $1);
+        $$->isArray = true; $$->attr.tmp = $1->idIndex;
     }
     ;
 
@@ -319,6 +322,7 @@ matchediterStmt : WHILE simpleExp DO matched
     | FOR ID ASS iterrange DO matched
     {
         $$ = newStmtNode(ForK, $2, $4, $6);
+        $$->attr.tmp = $2->idIndex
     }
     ;
 
@@ -340,6 +344,7 @@ iterrange : simpleExp TO simpleExp
     | simpleExp TO simpleExp BY simpleExp
     {
         $$ = newStmtNode(RangeK, $2, $1, $3, $5);
+        $$->attr.tmp = $2->idIndex;
     }
     ;
 
@@ -363,45 +368,31 @@ breakStmt : BREAK SEMICOLON
 
 exp : mutable ASS exp
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $2->nvalue;
-        $$->child[0] = $3;
+        $$ = newExpNode(AssignK, $2, $1, $3);
     }
     | mutable ADDASS exp
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $2->nvalue;
-        $$->child[0] = $3;
+        $$ = newExpNode(AssignK, $2, $1, $3);
     }
     | mutable SUBASS exp
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $2->nvalue;
-        $$->child[0] = $3;
+        $$ = newExpNode(AssignK, $2, $1, $3);
     }
     | mutable MULASS exp
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $2->nvalue;
-        $$->child[0] = $3;
+        $$ = newExpNode(AssignK, $2, $1, $3);
     }
     | mutable DIVASS exp
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $2->nvalue;
-        $$->child[0] = $3;
+        $$ = newExpNode(AssignK, $2, $1, $3);
     }
     | mutable INC
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $2->nvalue;
-        $$->child[0] = $1;
+        $$ = newExpNode(AssignK, $2, $1);
     }
     | mutable DEC
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $2->nvalue;
-        $$->child[0] = $1;
+        $$ = newExpNode(AssignK, $2, $1);
     }
     | simpleExp
     {
@@ -411,9 +402,7 @@ exp : mutable ASS exp
 
 simpleExp : simpleExp OR andExp
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $2->nvalue;
-        $$->child[0] = $3;
+        $$ = newExpNode(OpK, $2, $1, $3);
     }
     | andExp
     {
@@ -423,9 +412,7 @@ simpleExp : simpleExp OR andExp
 
 andExp : andExp AND unaryRelExp
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $2->nvalue;
-        $$->child[0] = $3;
+        $$ = newExpNode(OpK, $2, $1, $3);
     }
     | unaryRelExp
     {
@@ -435,9 +422,7 @@ andExp : andExp AND unaryRelExp
 
 unaryRelExp : NOT unaryRelExp
     {
-        $$ = newExpNode(OpK);
-        $$->attr.op = $1->nvalue;
-        $$->child[0] = $2;
+        $$ = newExpNode(OpK, $1, $2);
     }
     | relExp
     {
@@ -447,9 +432,9 @@ unaryRelExp : NOT unaryRelExp
 
 relExp : minmaxExp relop minmaxExp
     {
-        $$ = newExpNode(OpK);
-        $$->child[0] = $1;
-        $$->child[1] = $3;
+        $$ = $2;
+        addChild($$, $1);
+        addChild($$, $3);
     }
     | minmaxExp
     {
@@ -459,35 +444,35 @@ relExp : minmaxExp relop minmaxExp
 
 relop : LEQ
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     | LT
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     | GT
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     | GEQ
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     | EQ
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     | NEQ
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     ;
 
 minmaxExp : minmaxExp minmaxop sumExp
     {
-        $$ = newExpNode(OpK);
-        $$->child[0] = $1;
-        $$->child[1] = $3;
+        $$ = $2;
+        addChild($$,$1);
+        addChild($$,$3);
     }
     | sumExp
     {
@@ -497,19 +482,19 @@ minmaxExp : minmaxExp minmaxop sumExp
 
 minmaxop : MIN
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     | MAX
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     ;
 
 sumExp : sumExp sumop mulExp
     {
-        $$ = newExpNode(OpK);
-        $$->child[0] = $1;
-        $$->child[1] = $3;
+        $$ = $2;
+        addChild($$,$1);
+        addChild($$,$3);
     }
     | mulExp
     {
@@ -518,19 +503,19 @@ sumExp : sumExp sumop mulExp
 
 sumop : ADD
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     | SUB
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     ;
 
 mulExp : mulExp mulop unaryExp
     {
-        $$ = newExpNode(OpK);
-        $$->child[0] = $1;
-        $$->child[1] = $3;
+        $$ = $2;
+        addChild($$, $1);
+        addChild($$, $3);
     }
     | unaryExp
     {
@@ -540,22 +525,22 @@ mulExp : mulExp mulop unaryExp
 
 mulop : MUL
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     | DIV
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     | MOD
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     ;
 
 unaryExp : unaryop unaryExp
     {
-        $$ = newExpNode(OpK);
-        $$->child[1] = $2;
+        $$ = $1;
+        addChild($$, $2);
     }
     | factor
     {
@@ -564,17 +549,17 @@ unaryExp : unaryop unaryExp
 
 unaryop : SUB
     {
-        $1->tokenclass = CHSIGN;
-        $$ = $1;
+        $1->tokenclass=CHSIGN;
+        $$ = newExpNode(OpK, $1);
     }
     | MUL
     {
-        $1->tokenclass = SIZEOF;
-        $$ = $1;
+        $1->tokenclass=SIZEOF;
+        $$ = newExpNode(OpK, $1);
     }
     | RAND
     {
-        $$ = $1;
+        $$ = newExpNode(OpK, $1);
     }
     ;
 
@@ -590,13 +575,14 @@ factor : immutable
 
 mutable : ID
     {
-        $$ = newExpNode(IdK);
-        $$->attr.name = $1->svalue;
+        $$ = newExpNode(IdK, $1);
+        $$->attr.tmp = $1->idIndex;
     }
-    | mutable LB exp RB
+    |  ID LB exp RB
     {
-        $$ = newExpNode(IdK);
-        $$->child[0] = $3;
+        $$ = newExpNode(IdK, $1, $3);
+        $3->isArray = true;
+        $$->attr.tmp = $1->idIndex;
     }
     ;
 
@@ -606,19 +592,25 @@ immutable : LP exp RP
     }
     | call
     {
-        $$ = newExpNode(CallK);
+        $$ = $1;
     }
     | constant
     {
-        $$ = newExpNode(ConstantK);
+        $$ = $1;
     }
     ;
 
 call : ID LP args RP
     {
-        $$ = newExpNode(CallK);
-        $$->attr.name = $1->svalue;
-        $$->child[1] = $3;
+        if ($3 != NULL)
+        {
+            $$ = newExpNode(CallK, $1, $3);
+        }
+        else
+        {
+            $$ = newExpNode(CallK, $1);
+        }
+        $$->attr.tmp = $1->idIndex;
     }
     ;
 
@@ -635,6 +627,7 @@ args : argList
 argList : argList COMMA exp
     {
         $$ = addSibling($1, $3);
+        //$$->attr.op = $2->opp;
     }
     | exp
     {
@@ -644,19 +637,23 @@ argList : argList COMMA exp
 
 constant :  NUMCONST
     {
-        $$ = $1;
+        $$ = newExpNode(ConstantK, $1);
+        $$->expType = Integer;
     }
     | CHARCONST
     {
-        $$ = $1;
+        $$ = newExpNode(ConstantK, $1);
+        $$->expType = Char;
     }
     |STRINGCONST
     {
-        $$ = $1;
+        $$ = newExpNode(ConstantK, $1);
+        $$->expType = String;
     }
     |BOOLCONST
     {
-        $$ = $1;
+        $$ = newExpNode(ConstantK, $1);
+        $$->expType = Boolean;
     }
     ;
 

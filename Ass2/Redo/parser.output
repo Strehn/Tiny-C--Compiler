@@ -155,7 +155,7 @@ Grammar
    99       | mutable
 
   100 mutable: ID
-  101        | mutable LB exp RB
+  101        | ID LB exp RB
 
   102 immutable: LP exp RP
   103          | call
@@ -183,7 +183,7 @@ BOOLCONST (258) 113
 NUMCONST (259) 14 110
 CHARCONST (260) 111
 STRINGCONST (261) 112
-ID (262) 13 14 18 19 27 28 50 52 100 105
+ID (262) 13 14 18 19 27 28 50 52 100 101 105
 THEN (263) 46 47 48
 IF (264) 46 47 48
 WHILE (265) 49 51
@@ -332,7 +332,7 @@ unaryop (103)
 factor (104)
     on left: 98 99, on right: 94
 mutable (105)
-    on left: 100 101, on right: 58 59 60 61 62 63 64 99 101
+    on left: 100 101, on right: 58 59 60 61 62 63 64 99
 immutable (106)
     on left: 102 103 104, on right: 98
 call (107)
@@ -772,9 +772,11 @@ state 39
 state 40
 
   100 mutable: ID .
+  101        | ID . LB exp RB
   105 call: ID . LP args RP
 
     LP  shift, and go to state 86
+    LB  shift, and go to state 87
 
     $default  reduce using rule 100 (mutable)
 
@@ -815,7 +817,7 @@ state 44
     NOT          shift, and go to state 44
     LP           shift, and go to state 45
 
-    unaryRelExp  go to state 87
+    unaryRelExp  go to state 88
     relExp       go to state 49
     minmaxExp    go to state 50
     sumExp       go to state 51
@@ -844,7 +846,7 @@ state 45
     NOT          shift, and go to state 44
     LP           shift, and go to state 45
 
-    exp          go to state 88
+    exp          go to state 89
     simpleExp    go to state 81
     andExp       go to state 47
     unaryRelExp  go to state 48
@@ -866,7 +868,7 @@ state 46
    12 varDeclInit: varDeclId COLON simpleExp .
    66 simpleExp: simpleExp . OR andExp
 
-    OR  shift, and go to state 89
+    OR  shift, and go to state 90
 
     $default  reduce using rule 12 (varDeclInit)
 
@@ -876,7 +878,7 @@ state 47
    67 simpleExp: andExp .
    68 andExp: andExp . AND unaryRelExp
 
-    AND  shift, and go to state 90
+    AND  shift, and go to state 91
 
     $default  reduce using rule 67 (simpleExp)
 
@@ -901,19 +903,19 @@ state 50
    73       | minmaxExp .
    80 minmaxExp: minmaxExp . minmaxop sumExp
 
-    EQ   shift, and go to state 91
-    LEQ  shift, and go to state 92
-    GEQ  shift, and go to state 93
-    NEQ  shift, and go to state 94
-    LT   shift, and go to state 95
-    GT   shift, and go to state 96
-    MAX  shift, and go to state 97
-    MIN  shift, and go to state 98
+    EQ   shift, and go to state 92
+    LEQ  shift, and go to state 93
+    GEQ  shift, and go to state 94
+    NEQ  shift, and go to state 95
+    LT   shift, and go to state 96
+    GT   shift, and go to state 97
+    MAX  shift, and go to state 98
+    MIN  shift, and go to state 99
 
     $default  reduce using rule 73 (relExp)
 
-    relop     go to state 99
-    minmaxop  go to state 100
+    relop     go to state 100
+    minmaxop  go to state 101
 
 
 state 51
@@ -921,12 +923,12 @@ state 51
    81 minmaxExp: sumExp .
    84 sumExp: sumExp . sumop mulExp
 
-    ADD  shift, and go to state 101
-    SUB  shift, and go to state 102
+    ADD  shift, and go to state 102
+    SUB  shift, and go to state 103
 
     $default  reduce using rule 81 (minmaxExp)
 
-    sumop  go to state 103
+    sumop  go to state 104
 
 
 state 52
@@ -934,13 +936,13 @@ state 52
    85 sumExp: mulExp .
    88 mulExp: mulExp . mulop unaryExp
 
-    DIV  shift, and go to state 104
-    MOD  shift, and go to state 105
-    MUL  shift, and go to state 106
+    DIV  shift, and go to state 105
+    MOD  shift, and go to state 106
+    MUL  shift, and go to state 107
 
     $default  reduce using rule 85 (sumExp)
 
-    mulop  go to state 107
+    mulop  go to state 108
 
 
 state 53
@@ -964,7 +966,7 @@ state 54
     MUL          shift, and go to state 43
     LP           shift, and go to state 45
 
-    unaryExp   go to state 108
+    unaryExp   go to state 109
     unaryop    go to state 54
     factor     go to state 55
     mutable    go to state 56
@@ -983,9 +985,6 @@ state 55
 state 56
 
    99 factor: mutable .
-  101 mutable: mutable . LB exp RB
-
-    LB  shift, and go to state 109
 
     $default  reduce using rule 99 (factor)
 
@@ -1246,7 +1245,7 @@ state 81
    65 exp: simpleExp .
    66 simpleExp: simpleExp . OR andExp
 
-    OR  shift, and go to state 89
+    OR  shift, and go to state 90
 
     $default  reduce using rule 65 (exp)
 
@@ -1261,7 +1260,6 @@ state 82
    63    | mutable . INC
    64    | mutable . DEC
    99 factor: mutable .
-  101 mutable: mutable . LB exp RB
 
     ADDASS  shift, and go to state 120
     SUBASS  shift, and go to state 121
@@ -1270,7 +1268,6 @@ state 82
     DEC     shift, and go to state 124
     INC     shift, and go to state 125
     ASS     shift, and go to state 126
-    LB      shift, and go to state 109
 
     $default  reduce using rule 99 (factor)
 
@@ -1377,19 +1374,51 @@ state 86
 
 state 87
 
+  101 mutable: ID LB . exp RB
+
+    BOOLCONST    shift, and go to state 36
+    NUMCONST     shift, and go to state 37
+    CHARCONST    shift, and go to state 38
+    STRINGCONST  shift, and go to state 39
+    ID           shift, and go to state 40
+    RAND         shift, and go to state 41
+    SUB          shift, and go to state 42
+    MUL          shift, and go to state 43
+    NOT          shift, and go to state 44
+    LP           shift, and go to state 45
+
+    exp          go to state 131
+    simpleExp    go to state 81
+    andExp       go to state 47
+    unaryRelExp  go to state 48
+    relExp       go to state 49
+    minmaxExp    go to state 50
+    sumExp       go to state 51
+    mulExp       go to state 52
+    unaryExp     go to state 53
+    unaryop      go to state 54
+    factor       go to state 55
+    mutable      go to state 82
+    immutable    go to state 57
+    call         go to state 58
+    constant     go to state 59
+
+
+state 88
+
    70 unaryRelExp: NOT unaryRelExp .
 
     $default  reduce using rule 70 (unaryRelExp)
 
 
-state 88
+state 89
 
   102 immutable: LP exp . RP
 
-    RP  shift, and go to state 131
+    RP  shift, and go to state 132
 
 
-state 89
+state 90
 
    66 simpleExp: simpleExp OR . andExp
 
@@ -1404,37 +1433,8 @@ state 89
     NOT          shift, and go to state 44
     LP           shift, and go to state 45
 
-    andExp       go to state 132
+    andExp       go to state 133
     unaryRelExp  go to state 48
-    relExp       go to state 49
-    minmaxExp    go to state 50
-    sumExp       go to state 51
-    mulExp       go to state 52
-    unaryExp     go to state 53
-    unaryop      go to state 54
-    factor       go to state 55
-    mutable      go to state 56
-    immutable    go to state 57
-    call         go to state 58
-    constant     go to state 59
-
-
-state 90
-
-   68 andExp: andExp AND . unaryRelExp
-
-    BOOLCONST    shift, and go to state 36
-    NUMCONST     shift, and go to state 37
-    CHARCONST    shift, and go to state 38
-    STRINGCONST  shift, and go to state 39
-    ID           shift, and go to state 40
-    RAND         shift, and go to state 41
-    SUB          shift, and go to state 42
-    MUL          shift, and go to state 43
-    NOT          shift, and go to state 44
-    LP           shift, and go to state 45
-
-    unaryRelExp  go to state 133
     relExp       go to state 49
     minmaxExp    go to state 50
     sumExp       go to state 51
@@ -1450,61 +1450,90 @@ state 90
 
 state 91
 
+   68 andExp: andExp AND . unaryRelExp
+
+    BOOLCONST    shift, and go to state 36
+    NUMCONST     shift, and go to state 37
+    CHARCONST    shift, and go to state 38
+    STRINGCONST  shift, and go to state 39
+    ID           shift, and go to state 40
+    RAND         shift, and go to state 41
+    SUB          shift, and go to state 42
+    MUL          shift, and go to state 43
+    NOT          shift, and go to state 44
+    LP           shift, and go to state 45
+
+    unaryRelExp  go to state 134
+    relExp       go to state 49
+    minmaxExp    go to state 50
+    sumExp       go to state 51
+    mulExp       go to state 52
+    unaryExp     go to state 53
+    unaryop      go to state 54
+    factor       go to state 55
+    mutable      go to state 56
+    immutable    go to state 57
+    call         go to state 58
+    constant     go to state 59
+
+
+state 92
+
    78 relop: EQ .
 
     $default  reduce using rule 78 (relop)
 
 
-state 92
+state 93
 
    74 relop: LEQ .
 
     $default  reduce using rule 74 (relop)
 
 
-state 93
+state 94
 
    77 relop: GEQ .
 
     $default  reduce using rule 77 (relop)
 
 
-state 94
+state 95
 
    79 relop: NEQ .
 
     $default  reduce using rule 79 (relop)
 
 
-state 95
+state 96
 
    75 relop: LT .
 
     $default  reduce using rule 75 (relop)
 
 
-state 96
+state 97
 
    76 relop: GT .
 
     $default  reduce using rule 76 (relop)
 
 
-state 97
+state 98
 
    83 minmaxop: MAX .
 
     $default  reduce using rule 83 (minmaxop)
 
 
-state 98
+state 99
 
    82 minmaxop: MIN .
 
     $default  reduce using rule 82 (minmaxop)
 
 
-state 99
+state 100
 
    72 relExp: minmaxExp relop . minmaxExp
 
@@ -1518,7 +1547,7 @@ state 99
     MUL          shift, and go to state 43
     LP           shift, and go to state 45
 
-    minmaxExp  go to state 134
+    minmaxExp  go to state 135
     sumExp     go to state 51
     mulExp     go to state 52
     unaryExp   go to state 53
@@ -1530,7 +1559,7 @@ state 99
     constant   go to state 59
 
 
-state 100
+state 101
 
    80 minmaxExp: minmaxExp minmaxop . sumExp
 
@@ -1544,7 +1573,7 @@ state 100
     MUL          shift, and go to state 43
     LP           shift, and go to state 45
 
-    sumExp     go to state 135
+    sumExp     go to state 136
     mulExp     go to state 52
     unaryExp   go to state 53
     unaryop    go to state 54
@@ -1555,21 +1584,21 @@ state 100
     constant   go to state 59
 
 
-state 101
+state 102
 
    86 sumop: ADD .
 
     $default  reduce using rule 86 (sumop)
 
 
-state 102
+state 103
 
    87 sumop: SUB .
 
     $default  reduce using rule 87 (sumop)
 
 
-state 103
+state 104
 
    84 sumExp: sumExp sumop . mulExp
 
@@ -1583,7 +1612,7 @@ state 103
     MUL          shift, and go to state 43
     LP           shift, and go to state 45
 
-    mulExp     go to state 136
+    mulExp     go to state 137
     unaryExp   go to state 53
     unaryop    go to state 54
     factor     go to state 55
@@ -1593,28 +1622,28 @@ state 103
     constant   go to state 59
 
 
-state 104
+state 105
 
    91 mulop: DIV .
 
     $default  reduce using rule 91 (mulop)
 
 
-state 105
+state 106
 
    92 mulop: MOD .
 
     $default  reduce using rule 92 (mulop)
 
 
-state 106
+state 107
 
    90 mulop: MUL .
 
     $default  reduce using rule 90 (mulop)
 
 
-state 107
+state 108
 
    88 mulExp: mulExp mulop . unaryExp
 
@@ -1628,7 +1657,7 @@ state 107
     MUL          shift, and go to state 43
     LP           shift, and go to state 45
 
-    unaryExp   go to state 137
+    unaryExp   go to state 138
     unaryop    go to state 54
     factor     go to state 55
     mutable    go to state 56
@@ -1637,43 +1666,11 @@ state 107
     constant   go to state 59
 
 
-state 108
+state 109
 
    93 unaryExp: unaryop unaryExp .
 
     $default  reduce using rule 93 (unaryExp)
-
-
-state 109
-
-  101 mutable: mutable LB . exp RB
-
-    BOOLCONST    shift, and go to state 36
-    NUMCONST     shift, and go to state 37
-    CHARCONST    shift, and go to state 38
-    STRINGCONST  shift, and go to state 39
-    ID           shift, and go to state 40
-    RAND         shift, and go to state 41
-    SUB          shift, and go to state 42
-    MUL          shift, and go to state 43
-    NOT          shift, and go to state 44
-    LP           shift, and go to state 45
-
-    exp          go to state 138
-    simpleExp    go to state 81
-    andExp       go to state 47
-    unaryRelExp  go to state 48
-    relExp       go to state 49
-    minmaxExp    go to state 50
-    sumExp       go to state 51
-    mulExp       go to state 52
-    unaryExp     go to state 53
-    unaryop      go to state 54
-    factor       go to state 55
-    mutable      go to state 82
-    immutable    go to state 57
-    call         go to state 58
-    constant     go to state 59
 
 
 state 110
@@ -1698,7 +1695,7 @@ state 112
    66 simpleExp: simpleExp . OR andExp
 
     THEN  shift, and go to state 139
-    OR    shift, and go to state 89
+    OR    shift, and go to state 90
 
 
 state 113
@@ -1708,7 +1705,7 @@ state 113
    66 simpleExp: simpleExp . OR andExp
 
     DO  shift, and go to state 140
-    OR  shift, and go to state 89
+    OR  shift, and go to state 90
 
 
 state 114
@@ -1971,80 +1968,80 @@ state 130
 
 state 131
 
+  101 mutable: ID LB exp . RB
+
+    RB  shift, and go to state 154
+
+
+state 132
+
   102 immutable: LP exp RP .
 
     $default  reduce using rule 102 (immutable)
 
 
-state 132
+state 133
 
    66 simpleExp: simpleExp OR andExp .
    68 andExp: andExp . AND unaryRelExp
 
-    AND  shift, and go to state 90
+    AND  shift, and go to state 91
 
     $default  reduce using rule 66 (simpleExp)
 
 
-state 133
+state 134
 
    68 andExp: andExp AND unaryRelExp .
 
     $default  reduce using rule 68 (andExp)
 
 
-state 134
+state 135
 
    72 relExp: minmaxExp relop minmaxExp .
    80 minmaxExp: minmaxExp . minmaxop sumExp
 
-    MAX  shift, and go to state 97
-    MIN  shift, and go to state 98
+    MAX  shift, and go to state 98
+    MIN  shift, and go to state 99
 
     $default  reduce using rule 72 (relExp)
 
-    minmaxop  go to state 100
-
-
-state 135
-
-   80 minmaxExp: minmaxExp minmaxop sumExp .
-   84 sumExp: sumExp . sumop mulExp
-
-    ADD  shift, and go to state 101
-    SUB  shift, and go to state 102
-
-    $default  reduce using rule 80 (minmaxExp)
-
-    sumop  go to state 103
+    minmaxop  go to state 101
 
 
 state 136
 
-   84 sumExp: sumExp sumop mulExp .
-   88 mulExp: mulExp . mulop unaryExp
+   80 minmaxExp: minmaxExp minmaxop sumExp .
+   84 sumExp: sumExp . sumop mulExp
 
-    DIV  shift, and go to state 104
-    MOD  shift, and go to state 105
-    MUL  shift, and go to state 106
+    ADD  shift, and go to state 102
+    SUB  shift, and go to state 103
 
-    $default  reduce using rule 84 (sumExp)
+    $default  reduce using rule 80 (minmaxExp)
 
-    mulop  go to state 107
+    sumop  go to state 104
 
 
 state 137
 
-   88 mulExp: mulExp mulop unaryExp .
+   84 sumExp: sumExp sumop mulExp .
+   88 mulExp: mulExp . mulop unaryExp
 
-    $default  reduce using rule 88 (mulExp)
+    DIV  shift, and go to state 105
+    MOD  shift, and go to state 106
+    MUL  shift, and go to state 107
+
+    $default  reduce using rule 84 (sumExp)
+
+    mulop  go to state 108
 
 
 state 138
 
-  101 mutable: mutable LB exp . RB
+   88 mulExp: mulExp mulop unaryExp .
 
-    RB  shift, and go to state 154
+    $default  reduce using rule 88 (mulExp)
 
 
 state 139
@@ -2346,7 +2343,7 @@ state 153
 
 state 154
 
-  101 mutable: mutable LB exp RB .
+  101 mutable: ID LB exp RB .
 
     $default  reduce using rule 101 (mutable)
 
@@ -2398,7 +2395,7 @@ state 160
    66 simpleExp: simpleExp . OR andExp
 
     TO  shift, and go to state 168
-    OR  shift, and go to state 89
+    OR  shift, and go to state 90
 
 
 state 161
@@ -2625,7 +2622,7 @@ state 175
    66 simpleExp: simpleExp . OR andExp
 
     BY  shift, and go to state 177
-    OR  shift, and go to state 89
+    OR  shift, and go to state 90
 
     $default  reduce using rule 53 (iterrange)
 
@@ -2673,6 +2670,6 @@ state 178
    54 iterrange: simpleExp TO simpleExp BY simpleExp .
    66 simpleExp: simpleExp . OR andExp
 
-    OR  shift, and go to state 89
+    OR  shift, and go to state 90
 
     $default  reduce using rule 54 (iterrange)

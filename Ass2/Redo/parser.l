@@ -139,6 +139,9 @@ static int newToken(int tokenClass, char *tokenString)
     
     switch(tokenClass)
     {
+        case ID:
+            yylval.tokenData->idIndex = strParser(tokenString);
+            break;
         case NUMCONST:
             yylval.tokenData->nvalue = atoi(tokenString);
             break;
@@ -154,7 +157,7 @@ static int newToken(int tokenClass, char *tokenString)
             {
                 return COMMENT;
             }
-            yylval.tokenData->cvalue = (char)charData;
+            yylval.tokenData->cvalue[0] = (char)charData;
             break;
     }
     return tokenClass;
