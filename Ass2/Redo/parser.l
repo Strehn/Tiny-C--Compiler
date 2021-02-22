@@ -152,7 +152,7 @@ static int newToken(int tokenClass, char *tokenString)
             {
                 return COMMENT;
             }
-            yylval.tokenData->cvalue[0] = (char)charData;
+            yylval.tokenData->cvalue = (char)charData;
             break;
         case STRINGCONST:
             yylval.tokenData->svalue = strParser(tokenString);
@@ -180,7 +180,7 @@ letdig [0-9a-zA-Z]
 "!="                                 { return newToken(NEQ, yytext); }
 "<="                                 { return newToken(LEQ, yytext); }
 ">="                                 { return newToken(GEQ, yytext); }
-"="                                  { return newToken(ASS, yytext); }
+"\="                                  { return newToken(ASS, yytext); }
 "+="                                 { return newToken(ADDASS, yytext); }
 "-="                                 { return newToken(SUBASS, yytext); }
 "*="                                 { return newToken(MULASS, yytext); }

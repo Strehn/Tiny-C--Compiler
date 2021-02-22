@@ -59,15 +59,17 @@ typedef struct treeNode
     } subkind;
     
     // extra properties about the node depending on type of the node
-    union                                  // relevant data to type -> attr
-    {
-        OpKind op;                         // type of token (same as in bison)
-    int value;                         // used when an integer constant or boolean
-    char *cvalue;               // used when a character
-    char *string;                      // used when a string constant
-    char *name;                        // used when IdK
-    char *tmp;
-    } attr;
+    // union is all one collective memory space, can only have one thing stored in here
+    //union                                  // relevant data to type -> attr
+    //{
+        int value;                         // used when an integer constant or boolean
+        char cvalue;               // used when a character
+        char *string;                      // used when a string constant
+        char *name;                        // used when IdK
+        char *tmp;
+   // } attr;
+    
+    int tokenclass;                         // type of token (same as in bison)
     ExpType expType;                   // used when ExpK for type checking
     int aSize;
     bool isArray;                          // is this an array

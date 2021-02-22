@@ -47,11 +47,12 @@ TreeNode *newDeclNode(DeclKind kind,
         temp->child[2] = c2;
         
         // ----- Get Data From Token -----
-        temp->attr.string = token->svalue;
-        temp->attr.name = token->idIndex;
-        temp->attr.value = token->nvalue;
-        temp->attr.cvalue = token->cvalue;
-        temp->attr.tmp = token->tokenstr;
+        temp->string = token->svalue;
+        temp->name = token->idIndex;
+        temp->value = token->nvalue;
+        temp->cvalue = token->cvalue;
+        temp->tmp = token->tokenstr;
+        temp->tokenclass = token->tokenclass;
     }
     return temp;
 }
@@ -83,12 +84,12 @@ TreeNode *newStmtNode(StmtKind kind,
         temp->child[2] = c2;
         
         // ----- Get Data From Token -----
-        
-        temp->attr.string = token->svalue;
-        temp->attr.name = token->idIndex;
-        temp->attr.value = token->nvalue;
-        temp->attr.cvalue = token->cvalue;
-        temp->attr.tmp = token->tokenstr;
+        temp->string = token->svalue;
+        temp->name = token->idIndex;
+        temp->value = token->nvalue;
+        temp->cvalue = token->cvalue;
+        temp->tmp = token->tokenstr;
+        temp->tokenclass = token->tokenclass;
     }
     
     return temp;
@@ -118,12 +119,12 @@ TreeNode *newExpNode(ExpKind kind,
         temp->child[1] = c1;
         
         // ----- Get Data From Token -----
-        
-        temp->attr.string = token->svalue;
-        temp->attr.name = token->idIndex;
-        temp->attr.value = token->nvalue;
-        temp->attr.cvalue = token->cvalue;
-        temp->attr.tmp = token->tokenstr;
+        temp->string = token->svalue;
+        temp->name = token->idIndex;
+        temp->value = token->nvalue;
+        temp->cvalue = token->cvalue;
+        temp->tmp = token->tokenstr;
+        temp->tokenclass = token->tokenclass;
     }
     
     return temp;
@@ -225,59 +226,88 @@ void getType(TreeNode *tree)
 
 void printOp(TreeNode *tree)
 {
-    if(strcmp("=",tree->attr.string)==0)
+    switch(tree->tokenclass)
     {
-        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
-        
-    }
-    else if(strcmp("++",tree->attr.string)==0)
-    {
-        printf("Assign: %s [line: %d]\n", tree->attr.name, tree->lineno);
-        
-    }
-    else if(strcmp("==",tree->attr.string)==0)
-    {
-        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
-        
-    }
-    else if(strcmp("--",tree->attr.string)==0)
-    {
-        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
-        
-    }
-    else if(strcmp("+=",tree->attr.string)==0)
-    {
-        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
-        
-    }
-    else if(strcmp("-=",tree->attr.string)==0)
-    {
-        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
-        
-    }
-    else if(strcmp("*=",tree->attr.string)==0)
-    {
-        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
-        
-    }
-    else if(strcmp("-=",tree->attr.string)==0)
-    {
-        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
-        
-    }
-    else if(strcmp("/=",tree->attr.string)==0)
-    {
-        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
-        
-    }
-    else if(strcmp("-",tree->attr.string)==0 && tree->child[0] == NULL)
-    {
-        printf("Op: chsign [line: %d]\n", tree->lineno);
-        
-    }
-    else
-    {
-        printf("Op: %s [line: %d]\n", tree->attr.string , tree->lineno);
+        case EQ:
+            printf("Assign: == ");
+            break;
+        case NEQ:
+            printf("Assign: != ");
+            break;
+        case LEQ:
+            printf("Assign: <= ");
+            break;
+        case GEQ:
+            printf("Assign: >= ");
+            break;
+        case ASS:
+            printf("Assign: = ");
+            break;
+        case ADDASS:
+            printf("Assign: += ");
+            break;
+        case SUBASS:
+            printf("Assign: -= ");
+            break;
+        case MULASS:
+            printf("Assign: *= ");
+            break;
+        case DIVASS:
+            printf("Assign: /= ");
+            break;
+        case MAX:
+            printf("Assign: :>: ");
+            break;
+        case MIN:
+            printf("Assign: :<: ");
+            break;
+        case DEC:
+            printf("Assign: -- ");
+            break;
+        case INC:
+            printf("Assign: ++ ");
+            break;
+        case ADD:
+            printf("Assign: + ");
+            break;
+        case SUB:
+            printf("Assign: - ");
+            break;
+        case LT:
+            printf("Assign: > ");
+            break;
+        case GT:
+            printf("Assign: < ");
+            break;
+        case SIZEOF:
+            printf("Op: SIZEOF ");
+            break;
+        case CHSIGN:
+            printf("Op: CHSIGN ");
+            break;
+        case MUL:
+            printf("Assign: * ");
+            break;
+        case DIV:
+            printf("Assign: \/ ");
+            break;
+        case MOD:
+            printf("Assign: % ");
+            break;
+        case RAND:
+            printf("Assign: ? ");
+            break;
+        case AND:
+            printf("Assign: & ");
+            break;
+        case OR:
+            printf("Assign: | ");
+            break;
+        case NOT:
+            printf("Assign: ! ");
+            break;
+        default:
+            printf("Shouldn't be here");
     }
 }
 
@@ -355,42 +385,50 @@ void printTree(TreeNode *tree)
             {
                 case OpK:
                     printOp(tree);
+                    printf("[line: %d]\n", tree->lineno);
                     break;
                 case ConstantK:
                     printf("Const ");
                     switch(tree->expType)
                     {
                         case Integer:
-                            printf("of type int: %d \n", tree->attr.value);
+                            printf("of type int: %d ", tree->value);
+                            printf("[line: %d]\n", tree->lineno);
                             break;
                         case Boolean:
-                            printf("of type bool %d \n", tree->attr.value);
+                            printf("of type bool %d ", tree->value);
+                            printf("[line: %d]\n", tree->lineno);
                             break;
                         case Char:
-                            printf("of type char: '%c' \n", tree->attr.cvalue[0]);
+                            printf("of type char: '%c' ", tree->cvalue);
+                            printf("[line: %d]\n", tree->lineno);
                             break;
                         case String:
-                            printf("is array of type char: \"%s\" \n", tree->attr.string);
+                            printf("is array of type char: \"%s\" ", tree->string);
+                            printf("[line: %d]\n", tree->lineno);
                             break;
                         default:
-                            printf("of usassigned type \n");
+                            printf("of usassigned type ");
+                            printf("[line: %d]\n", tree->lineno);
                     }
                     break;
                 case IdK:
-                    printf("Id: %s [line: %d]\n", tree->attr.name, tree->lineno);
+                    printf("Id: %s [line: %d]\n", tree->name, tree->lineno);
                     break;
                 case AssignK:
-                    printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+                    printf("Assign: %s [line: %d]\n", tree->string, tree->lineno);
                     break;
                 case InitK:
-                    printf("Op: %s [line: %d]\n", tree->attr.string, tree->lineno);
+                    printf("Op: %s [line: %d]\n", tree->string, tree->lineno);
                     break;
                 case CallK:
-                    printf("Call: %s [line: %d]\n", tree->attr.tmp, tree->lineno);
+                    printf("Call: %s [line: %d]\n", tree->name, tree->lineno);
                     break;
                 default:
                     printf("Unknown ExpNode kind\n");
                     break;
+                    
+                    printf("[line: %d]\n", tree->lineno);
             }
         }
         else if (tree->nodekind==DeclK)
@@ -402,30 +440,30 @@ void printTree(TreeNode *tree)
                 case VarK:
                     if(tree->isArray == true)
                     {
-                        printf("Var: %s is array of type ", tree->attr.tmp);
+                        printf("Var: %s is array of type ", tree->tmp);
                     }
                     else
                     {
-                        printf("Var: %s of type ", tree->attr.tmp);
+                        printf("Var: %s of type ", tree->tmp);
                     }
                     getType(tree);
                     printf("[line: %d]\n", tree->lineno);
                     break;
                 case FuncK:
-                    printf("Func: %s returns type ", tree->attr.string);
+                    printf("Func: %s returns type ", tree->string);
                     getType(tree);
                     printf("[line: %d]\n", tree->lineno);
                     break;
                 case ParamK:
                     if(tree->isArray)
                     {
-                        printf("Param %s is array of type ", tree->attr.string);
+                        printf("Parm: %s is array of type ", tree->string);
                         getType(tree);
                         printf("[line: %d]\n", tree->lineno);
                     }
                     else
                     {
-                            printf("Param %s of type ", tree->attr.string);
+                            printf("Parm: %s of type ", tree->string);
                             getType(tree);
                             printf("[line: %d]\n", tree->lineno);
                     }

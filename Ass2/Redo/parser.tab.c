@@ -606,13 +606,13 @@ static const yytype_uint16 yyrline[] =
      163,   170,   175,   180,   184,   190,   197,   201,   207,   212,
      221,   225,   231,   235,   239,   243,   247,   251,   257,   261,
      267,   271,   277,   283,   288,   293,   298,   303,   310,   315,
-     321,   325,   332,   336,   342,   347,   354,   358,   364,   372,
-     376,   380,   384,   388,   392,   396,   400,   406,   410,   416,
-     420,   426,   430,   436,   442,   448,   452,   456,   460,   464,
-     468,   474,   480,   486,   490,   496,   502,   507,   511,   517,
-     523,   529,   533,   537,   543,   548,   553,   558,   563,   569,
-     573,   579,   584,   591,   595,   599,   605,   612,   617,   622,
-     627,   633,   639,   645,   651
+     321,   325,   332,   336,   343,   348,   355,   359,   365,   373,
+     377,   381,   385,   389,   393,   397,   401,   407,   411,   417,
+     421,   427,   431,   437,   443,   449,   453,   457,   461,   465,
+     469,   475,   481,   487,   491,   497,   503,   508,   512,   518,
+     524,   530,   534,   538,   544,   549,   554,   559,   564,   570,
+     574,   580,   585,   592,   596,   600,   606,   613,   618,   623,
+     628,   634,   640,   646,   652
 };
 #endif
 
@@ -1764,7 +1764,7 @@ yyreduce:
 #line 128 "parser.y"
     {
         (yyval.tree) = newDeclNode(VarK, UndefinedType, (yyvsp[(1) - (1)].tokenData));
-        (yyval.tree)->attr.tmp = (yyvsp[(1) - (1)].tokenData)->idIndex;
+        (yyval.tree)->tmp = (yyvsp[(1) - (1)].tokenData)->idIndex;
     ;}
     break;
 
@@ -1774,7 +1774,7 @@ yyreduce:
         (yyval.tree) = newDeclNode(VarK, UndefinedType, (yyvsp[(1) - (4)].tokenData));
         (yyval.tree)->isArray = true;
         (yyval.tree)->aSize = (yyvsp[(3) - (4)].tokenData)->nvalue;
-        (yyval.tree)->attr.tmp = (yyvsp[(1) - (4)].tokenData)->idIndex;
+        (yyval.tree)->tmp = (yyvsp[(1) - (4)].tokenData)->idIndex;
     ;}
     break;
 
@@ -1803,7 +1803,7 @@ yyreduce:
 #line 158 "parser.y"
     {
         (yyval.tree) = newDeclNode(FuncK, (yyvsp[(1) - (6)].type), (yyvsp[(2) - (6)].tokenData), (yyvsp[(4) - (6)].tree), (yyvsp[(6) - (6)].tree));
-        (yyval.tree)->attr.tmp = (yyvsp[(2) - (6)].tokenData)->idIndex;
+        (yyval.tree)->tmp = (yyvsp[(2) - (6)].tokenData)->idIndex;
         setType((yyval.tree), (yyvsp[(1) - (6)].type), true);
     ;}
     break;
@@ -1812,7 +1812,7 @@ yyreduce:
 #line 164 "parser.y"
     {
         (yyval.tree) = newDeclNode(FuncK, Void, (yyvsp[(1) - (5)].tokenData), (yyvsp[(3) - (5)].tree), (yyvsp[(5) - (5)].tree));
-        (yyval.tree)->attr.tmp = (yyvsp[(1) - (5)].tokenData)->idIndex;
+        (yyval.tree)->tmp = (yyvsp[(1) - (5)].tokenData)->idIndex;
     ;}
     break;
 
@@ -1870,7 +1870,7 @@ yyreduce:
 #line 208 "parser.y"
     {
         (yyval.tree) = newDeclNode(ParamK, Void, (yyvsp[(1) - (1)].tokenData));
-        (yyval.tree)->attr.tmp = (yyvsp[(1) - (1)].tokenData)->idIndex;
+        (yyval.tree)->tmp = (yyvsp[(1) - (1)].tokenData)->idIndex;
     ;}
     break;
 
@@ -1878,7 +1878,7 @@ yyreduce:
 #line 213 "parser.y"
     {
         (yyval.tree) = newDeclNode(ParamK, Void, (yyvsp[(1) - (3)].tokenData));
-        (yyval.tree)->isArray = true; (yyval.tree)->attr.tmp = (yyvsp[(1) - (3)].tokenData)->idIndex;
+        (yyval.tree)->isArray = true; (yyval.tree)->tmp = (yyvsp[(1) - (3)].tokenData)->idIndex;
     ;}
     break;
 
@@ -2034,8 +2034,8 @@ yyreduce:
   case 51:
 #line 326 "parser.y"
     {
-        (yyval.tree) = newStmtNode(ForK, (yyvsp[(2) - (6)].tokenData), (yyvsp[(4) - (6)].tree), (yyvsp[(6) - (6)].tree));
-        (yyval.tree)->attr.tmp = (yyvsp[(2) - (6)].tokenData)->idIndex;
+        (yyval.tree) = newStmtNode(ForK, (yyvsp[(1) - (6)].tokenData), newDeclNode(VarK, Integer, (yyvsp[(2) - (6)].tokenData)), (yyvsp[(4) - (6)].tree), (yyvsp[(6) - (6)].tree));
+        (yyval.tree)->tmp = (yyvsp[(2) - (6)].tokenData)->idIndex;
     ;}
     break;
 
@@ -2049,146 +2049,147 @@ yyreduce:
   case 53:
 #line 337 "parser.y"
     {
-        (yyval.tree) = newStmtNode(ForK, (yyvsp[(2) - (6)].tokenData), (yyvsp[(4) - (6)].tree), (yyvsp[(6) - (6)].tree));
+        (yyval.tree) = newStmtNode(ForK, (yyvsp[(1) - (6)].tokenData), newDeclNode(VarK, Integer, (yyvsp[(2) - (6)].tokenData)), (yyvsp[(4) - (6)].tree), (yyvsp[(6) - (6)].tree));
+        (yyval.tree)->tmp = (yyvsp[(2) - (6)].tokenData)->idIndex;
     ;}
     break;
 
   case 54:
-#line 343 "parser.y"
+#line 344 "parser.y"
     {
         (yyval.tree) = newStmtNode(RangeK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
     ;}
     break;
 
   case 55:
-#line 348 "parser.y"
+#line 349 "parser.y"
     {
         (yyval.tree) = newStmtNode(RangeK, (yyvsp[(2) - (5)].tokenData), (yyvsp[(1) - (5)].tree), (yyvsp[(3) - (5)].tree), (yyvsp[(5) - (5)].tree));
-        (yyval.tree)->attr.tmp = (yyvsp[(2) - (5)].tokenData)->idIndex;
+        (yyval.tree)->tmp = (yyvsp[(2) - (5)].tokenData)->idIndex;
     ;}
     break;
 
   case 56:
-#line 355 "parser.y"
+#line 356 "parser.y"
     {
         (yyval.tree) = newStmtNode(ReturnK, (yyvsp[(1) - (2)].tokenData));
     ;}
     break;
 
   case 57:
-#line 359 "parser.y"
+#line 360 "parser.y"
     {
         (yyval.tree) = newStmtNode(ReturnK, (yyvsp[(1) - (3)].tokenData), (yyvsp[(2) - (3)].tree));
     ;}
     break;
 
   case 58:
-#line 365 "parser.y"
+#line 366 "parser.y"
     {
         (yyval.tree) = newStmtNode(BreakK, (yyvsp[(1) - (2)].tokenData));
     ;}
     break;
 
   case 59:
-#line 373 "parser.y"
+#line 374 "parser.y"
     {
         (yyval.tree) = newExpNode(AssignK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
     ;}
     break;
 
   case 60:
-#line 377 "parser.y"
+#line 378 "parser.y"
     {
         (yyval.tree) = newExpNode(AssignK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
     ;}
     break;
 
   case 61:
-#line 381 "parser.y"
+#line 382 "parser.y"
     {
         (yyval.tree) = newExpNode(AssignK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
     ;}
     break;
 
   case 62:
-#line 385 "parser.y"
+#line 386 "parser.y"
     {
         (yyval.tree) = newExpNode(AssignK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
     ;}
     break;
 
   case 63:
-#line 389 "parser.y"
+#line 390 "parser.y"
     {
         (yyval.tree) = newExpNode(AssignK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
     ;}
     break;
 
   case 64:
-#line 393 "parser.y"
+#line 394 "parser.y"
     {
         (yyval.tree) = newExpNode(AssignK, (yyvsp[(2) - (2)].tokenData), (yyvsp[(1) - (2)].tree));
     ;}
     break;
 
   case 65:
-#line 397 "parser.y"
+#line 398 "parser.y"
     {
         (yyval.tree) = newExpNode(AssignK, (yyvsp[(2) - (2)].tokenData), (yyvsp[(1) - (2)].tree));
     ;}
     break;
 
   case 66:
-#line 401 "parser.y"
+#line 402 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 67:
-#line 407 "parser.y"
+#line 408 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
     ;}
     break;
 
   case 68:
-#line 411 "parser.y"
+#line 412 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 69:
-#line 417 "parser.y"
+#line 418 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
     ;}
     break;
 
   case 70:
-#line 421 "parser.y"
+#line 422 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 71:
-#line 427 "parser.y"
+#line 428 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (2)].tokenData), (yyvsp[(2) - (2)].tree));
     ;}
     break;
 
   case 72:
-#line 431 "parser.y"
+#line 432 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 73:
-#line 437 "parser.y"
+#line 438 "parser.y"
     {
         (yyval.tree) = (yyvsp[(2) - (3)].tree);
         addChild((yyval.tree), (yyvsp[(1) - (3)].tree));
@@ -2197,56 +2198,56 @@ yyreduce:
     break;
 
   case 74:
-#line 443 "parser.y"
+#line 444 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 75:
-#line 449 "parser.y"
+#line 450 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 76:
-#line 453 "parser.y"
+#line 454 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 77:
-#line 457 "parser.y"
+#line 458 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 78:
-#line 461 "parser.y"
+#line 462 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 79:
-#line 465 "parser.y"
+#line 466 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 80:
-#line 469 "parser.y"
+#line 470 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 81:
-#line 475 "parser.y"
+#line 476 "parser.y"
     {
         (yyval.tree) = (yyvsp[(2) - (3)].tree);
         addChild((yyval.tree),(yyvsp[(1) - (3)].tree));
@@ -2255,28 +2256,28 @@ yyreduce:
     break;
 
   case 82:
-#line 481 "parser.y"
+#line 482 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 83:
-#line 487 "parser.y"
+#line 488 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 84:
-#line 491 "parser.y"
+#line 492 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 85:
-#line 497 "parser.y"
+#line 498 "parser.y"
     {
         (yyval.tree) = (yyvsp[(2) - (3)].tree);
         addChild((yyval.tree),(yyvsp[(1) - (3)].tree));
@@ -2285,28 +2286,28 @@ yyreduce:
     break;
 
   case 86:
-#line 503 "parser.y"
+#line 504 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 87:
-#line 508 "parser.y"
+#line 509 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 88:
-#line 512 "parser.y"
+#line 513 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 89:
-#line 518 "parser.y"
+#line 519 "parser.y"
     {
         (yyval.tree) = (yyvsp[(2) - (3)].tree);
         addChild((yyval.tree), (yyvsp[(1) - (3)].tree));
@@ -2315,35 +2316,35 @@ yyreduce:
     break;
 
   case 90:
-#line 524 "parser.y"
+#line 525 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 91:
-#line 530 "parser.y"
+#line 531 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 92:
-#line 534 "parser.y"
+#line 535 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 93:
-#line 538 "parser.y"
+#line 539 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 94:
-#line 544 "parser.y"
+#line 545 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (2)].tree);
         addChild((yyval.tree), (yyvsp[(2) - (2)].tree));
@@ -2351,14 +2352,14 @@ yyreduce:
     break;
 
   case 95:
-#line 549 "parser.y"
+#line 550 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 96:
-#line 554 "parser.y"
+#line 555 "parser.y"
     {
         (yyvsp[(1) - (1)].tokenData)->tokenclass=CHSIGN;
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
@@ -2366,7 +2367,7 @@ yyreduce:
     break;
 
   case 97:
-#line 559 "parser.y"
+#line 560 "parser.y"
     {
         (yyvsp[(1) - (1)].tokenData)->tokenclass=SIZEOF;
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
@@ -2374,139 +2375,139 @@ yyreduce:
     break;
 
   case 98:
-#line 564 "parser.y"
+#line 565 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(1) - (1)].tokenData));
     ;}
     break;
 
   case 99:
-#line 570 "parser.y"
+#line 571 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 100:
-#line 574 "parser.y"
+#line 575 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 101:
-#line 580 "parser.y"
+#line 581 "parser.y"
     {
         (yyval.tree) = newExpNode(IdK, (yyvsp[(1) - (1)].tokenData));
-        (yyval.tree)->attr.name = (yyvsp[(1) - (1)].tokenData)->idIndex;
+        (yyval.tree)->name = (yyvsp[(1) - (1)].tokenData)->idIndex;
     ;}
     break;
 
   case 102:
-#line 585 "parser.y"
+#line 586 "parser.y"
     {
         (yyval.tree) = newExpNode(OpK, (yyvsp[(2) - (4)].tokenData), newExpNode(IdK, (yyvsp[(1) - (4)].tokenData)), (yyvsp[(3) - (4)].tree));
-        (yyval.tree)->child[0]->attr.name = (yyvsp[(1) - (4)].tokenData)->idIndex;
+        (yyval.tree)->child[0]->name = (yyvsp[(1) - (4)].tokenData)->idIndex;
     ;}
     break;
 
   case 103:
-#line 592 "parser.y"
+#line 593 "parser.y"
     {
         (yyval.tree) = (yyvsp[(2) - (3)].tree);
     ;}
     break;
 
   case 104:
-#line 596 "parser.y"
+#line 597 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 105:
-#line 600 "parser.y"
+#line 601 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 106:
-#line 606 "parser.y"
+#line 607 "parser.y"
     {
         (yyval.tree) = newExpNode(CallK, (yyvsp[(1) - (4)].tokenData), (yyvsp[(3) - (4)].tree));
-        (yyval.tree)->attr.tmp = (yyvsp[(1) - (4)].tokenData)->idIndex;
+        (yyval.tree)->name = (yyvsp[(1) - (4)].tokenData)->idIndex;
     ;}
     break;
 
   case 107:
-#line 613 "parser.y"
+#line 614 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 108:
-#line 617 "parser.y"
+#line 618 "parser.y"
     {
         (yyval.tree) = NULL;
     ;}
     break;
 
   case 109:
-#line 623 "parser.y"
+#line 624 "parser.y"
     {
         (yyval.tree) = addSibling((yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
-        (yyval.tree)->attr.op = (yyvsp[(2) - (3)].tokenData)->opp;
+        (yyval.tree)->name = (yyvsp[(2) - (3)].tokenData)->svalue;
     ;}
     break;
 
   case 110:
-#line 628 "parser.y"
+#line 629 "parser.y"
     {
         (yyval.tree) = (yyvsp[(1) - (1)].tree);
     ;}
     break;
 
   case 111:
-#line 634 "parser.y"
+#line 635 "parser.y"
     {
         (yyval.tree) = newExpNode(ConstantK, (yyvsp[(1) - (1)].tokenData));
         (yyval.tree)->expType = Integer;
-        (yyval.tree)->attr.value = (yyvsp[(1) - (1)].tokenData)->nvalue;
+        (yyval.tree)->value = (yyvsp[(1) - (1)].tokenData)->nvalue;
     ;}
     break;
 
   case 112:
-#line 640 "parser.y"
+#line 641 "parser.y"
     {
         (yyval.tree) = newExpNode(ConstantK, (yyvsp[(1) - (1)].tokenData));
         (yyval.tree)->expType = Char;
-        (yyval.tree)->attr.cvalue = (yyvsp[(1) - (1)].tokenData)->cvalue;
+        (yyval.tree)->cvalue = (yyvsp[(1) - (1)].tokenData)->cvalue;
     ;}
     break;
 
   case 113:
-#line 646 "parser.y"
+#line 647 "parser.y"
     {
         (yyval.tree) = newExpNode(ConstantK, (yyvsp[(1) - (1)].tokenData));
         (yyval.tree)->expType = String;
-        (yyval.tree)->attr.string = (yyvsp[(1) - (1)].tokenData)->svalue;
+        (yyval.tree)->string = (yyvsp[(1) - (1)].tokenData)->svalue;
     ;}
     break;
 
   case 114:
-#line 652 "parser.y"
+#line 653 "parser.y"
     {
         (yyval.tree) = newExpNode(ConstantK, (yyvsp[(1) - (1)].tokenData));
         (yyval.tree)->expType = Boolean;
-        (yyval.tree)->attr.value = (yyvsp[(1) - (1)].tokenData)->nvalue;
+        (yyval.tree)->value = (yyvsp[(1) - (1)].tokenData)->nvalue;
     ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 2510 "parser.tab.c"
+#line 2511 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2726,7 +2727,7 @@ yyreturn:
 }
 
 
-#line 659 "parser.y"
+#line 660 "parser.y"
 
 
 //

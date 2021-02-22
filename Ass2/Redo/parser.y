@@ -127,14 +127,14 @@ varDeclInit : varDeclId
 varDeclId : ID
     {
         $$ = newDeclNode(VarK, UndefinedType, $1);
-        $$->attr.tmp = $1->idIndex;
+        $$->tmp = $1->idIndex;
     }
     | ID LB NUMCONST RB
     {
         $$ = newDeclNode(VarK, UndefinedType, $1);
         $$->isArray = true;
         $$->aSize = $3->nvalue;
-        $$->attr.tmp = $1->idIndex;
+        $$->tmp = $1->idIndex;
     }
     ;
 
@@ -157,13 +157,13 @@ typeSpec : INT
 funDecl : typeSpec ID LP parms RP stmt
     {
         $$ = newDeclNode(FuncK, $1, $2, $4, $6);
-        $$->attr.tmp = $2->idIndex;
+        $$->tmp = $2->idIndex;
         setType($$, $1, true);
     }
     | ID LP parms RP stmt
     {
         $$ = newDeclNode(FuncK, Void, $1, $3, $5);
-        $$->attr.tmp = $1->idIndex;
+        $$->tmp = $1->idIndex;
     }
     ;
 
@@ -207,12 +207,12 @@ parmIdList : parmIdList COMMA parmId
 parmId : ID
     {
         $$ = newDeclNode(ParamK, Void, $1);
-        $$->attr.tmp = $1->idIndex;
+        $$->tmp = $1->idIndex;
     }
     | ID LB RB
     {
         $$ = newDeclNode(ParamK, Void, $1);
-        $$->isArray = true; $$->attr.tmp = $1->idIndex;
+        $$->isArray = true; $$->tmp = $1->idIndex;
     }
     ;
 
@@ -324,8 +324,8 @@ matchediterStmt : WHILE simpleExp DO matched
     }
     | FOR ID ASS iterrange DO matched
     {
-        $$ = newStmtNode(ForK, $2, $4, $6);
-        $$->attr.tmp = $2->idIndex;
+        $$ = newStmtNode(ForK, $1, newDeclNode(VarK, Integer, $2), $4, $6);
+        $$->tmp = $2->idIndex;
     }
     ;
 
@@ -335,7 +335,8 @@ unmatchediterStmt : WHILE simpleExp DO unmatched
     }
     | FOR ID ASS iterrange DO unmatched
     {
-        $$ = newStmtNode(ForK, $2, $4, $6);
+        $$ = newStmtNode(ForK, $1, newDeclNode(VarK, Integer, $2), $4, $6);
+        $$->tmp = $2->idIndex;
     }
     ;
 
@@ -347,7 +348,7 @@ iterrange : simpleExp TO simpleExp
     | simpleExp TO simpleExp BY simpleExp
     {
         $$ = newStmtNode(RangeK, $2, $1, $3, $5);
-        $$->attr.tmp = $2->idIndex;
+        $$->tmp = $2->idIndex;
     }
     ;
 
@@ -579,12 +580,12 @@ factor : immutable
 mutable : ID
     {
         $$ = newExpNode(IdK, $1);
-        $$->attr.name = $1->idIndex;
+        $$->name = $1->idIndex;
     }
     |  ID LB exp RB
     {
         $$ = newExpNode(OpK, $2, newExpNode(IdK, $1), $3);
-        $$->child[0]->attr.name = $1->idIndex;
+        $$->child[0]->name = $1->idIndex;
     }
     ;
 
@@ -605,7 +606,7 @@ immutable : LP exp RP
 call : ID LP args RP
     {
         $$ = newExpNode(CallK, $1, $3);
-        $$->attr.tmp = $1->idIndex;
+        $$->name = $1->idIndex;
     }
     ;
 
@@ -622,7 +623,7 @@ args : argList
 argList : argList COMMA exp
     {
         $$ = addSibling($1, $3);
-        $$->attr.op = $2->opp;
+        $$->name = $2->svalue;
     }
     | exp
     {
@@ -634,25 +635,25 @@ constant :  NUMCONST
     {
         $$ = newExpNode(ConstantK, $1);
         $$->expType = Integer;
-        $$->attr.value = $1->nvalue;
+        $$->value = $1->nvalue;
     }
     | CHARCONST
     {
         $$ = newExpNode(ConstantK, $1);
         $$->expType = Char;
-        $$->attr.cvalue = $1->cvalue;
+        $$->cvalue = $1->cvalue;
     }
     |STRINGCONST
     {
         $$ = newExpNode(ConstantK, $1);
         $$->expType = String;
-        $$->attr.string = $1->svalue;
+        $$->string = $1->svalue;
     }
     |BOOLCONST
     {
         $$ = newExpNode(ConstantK, $1);
         $$->expType = Boolean;
-        $$->attr.value = $1->nvalue;
+        $$->value = $1->nvalue;
     }
     ;
 
