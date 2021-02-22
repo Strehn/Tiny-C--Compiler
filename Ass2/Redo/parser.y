@@ -579,13 +579,12 @@ factor : immutable
 mutable : ID
     {
         $$ = newExpNode(IdK, $1);
-        $$->attr.tmp = $1->idIndex;
+        $$->attr.name = $1->idIndex;
     }
     |  ID LB exp RB
     {
-        $$ = newExpNode(IdK, $1, $3);
-        $3->isArray = true;
-        $$->attr.tmp = $1->idIndex;
+        $$ = newExpNode(OpK, $2, newExpNode(IdK, $1), $3);
+        $$->child[0]->attr.name = $1->idIndex;
     }
     ;
 
@@ -605,14 +604,7 @@ immutable : LP exp RP
 
 call : ID LP args RP
     {
-        if ($3 != NULL)
-        {
-            $$ = newExpNode(CallK, $1, $3);
-        }
-        else
-        {
-            $$ = newExpNode(CallK, $1);
-        }
+        $$ = newExpNode(CallK, $1, $3);
         $$->attr.tmp = $1->idIndex;
     }
     ;
@@ -642,21 +634,25 @@ constant :  NUMCONST
     {
         $$ = newExpNode(ConstantK, $1);
         $$->expType = Integer;
+        $$->attr.value = $1->nvalue;
     }
     | CHARCONST
     {
         $$ = newExpNode(ConstantK, $1);
         $$->expType = Char;
+        $$->attr.cvalue = $1->cvalue;
     }
     |STRINGCONST
     {
         $$ = newExpNode(ConstantK, $1);
         $$->expType = String;
+        $$->attr.string = $1->svalue;
     }
     |BOOLCONST
     {
         $$ = newExpNode(ConstantK, $1);
         $$->expType = Boolean;
+        $$->attr.value = $1->nvalue;
     }
     ;
 
@@ -683,6 +679,10 @@ int main(int argc, char *argv[])
     extern char *optarg;
     int c, dset = 0,  pset = 0;
     
+    if(argc < 3)
+    {
+        return -1;
+    }
     
     while((c = ourGetopt(argc, argv, (char *)"dp?")) != EOF)
     {
@@ -720,7 +720,6 @@ int main(int argc, char *argv[])
         yyparse();
         fclose(yyin);
     }
-    
     else
     {
         syntaxTree = parse();

@@ -47,17 +47,13 @@ TreeNode *newDeclNode(DeclKind kind,
         temp->child[2] = c2;
         
         // ----- Get Data From Token -----
-        
         temp->attr.string = token->svalue;
         temp->attr.name = token->idIndex;
         temp->attr.value = token->nvalue;
         temp->attr.cvalue = token->cvalue;
         temp->attr.tmp = token->tokenstr;
-
     }
-    
     return temp;
-    
 }
 
 TreeNode *newStmtNode(StmtKind kind,
@@ -153,17 +149,14 @@ TreeNode *addSibling(TreeNode *t, TreeNode *s)
 
 void addChild(TreeNode *t, TreeNode *c)
 {
-    int i;
-    if (t!=NULL) {
-        TreeNode *tmp;
-
-        tmp = t;
-        while (tmp->child[i]!=NULL)
-        {
-            tmp = tmp->child[i+1];
-            i++;
-        }
-        tmp->child[i] = c;
+    if (t == NULL || c == NULL)
+    {
+            return;
+    }
+    else if (t->n_children >= 0 && t->n_children < 3)
+    {
+            t->child[t->n_children] = c;
+            t->n_children++;
     }
 }
 
@@ -239,7 +232,7 @@ void printOp(TreeNode *tree)
     }
     else if(strcmp("++",tree->attr.string)==0)
     {
-        printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
+        printf("Assign: %s [line: %d]\n", tree->attr.name, tree->lineno);
         
     }
     else if(strcmp("==",tree->attr.string)==0)
@@ -374,24 +367,26 @@ void printTree(TreeNode *tree)
                             printf("of type bool %d \n", tree->attr.value);
                             break;
                         case Char:
-                            printf("of type char: '%c' \n", tree->attr.cvalue);
+                            printf("of type char: '%c' \n", tree->attr.cvalue[0]);
                             break;
                         case String:
-                            printf("is array of type char: \"%s\" \n", tree->attr.tmp);
+                            printf("is array of type char: \"%s\" \n", tree->attr.string);
                             break;
+                        default:
+                            printf("of usassigned type \n");
                     }
                     break;
                 case IdK:
-                        printf("Id: %s [line: %d]\n", tree->attr.string, tree->lineno);
+                    printf("Id: %s [line: %d]\n", tree->attr.name, tree->lineno);
                     break;
                 case AssignK:
-                    printf("Assign: %s [line: %d]\n", tree->attr.name, tree->lineno);
+                    printf("Assign: %s [line: %d]\n", tree->attr.string, tree->lineno);
                     break;
                 case InitK:
-                    printf("Op: %s [line: %d]\n", tree->attr.name, tree->lineno);
+                    printf("Op: %s [line: %d]\n", tree->attr.string, tree->lineno);
                     break;
                 case CallK:
-                    printf("Call: %s [line: %d]\n", tree->attr.string, tree->lineno);
+                    printf("Call: %s [line: %d]\n", tree->attr.tmp, tree->lineno);
                     break;
                 default:
                     printf("Unknown ExpNode kind\n");
@@ -405,7 +400,14 @@ void printTree(TreeNode *tree)
             switch (tree->subkind.decl)
             {
                 case VarK:
-                    printf("Var: %s of type ", tree->attr.string);
+                    if(tree->isArray == true)
+                    {
+                        printf("Var: %s is array of type ", tree->attr.tmp);
+                    }
+                    else
+                    {
+                        printf("Var: %s of type ", tree->attr.tmp);
+                    }
                     getType(tree);
                     printf("[line: %d]\n", tree->lineno);
                     break;

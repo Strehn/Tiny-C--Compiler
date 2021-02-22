@@ -66,12 +66,13 @@ typedef struct treeNode
     char *cvalue;               // used when a character
     char *string;                      // used when a string constant
     char *name;                        // used when IdK
-    char*tmp;
+    char *tmp;
     } attr;
     ExpType expType;                   // used when ExpK for type checking
     int aSize;
     bool isArray;                          // is this an array
     bool isStatic;                         // is staticly allocated?
+    int n_children;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
@@ -82,7 +83,7 @@ TreeNode *newDeclNode(DeclKind kind,
                       TokenData *token=NULL,
                       TreeNode *c0=NULL,
                       TreeNode *c1=NULL,
-                      TreeNode *c2=NULL);  // save TokenData block!!
+                      TreeNode *c2=NULL);
 
 TreeNode *newStmtNode(StmtKind kind,
                       TokenData *token,
