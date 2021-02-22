@@ -207,12 +207,13 @@ parmIdList : parmIdList COMMA parmId
 parmId : ID
     {
         $$ = newDeclNode(ParamK, Void, $1);
-        $$->tmp = $1->idIndex;
+        $$->tmp = $1->svalue;
     }
     | ID LB RB
     {
         $$ = newDeclNode(ParamK, Void, $1);
-        $$->isArray = true; $$->tmp = $1->idIndex;
+        $$->isArray = true;
+        $$->tmp = $1->svalue;
     }
     ;
 

@@ -136,6 +136,7 @@ static int newToken(int tokenClass, char *tokenString)
     yylval.tokenData->tokenclass = tokenClass;
     yylval.tokenData->linenum = line;
     yylval.tokenData->tokenstr = strdup(tokenString);
+    yylval.tokenData->svalue = strdup(tokenString);
     int charData;
     
     switch(tokenClass)
@@ -159,6 +160,8 @@ static int newToken(int tokenClass, char *tokenString)
             break;
         case ID:
             yylval.tokenData->idIndex = strdup(tokenString);
+            yylval.tokenData->svalue = strdup(tokenString);
+
             break;
     }
     return tokenClass;

@@ -18,6 +18,7 @@ using namespace std;
 
 extern int line;
 
+//{VarK, FuncK, ParamK};
 TreeNode *newDeclNode(DeclKind kind,
                       ExpType type,
                       TokenData *token,
@@ -57,6 +58,7 @@ TreeNode *newDeclNode(DeclKind kind,
     return temp;
 }
 
+//{NullK, IfK, WhileK, ForK, CompoundK, ReturnK, BreakK, RangeK}
 TreeNode *newStmtNode(StmtKind kind,
                       TokenData *token,
                       TreeNode *c0,
@@ -185,11 +187,9 @@ static int indentno = -1;
 bool tisChild = false;
 
 int childcounter = 0;
-int siblingcounter = 0;
-int csavedstate;
-int ssavedstate;
+int csavedstate = 0;
 bool cisFirst = true;
-bool sisFirst = true;
+bool sisFirst = false;
 
 
 // used to keep track if the node being printed is a sibling
@@ -229,16 +229,16 @@ void printOp(TreeNode *tree)
     switch(tree->tokenclass)
     {
         case EQ:
-            printf("Assign: == ");
+            printf("Op: == ");
             break;
         case NEQ:
-            printf("Assign: != ");
+            printf("Op: != ");
             break;
         case LEQ:
-            printf("Assign: <= ");
+            printf("Op: <= ");
             break;
         case GEQ:
-            printf("Assign: >= ");
+            printf("Op: >= ");
             break;
         case ASS:
             printf("Assign: = ");
@@ -256,10 +256,10 @@ void printOp(TreeNode *tree)
             printf("Assign: /= ");
             break;
         case MAX:
-            printf("Assign: :>: ");
+            printf("Op: :>: ");
             break;
         case MIN:
-            printf("Assign: :<: ");
+            printf("Op: :<: ");
             break;
         case DEC:
             printf("Assign: -- ");
@@ -268,16 +268,16 @@ void printOp(TreeNode *tree)
             printf("Assign: ++ ");
             break;
         case ADD:
-            printf("Assign: + ");
+            printf("Op: + ");
             break;
         case SUB:
-            printf("Assign: - ");
+            printf("Op: - ");
             break;
         case LT:
-            printf("Assign: > ");
+            printf("Op: < ");
             break;
         case GT:
-            printf("Assign: < ");
+            printf("Op: > ");
             break;
         case SIZEOF:
             printf("Op: SIZEOF ");
@@ -286,25 +286,52 @@ void printOp(TreeNode *tree)
             printf("Op: CHSIGN ");
             break;
         case MUL:
-            printf("Assign: * ");
+            printf("Op: * ");
             break;
         case DIV:
-            printf("Assign: \/ ");
+            printf("Op: / ");
             break;
         case MOD:
-            printf("Assign: % ");
+            printf("Op: %% ");
             break;
         case RAND:
-            printf("Assign: ? ");
+            printf("Op: ? ");
             break;
         case AND:
-            printf("Assign: & ");
+            printf("Op: AND ");
             break;
         case OR:
-            printf("Assign: | ");
+            printf("Op: OR ");
             break;
         case NOT:
-            printf("Assign: ! ");
+            printf("Op: NOT ");
+            break;
+        case SEMICOLON:
+            printf("Op: ; ");
+            break;
+        case COLON:
+            printf("Op: : ");
+            break;
+        case LP:
+            printf("Op: ( ");
+            break;
+        case RP:
+            printf("Op: ) ");
+            break;
+        case LB:
+            printf("Op: [ ");
+            break;
+        case RB:
+            printf("Op: ] ");
+            break;
+        case COMMA:
+            printf("Op: add ");
+            break;
+        case LCB:
+            printf("Op: { ");
+            break;
+        case RCB:
+            printf("Op: } ");
             break;
         default:
             printf("Shouldn't be here");
@@ -315,8 +342,7 @@ void printOp(TreeNode *tree)
 void printTree(TreeNode *tree)
 {
     // ----- Varaibles -----
-    int i;
-    siblingcounter = 0;
+    int i, siblingcounter = 0, ssavedstate = 0;
     INDENT;
     
     while (tree != NULL)
@@ -324,18 +350,14 @@ void printTree(TreeNode *tree)
         printSpaces();
         
         // ------ If child print out child prefix -----
-        
         if(tisChild == true)
         {
             if(cisFirst == true)
             {
-                csavedstate = childcounter;
-                childcounter = 0;
                 cisFirst = false;
+                childcounter = 0;
             }
             printf("Child: %d  ", childcounter);
-            childcounter = csavedstate;
-            tisChild = false;
         }
         
         if(tisSibling == true)
@@ -396,15 +418,23 @@ void printTree(TreeNode *tree)
                             printf("[line: %d]\n", tree->lineno);
                             break;
                         case Boolean:
-                            printf("of type bool %d ", tree->value);
-                            printf("[line: %d]\n", tree->lineno);
+                            if(tree->value == 1)
+                            {
+                                printf("of type bool: true ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("of type bool: false ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
                             break;
                         case Char:
                             printf("of type char: '%c' ", tree->cvalue);
                             printf("[line: %d]\n", tree->lineno);
                             break;
                         case String:
-                            printf("is array of type char: \"%s\" ", tree->string);
+                            printf("is array of type char: %s ", tree->string);
                             printf("[line: %d]\n", tree->lineno);
                             break;
                         default:
@@ -413,16 +443,18 @@ void printTree(TreeNode *tree)
                     }
                     break;
                 case IdK:
-                    printf("Id: %s [line: %d]\n", tree->name, tree->lineno);
+                    printf("Id: %s [line: %d]\n", tree->tmp, tree->lineno);
                     break;
                 case AssignK:
-                    printf("Assign: %s [line: %d]\n", tree->string, tree->lineno);
+                    printOp(tree);
+                    printf("[line: %d]\n", tree->lineno);
                     break;
                 case InitK:
-                    printf("Op: %s [line: %d]\n", tree->string, tree->lineno);
+                    printOp(tree);
+                    printf("[line: %d]\n", tree->lineno);
                     break;
                 case CallK:
-                    printf("Call: %s [line: %d]\n", tree->name, tree->lineno);
+                    printf("Call: %s [line: %d]\n", tree->tmp, tree->lineno);
                     break;
                 default:
                     printf("Unknown ExpNode kind\n");
@@ -450,20 +482,20 @@ void printTree(TreeNode *tree)
                     printf("[line: %d]\n", tree->lineno);
                     break;
                 case FuncK:
-                    printf("Func: %s returns type ", tree->string);
+                    printf("Func: %s returns type ", tree->tmp);
                     getType(tree);
                     printf("[line: %d]\n", tree->lineno);
                     break;
                 case ParamK:
                     if(tree->isArray)
                     {
-                        printf("Parm: %s is array of type ", tree->string);
+                        printf("Parm: %s is array of type ", tree->tmp);
                         getType(tree);
                         printf("[line: %d]\n", tree->lineno);
                     }
                     else
                     {
-                            printf("Parm: %s of type ", tree->string);
+                            printf("Parm: %s of type ", tree->tmp);
                             getType(tree);
                             printf("[line: %d]\n", tree->lineno);
                     }
@@ -475,30 +507,43 @@ void printTree(TreeNode *tree)
         }
         else printf("Unknown node kind\n");
         
-        if(cisFirst == false)
-        {
-            cisFirst = true;
-        }
         for (i=0;i<MAXCHILDREN;i++)
         {
             if(tree->child[i] != NULL)
             {
+                if(i == 0 && cisFirst == false)
+                {
+                    cisFirst = true;
+                }
+                childcounter = i;
                 tisChild = true;
                 printTree(tree->child[i]);
-                childcounter++;
+            }
+            else
+            {
+                cisFirst = false;
             }
         }
         cisFirst = false;
-        childcounter = 0;
-        i = 0;
         tisChild = false;
+        i = 0;
         
-        tree = tree->sibling;
-        tisSibling = true;
-        siblingcounter++;
-      }
-    
-    tisSibling = false;
+        ssavedstate = siblingcounter;
+        
+        if(tree->sibling != NULL)
+        {
+            tree = tree->sibling;
+            tisSibling = true;
+            siblingcounter++;
+        }
+        else // NULL needs to pass so the while statement gets the null
+        {
+            siblingcounter = ssavedstate;
+            tree = tree->sibling;
+        }
+        
+      
+    }
     UNINDENT;
 }
 
