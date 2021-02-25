@@ -679,14 +679,14 @@ int main(int argc, char *argv[])
     extern int   opterr;
     extern int   optind;
     extern char *optarg;
-    int c, dset = 0,  pset = 0;
+    int c, dset = 0,  pset = 0, bDset = 0, bPset = 0;
     
     if(argc < 3)
     {
         return -1;
     }
     
-    while((c = ourGetopt(argc, argv, (char *)"dp?")) != EOF)
+    while((c = ourGetopt(argc, argv, (char *)"dDpPh")) != EOF)
     {
         switch(c)
         {
@@ -696,9 +696,21 @@ int main(int argc, char *argv[])
             case 'p':
                 pset = 1;
                 break;
-            case '?':
-                fprintf(stderr, "usage: c- [-d] [-p] file\n");
+            case 'h':
+                fprintf(stderr, "Usage: c- [options] [sourceFile] \n");
+                printf("options: \n");
+                printf("-d      - turn on parser debugging \n");
+                printf("-D      - turn on symbol table debugging \n");
+                printf("-h      - this usage message ");
+                printf("-p      - print the abstract syntax tree");
+                printf("-P      - print the abstract syntax tree plus type information");
                 return -1;
+            case 'P':
+                bPset = 1;
+                break;
+            case 'D':
+                bDset = 1;
+                break;
         }
     }
     
