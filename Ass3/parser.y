@@ -27,6 +27,10 @@ void yyerror(const char *msg) {
 // ----- Global Tree -----
 static TreeNode *syntaxTree;
 
+int errors = 0, warnings = 0;
+bool checkInitialization = true;
+
+
 %}
 
 %locations
@@ -679,7 +683,8 @@ int main(int argc, char *argv[])
     extern int   opterr;
     extern int   optind;
     extern char *optarg;
-    int c, dset = 0,  pset = 0, bDset = 0, bPset = 0;
+    int c, dset = 0,  pset = 0, bDset = 0, bPset = 0, hset = 0;
+    
     
     if(argc < 3)
     {
@@ -697,14 +702,8 @@ int main(int argc, char *argv[])
                 pset = 1;
                 break;
             case 'h':
-                fprintf(stderr, "Usage: c- [options] [sourceFile] \n");
-                printf("options: \n");
-                printf("-d      - turn on parser debugging \n");
-                printf("-D      - turn on symbol table debugging \n");
-                printf("-h      - this usage message ");
-                printf("-p      - print the abstract syntax tree");
-                printf("-P      - print the abstract syntax tree plus type information");
-                return -1;
+                hset = 1
+                break;
             case 'P':
                 bPset = 1;
                 break;
@@ -719,18 +718,20 @@ int main(int argc, char *argv[])
         yydebug = 1;
     }
     
+    if(hset == 1)
+    {
+        fprintf(stderr, "Usage: c- [options] [sourceFile] \n");
+        printf("options: \n");
+        printf("-d      - turn on parser debugging \n");
+        printf("-D      - turn on symbol table debugging \n");
+        printf("-h      - this usage message ");
+        printf("-p      - print the abstract syntax tree");
+        printf("-P      - print the abstract syntax tree plus type information");
+    }
+    
     if(optind < argc)
     {
-        if ((yyin = fopen(argv[optind], "r")))
-        {
-            // file open successful
-        }
-        else
-        {
-            // failed to open file
-            printf("ERROR: failed to open '%s'\n", argv[1]);
-            exit(1);
-        }
+        yyin = fopen(argv[optind], "r");
         yyparse();
         fclose(yyin);
     }
@@ -743,6 +744,19 @@ int main(int argc, char *argv[])
     {
         printTree(syntaxTree);
     }
+    
+    if(bPset == 1)
+    {
+
+        // semantic analysis
+        SymbolTable *table = new SymbolTable();
+        table->debug(Sflag);
+
+        analyze(syntaxTree, table);
+    }
+    
+    printf("Number of warnings: %d\n", warnings);
+    printf("Number of errors: %d\n", errors);
     
     return 0;
 }
