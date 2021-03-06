@@ -8,6 +8,9 @@
 #ifndef TreeUtils_hpp
 #define TreeUtils_hpp
 
+#include <map>
+#include <vector>
+#include <string>
 #include <stdio.h>
 #include "scanType.h"
 
@@ -75,10 +78,10 @@ typedef struct treeNode
     bool isArray;                          // is this an array
     bool isStatic;                         // is staticly allocated?
     int n_children;
+    bool noScope;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
-
 
 TreeNode *newDeclNode(DeclKind kind,
                       ExpType type,
@@ -107,7 +110,5 @@ void setType(TreeNode *t, ExpType type, bool isStatic);
 static void printSpaces(void);
 
 void printTree(TreeNode *tree);
-
-
 
 #endif /* TreeUtils_hpp */

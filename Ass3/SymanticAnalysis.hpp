@@ -1,21 +1,33 @@
 //
-//  symbolTable.hpp
+//  SymanticAnalysis.hpp
 //  
 //
-//  Created by Sydney Petrehn on 2/24/21.
+//  Created by Sydney Petrehn on 3/4/21.
 //
 
-#ifndef symbolTable_hpp
-#define symbolTable_hpp
+#ifndef SymanticAnalysis_hpp
+#define SymanticAnalysis_hpp
 
 #include <map>
 #include <vector>
 #include <string>
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> // pulls in declaration of malloc, free
+#include <string.h> // pulls in declaration for strlen.
+#include <string>
+#include <iostream>
+#include "TreeUtils.hpp"
 
-// // // // // // // // // // // // // // // // // // // //
-//
+
+void pointerPrintNothing(void *data);
+void pointerPrintAddr(void *data);
+void pointerPrintLongInteger(void *data);
+void pointerPrintStr(void *data);
+
+///// ------ Symantic Analysis -----
+
+// SYMBOL TABLE FOR ASS 3
+
 // Class: Scope
 //
 // feel free to replace std::string  with std::string
@@ -24,18 +36,18 @@ class Scope {
 private:
     static bool debugFlg;                      // turn on tedious debugging
     std::string name;                          // name of scope
-    std::map<std::string, void *> symbols;     // use an ordered map (not as fast as unordered)
+    std::map<std::string , void *> symbols;    // use an ordered map (not as fast as unordered)
 
 public:
-    Scope(std::string);
+    Scope(std::string newname);
     ~Scope();
     std::string scopeName();                   // returns name of scope
-    void debug(bool);                          // sets the debug flag to new state
+    void debug(bool state);                    // sets the debug flag to state
     void print(void (*printData)(void *));     // prints the table using the supplied function to print the void *
-    void applyToAll(void (*action)(std::string, void *));  // applies func to all symbol/data pairs
-    bool insert(std::string, void *);           // inserts a new ptr associated with symbol sym
+    void applyToAll(void (*action)(std::string , void *));  // applies func to all symbol/data pairs
+    bool insert(std::string sym, void *ptr);   // inserts a new ptr associated with symbol sym
                                                // returns false if already defined
-    void *lookup(std::string);                 // returns the ptr associated with sym
+    void *lookup(std::string sym);             // returns the ptr associated with sym
                                                // returns NULL if symbol not found
 };
 
@@ -48,7 +60,7 @@ public:
 //
 class SymbolTable {
 private:
-    std::vector<Scope *> stack;
+    std::vector <Scope *> stack;
     bool debugFlg;
 
 public:
@@ -70,4 +82,18 @@ public:
     void applyToAllGlobal(void (*action)(std::string , void *));  // apply func to all symbol/data pairs in global scope
 };
 
-#endif /* symbolTable_hpp */
+// Functions
+void makeTable(TreeNode *tree, SymbolTable *table);
+
+void analyzenode(TreeNode *tree, SymbolTable *table);
+
+void nodestart(TreeNode *tree, SymbolTable *table);
+void declStart(TreeNode *tree, SymbolTable *table);
+void stmtStart(TreeNode *tree, SymbolTable *table);
+void expStart(TreeNode *tree, SymbolTable *table);
+
+void nodeend(TreeNode *tree, SymbolTable *table);
+void declend(TreeNode *tree, SymbolTable *table);
+void stmtend(TreeNode *tree, SymbolTable *table);
+void expend(TreeNode *tree, SymbolTable *table);
+#endif /* SymanticAnalysis_hpp */

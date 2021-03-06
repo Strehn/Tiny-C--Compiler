@@ -18,6 +18,8 @@ using namespace std;
 
 extern int line;
 
+
+///// ----- PARSE TABLE TO PRINT FROM ASS2
 //{VarK, FuncK, ParamK};
 TreeNode *newDeclNode(DeclKind kind,
                       ExpType type,
@@ -546,4 +548,3 @@ void printTree(TreeNode *tree)
     }
     UNINDENT;
 }
-

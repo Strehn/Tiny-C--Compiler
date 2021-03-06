@@ -10,6 +10,7 @@
 #include "scanType.h"
 #include "TreeUtils.hpp"
 #include "parser.tab.h"
+#include "SymanticAnalysis.hpp"
 
 
 extern int yylex();
@@ -27,7 +28,6 @@ void yyerror(const char *msg) {
 // ----- Global Tree -----
 static TreeNode *syntaxTree;
 
-int errors = 0, warnings = 0;
 bool checkInitialization = true;
 
 
@@ -680,9 +680,11 @@ int main(int argc, char *argv[])
     // in case no filename listed
     
     // ----- VARIABLES -----
-    extern int   opterr;
-    extern int   optind;
+    extern int  opterr;
+    extern int  optind;
     extern char *optarg;
+    extern int n_errors;
+    extern int n_warnings;
     int c, dset = 0,  pset = 0, bDset = 0, bPset = 0, hset = 0;
     
     
@@ -702,7 +704,7 @@ int main(int argc, char *argv[])
                 pset = 1;
                 break;
             case 'h':
-                hset = 1
+                hset = 1;
                 break;
             case 'P':
                 bPset = 1;
@@ -747,16 +749,20 @@ int main(int argc, char *argv[])
     
     if(bPset == 1)
     {
-
         // semantic analysis
         SymbolTable *table = new SymbolTable();
-        table->debug(Sflag);
-
-        analyze(syntaxTree, table);
+        table->debug(bDset);
+        
+        makeTable(syntaxTree, table);
+        
+        if(n_errors == 0)
+        {
+            printTree(syntaxTree);
+        }
     }
     
-    printf("Number of warnings: %d\n", warnings);
-    printf("Number of errors: %d\n", errors);
+    printf("Number of warnings: %d\n", n_warnings);
+    printf("Number of errors: %d\n", n_errors);
     
     return 0;
 }

@@ -7,9 +7,9 @@
 BIN = parser
 CC = g++
 OUT = c-
-LIBS = ourgetopt.h TreeUtils.hpp scanType.h 
+LIBS = ourgetopt.h TreeUtils.hpp scanType.h SymanticAnalysis.hpp
 FLAGS = -DCPLUSPLUS -g
-OBJS = ourgetopt.o TreeUtils.o 
+OBJS = ourgetopt.o TreeUtils.o SymanticAnalysis.o
 
 $(BIN) : lex.yy.c $(BIN).tab.c $(BIN).tab.h $(LIBS) $(OBJS)
 	$(CC) $(FLAGS) lex.yy.c $(BIN).tab.c $(OBJS) -o $(OUT)
