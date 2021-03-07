@@ -45,13 +45,25 @@ TreeNode *newDeclNode(DeclKind kind,
         temp->lineno = token->linenum;
         temp->subkind.decl = kind;
         temp->expType = type;
-        temp->child[0] = c0;
-        temp->child[1] = c1;
-        temp->child[2] = c2;
+        if(c0 != NULL)
+        {
+            temp->child[0] = c0;
+            temp->child[0]->expType = type;
+        }
+        if(c1 != NULL)
+        {
+            temp->child[1] = c1;
+            temp->child[1]->expType = type;
+        }
+        if(c2 != NULL)
+        {
+            temp->child[2] = c2;
+            temp->child[2]->expType = type;
+        }
         
         // ----- Get Data From Token -----
         temp->string = token->svalue;
-        temp->name = token->idIndex;
+        temp->name = token->tokenstr;
         temp->value = token->nvalue;
         temp->cvalue = token->cvalue;
         temp->tmp = token->tokenstr;
@@ -87,13 +99,16 @@ TreeNode *newStmtNode(StmtKind kind,
         temp->child[1] = c1;
         temp->child[2] = c2;
         
+        temp->expType = UndefinedType;
+        
         // ----- Get Data From Token -----
         temp->string = token->svalue;
-        temp->name = token->idIndex;
+        temp->name = token->tokenstr;
         temp->value = token->nvalue;
         temp->cvalue = token->cvalue;
         temp->tmp = token->tokenstr;
         temp->tokenclass = token->tokenclass;
+        
     }
     
     return temp;
@@ -122,9 +137,11 @@ TreeNode *newExpNode(ExpKind kind,
         temp->child[0] = c0;
         temp->child[1] = c1;
         
+        temp->expType = UndefinedType;
+        
         // ----- Get Data From Token -----
         temp->string = token->svalue;
-        temp->name = token->idIndex;
+        temp->name = token->tokenstr;
         temp->value = token->nvalue;
         temp->cvalue = token->cvalue;
         temp->tmp = token->tokenstr;

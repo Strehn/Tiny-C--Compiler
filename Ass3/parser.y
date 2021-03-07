@@ -690,7 +690,8 @@ int main(int argc, char *argv[])
     
     if(argc < 3)
     {
-        return -1;
+        printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", argv[1]);
+        n_errors++;
     }
     
     while((c = ourGetopt(argc, argv, (char *)"dDpPh")) != EOF)
