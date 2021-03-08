@@ -68,6 +68,7 @@ TreeNode *newDeclNode(DeclKind kind,
         temp->cvalue = token->cvalue;
         temp->tmp = token->tokenstr;
         temp->tokenclass = token->tokenclass;
+        temp->isInitialized = false;
     }
     return temp;
 }
@@ -95,6 +96,7 @@ TreeNode *newStmtNode(StmtKind kind,
         temp->nodekind = StmtK;
         temp->lineno = token->linenum;
         temp->subkind.stmt = kind;
+        
         temp->child[0] = c0;
         temp->child[1] = c1;
         temp->child[2] = c2;
@@ -108,6 +110,7 @@ TreeNode *newStmtNode(StmtKind kind,
         temp->cvalue = token->cvalue;
         temp->tmp = token->tokenstr;
         temp->tokenclass = token->tokenclass;
+        temp->isInitialized = false;
         
     }
     
@@ -134,6 +137,7 @@ TreeNode *newExpNode(ExpKind kind,
         temp->nodekind = ExpK;
         temp->lineno = token->linenum;
         temp->subkind.exp = kind;
+        
         temp->child[0] = c0;
         temp->child[1] = c1;
         
@@ -183,14 +187,21 @@ void addChild(TreeNode *t, TreeNode *c)
 }
 
 // pass the static and type attribute down the sibling list
-void setType(TreeNode *t, ExpType type, bool isStatic)
+TreeNode * setType(TreeNode *t, ExpType type, bool isStatic)
 {
-    while (t) {
-        t->expType = type;
-        t->isStatic = isStatic;
-
-        t = t->sibling;
-    }
+        TreeNode *tmp = t;
+        while(t)
+        {
+            if(type == Boolean)
+            {
+                t->isBoolean = true;
+            }
+            t->expType = type;
+            t->isStatic = isStatic;
+            t = t->sibling;
+        }
+    
+    return tmp;
 }
 
 /* Variable indentno is used by printTree to
@@ -226,19 +237,19 @@ void getType(TreeNode *tree)
     switch(tree->expType)
     {
         case 1:
-            printf("int ");
+            printf("int");
             break;
         case 2:
-            printf("bool ");
+            printf("bool");
             break;
         case 3:
-            printf("char ");
+            printf("char");
             break;
         case 4:
-            printf("string ");
+            printf("string");
             break;
         default:
-            printf("void ");
+            printf("void");
             break;
     }
 }
@@ -441,11 +452,13 @@ void printTree(TreeNode *tree)
                             {
                                 printf("of type bool: true ");
                                 printf("[line: %d]\n", tree->lineno);
+                                tree->expType = Boolean;
                             }
                             else
                             {
                                 printf("of type bool: false ");
                                 printf("[line: %d]\n", tree->lineno);
+                                tree->expType = Boolean;
                             }
                             break;
                         case Char:

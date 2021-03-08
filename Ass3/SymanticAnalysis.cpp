@@ -18,6 +18,7 @@ int n_warnings = 0;
 // Functions
 void settTypes(TreeNode *tree);
 void getaType(TreeNode *tree);
+void checkUsage(TreeNode *tree, SymbolTable *table);
 
 // -----Symantic Analysis Stuff -----
 ///// ----- SYMANTIC ANALYSIS -----
@@ -25,8 +26,6 @@ void makeTable(TreeNode *tree, SymbolTable *table)
 {
     // analyze the tree to add the stuff to the symbol table
     // Import same kind of stuff from the print function
-    // Set Types
-    settTypes(tree);
     
     // Analyze Tree
     analyzenode(tree, table);
@@ -34,93 +33,13 @@ void makeTable(TreeNode *tree, SymbolTable *table)
     // Check for Main
     if ( table->lookup("main") == NULL )
         {
-            printf("ERROR(LINKER): a function named 'main()' must be defined.\n");
+            printf("ERROR(LINKER): A function named 'main()' must be defined.\n");
             n_errors++;
         }
     // get captial D flag working
     
     // print the table need to make a new function
     //table->print(//this points to data);
-}
-void settTypes(TreeNode *tree)
-{
-    if (tree->nodekind==StmtK)
-    {
-        // StmtKind {NullK, IfK, WhileK, ForK, CompoundK, ReturnK, BreakK, RangeK};
-        switch (tree->subkind.stmt)
-        {
-            case NullK:
-                break;
-            case IfK:
-                break;
-            case WhileK:
-                break;
-            case ForK:
-                break;
-            case CompoundK:
-                break;
-            case ReturnK:
-                break;
-            case BreakK:
-                break;
-            case RangeK:
-                break;
-            default:
-                
-                break;
-        }
-    }
-    else if (tree->nodekind == ExpK)
-    {
-        // ExpKind {OpK, ConstantK, IdK, AssignK, InitK, CallK};
-        switch (tree->subkind.exp)
-        {
-            case OpK:
-                
-                break;
-            case ConstantK:
-                switch(tree->expType)
-                {
-                    case Integer:
-                        break;
-                    case Boolean:
-                        break;
-                    case Char:
-                        break;
-                    case String:
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case IdK:
-                break;
-            case AssignK:
-                break;
-            case InitK:
-                break;
-            case CallK:
-                break;
-            default:
-                break;
-        }
-    }
-    else if (tree->nodekind==DeclK)
-    {
-        // DeclKind {VarK, FuncK, ParamK};
-
-        switch (tree->subkind.decl)
-        {
-            case VarK:
-                break;
-            case FuncK:
-                break;
-            case ParamK:
-                break;
-            default:
-                break;
-        }
-    }
 }
 
 void analyzenode(TreeNode *tree, SymbolTable *table)
@@ -142,6 +61,7 @@ void analyzenode(TreeNode *tree, SymbolTable *table)
         }
     }
     
+    nodeend(tree, table);
     
     // look at the sibling
     if( (tree->sibling) != NULL)
@@ -149,7 +69,30 @@ void analyzenode(TreeNode *tree, SymbolTable *table)
         analyzenode(tree->sibling, table);
     }
     
-    nodeend(tree, table);
+    //CHECK FOR IS USED HERE
+    checkUsage(tree, table);
+}
+
+void checkUsage(TreeNode *tree, SymbolTable *table)
+{
+    if(tree->nodekind == DeclK)
+    {
+        switch(tree->subkind.decl)
+        {
+            case VarK:
+                if( (tree->isUsed == false)  )
+                {
+                    printf("WARNING(%d): The variable '%s' seems to not be used.\n", tree->lineno, tree->name);
+                    n_warnings++;
+                }
+                else if(tree->isInitialized == false)
+                {
+                    printf("WARNING(%d): Variable '%s' may be uninitialized when used here.\n", tree->lineno, tree->name);
+                    n_warnings++;
+                }
+                break;
+        }
+    }
 }
 
 void nodestart(TreeNode *tree, SymbolTable *table)
@@ -189,6 +132,7 @@ void declStart(TreeNode *tree, SymbolTable *table)
     switch(tree->subkind.decl)
     {
         case VarK:
+            //varkind None, Local, Global, Parameter, LocalStatic};
             if(tree->isArray == true)
             {
                 if(tree->expType == Integer)
@@ -204,7 +148,7 @@ void declStart(TreeNode *tree, SymbolTable *table)
             }
             break;
         case FuncK:
-            tree->isInitialized = true;
+            //tree->isInitialized = true;
             table->enter(tree->name);
             for(int i = 0; i < MAXCHILDREN; i++)
             {
@@ -222,30 +166,25 @@ void declStart(TreeNode *tree, SymbolTable *table)
     
 }
 
-char* getsType(ExpType tree)
+char * getsType(TreeNode* tree)
 {
-    switch(tree)
+    switch(tree->expType)
     {
-        case Integer:
-            return (char*)"int";
+        case 1:
+            return("int");
             break;
-        case Boolean:
-            return (char*)"bool";
+        case 2:
+            return("bool");
             break;
-        case Char:
-            return (char*)"char";
+        case 3:
+            return("char");
             break;
-        case String:
-            return (char*)"char";
+        case 4:
+            return("char");
             break;
-        case Void:
-            return (char*)"void";
-        case UndefinedType:
-            return (char*)"undefined type";
-        case Array:
-            return (char*)"array";
         default:
-            return (char*)"default";
+            return("void");
+            break;
     }
 }
     
@@ -274,13 +213,28 @@ void expStart(TreeNode *tree, SymbolTable *table)
                 }
                 else
                 {
-                    tree->expType = Char;
+                    //tree->expType = Char;
                     tree->isArray = true;
+                    tree->isUsed = true;
                 }
+               
                 break;
             case AssignK:
+                if(tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == IdK && table->lookup(tree->child[0]->name))
+                {
+                    tree->expType = tree->child[0]->expType;
+                    ((TreeNode *)table->lookup(tree->child[0]->name))->isInitialized = true;
+                }
+                else if(tree->child[0]->child[0] != NULL && tree->child[0]->child[0]->nodekind == ExpK && tree->child[0]->child[0]->subkind.exp == IdK && table->lookup(tree->name))
+                {
+                    tree->expType = tree->child[0]->child[0]->expType;
+                    tree->child[0]->child[0]->isInitialized = true;
+                }
+                tree->isUsed = true;
+                
                 break;
             case InitK:
+                tree->isUsed = true;
                 break;
             case CallK:
                 temp = (TreeNode *) table->lookup(tree->name);
@@ -291,7 +245,7 @@ void expStart(TreeNode *tree, SymbolTable *table)
                 }
                 else
                 {
-                    tree->expType = Char;
+                    //tree->expType = Boolean;
                     if(temp->subkind.decl != FuncK)
                     {
                         printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", tree->lineno, temp->name);
@@ -417,14 +371,18 @@ void declend(TreeNode *tree, SymbolTable *table)
     switch(tree->subkind.decl)
     {
         case VarK:
+            /*
             if(tree->isUsed == false)
             {
                 printf("WARNING(%d): Variable '%s' seems to not be used.\n", tree->lineno, tree->name);
+                n_warnings++;
             }
             else if(tree->isInitialized == false)
             {
                 printf("WARNING(%d): Variable '%s' may be uninitialized when used here.\n", tree->lineno, tree->name);
+                n_warnings++;
             }
+             */
             break;
         case FuncK:
             break;
@@ -446,24 +404,41 @@ void expend(TreeNode *tree, SymbolTable *table)
     char * lhs_type = NULL;
     char * rhs_type = NULL;
     
-    char * intstring = (char *)"int";
-    char * boolstring = (char *)"bool";
+    char * intstring = "int";
+    char * boolstring = "bool";
     
     TreeNode * temp = NULL;
     
     if(tree->child[0] != NULL)
     {
+        if(tree->child[0]->nodekind == DeclK)
+        {
+            if(tree->child[0]->subkind.decl = FuncK)
+            {
+                printf("ERROR(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[0]->name);
+                n_errors++;
+            }
+        }
+        
         if(tree->child[0]->subkind.exp == IdK)
         {
             temp = (TreeNode *)table->lookup(tree->child[0]->name);
             if(temp != NULL)
             {
-                lhs_type = getsType(temp->expType);
+                lhs_type = getsType(temp);
+                if(temp->isBoolean == true)
+                {
+                    lhs_type = "bool";
+                }
             }
         }
         else
         {
-            lhs_type = getsType(tree->child[0]->expType);
+            lhs_type = getsType(tree->child[0]);
+            if(tree->child[0]->isBoolean == true)
+            {
+                lhs_type = "bool";
+            }
         }
     }
     else
@@ -471,30 +446,50 @@ void expend(TreeNode *tree, SymbolTable *table)
         lhs_type = (char *)"undefined";
     }
     
+    
     if(tree->child[1] != NULL)
     {
+        if(tree->child[1]->nodekind == DeclK)
+        {
+            if(tree->child[1]->subkind.decl = FuncK)
+            {
+                printf("ERROR(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[1]->name);
+                n_errors++;
+            }
+        }
         if(tree->child[1]->subkind.exp == IdK)
         {
             temp = (TreeNode *)table->lookup(tree->child[1]->name);
             if(temp != NULL)
             {
-                rhs_type = getsType(temp->expType);
+                rhs_type = getsType(temp);
+                if(temp->isBoolean == true)
+                {
+                    lhs_type = "bool";
+                }
             }
         }
         else
         {
-            rhs_type = getsType(tree->child[0]->expType);
+            rhs_type = getsType(tree->child[1]);
+            if(tree->child[1]->isBoolean == true)
+            {
+                lhs_type = "bool";
+            }
         }
     }
     else
     {
         rhs_type = (char *)"undefined";
     }
+   
     
     //{OpK, ConstantK, IdK, AssignK, InitK, CallK}
-    switch(tree->subkind.exp)
+    if( (tree->subkind.exp == OpK) || (tree->subkind.exp == InitK) || (tree->subkind.exp == AssignK) )
     {
-        case OpK:
+    //switch(tree->subkind.exp)
+    //{
+        //case OpK:
             switch(tree->tokenclass)
             {
                 case EQ:
@@ -503,6 +498,13 @@ void expend(TreeNode *tree, SymbolTable *table)
                     {
                         printf("ERROR(%d): '==' requires operands of the same type but lhs is type %s and rhs is type %s.\n", tree->lineno, lhs_type, rhs_type);
                         n_errors++;
+                    }
+                    else
+                    {
+                        tree->child[0]->isUsed = true;
+                        tree->child[0]->isInitialized = true;
+                        tree->child[1]->isUsed = true;
+                        tree->child[1]->isInitialized = true;
                     }
                     
                     break;
@@ -513,6 +515,13 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '!=' requires operands of the same type but lhs is type %s and rhs is type %s.\n", tree->lineno, lhs_type, rhs_type);
                         n_errors++;
                     }
+                    else
+                    {
+                        tree->child[0]->isUsed = true;
+                        tree->child[0]->isInitialized = true;
+                        tree->child[1]->isUsed = true;
+                        tree->child[1]->isInitialized = true;
+                    }
                     
                     break;
                 case LEQ:
@@ -522,7 +531,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '<=' requires operands of the same type but lhs is type %s and rhs is type %s.\n", tree->lineno, lhs_type, rhs_type);
                         n_errors++;
                     }
-                    if( (tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1] != NULL) && (tree->child[1]->isArray == false))
+                    else if( (tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1] != NULL) && (tree->child[1]->isArray == false))
                     {
                         printf("ERROR(%d): '<=' requires both operands be arrays or not but lhs is an array and rhs is not an array. \n", tree->lineno);
                         n_errors++;
@@ -531,6 +540,13 @@ void expend(TreeNode *tree, SymbolTable *table)
                     {
                         printf("ERROR(%d): '<=' requires both operands be arrays or not but lhs is not an array and rhs is an array. \n", tree->lineno);
                         n_errors++;
+                    }
+                    else
+                    {
+                        tree->child[0]->isUsed = true;
+                        tree->child[0]->isInitialized = true;
+                        tree->child[1]->isUsed = true;
+                        tree->child[1]->isInitialized = true;
                     }
                      
                     break;
@@ -541,7 +557,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '>=' requires operands of the same type but lhs is type %s and rhs is type %s.\n", tree->lineno, lhs_type, rhs_type);
                         n_errors++;
                     }
-                    if( (tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1] != NULL) && (tree->child[1]->isArray == false))
+                    else if( (tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1] != NULL) && (tree->child[1]->isArray == false))
                     {
                         printf("ERROR(%d): '>=' requires both operands be arrays or not but lhs is an array and rhs is not an array. \n", tree->lineno);
                         n_errors++;
@@ -551,23 +567,50 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '>=' requires both operands be arrays or not but lhs is not an array and rhs is an array. \n", tree->lineno);
                         n_errors++;
                     }
+                    else
+                    {
+                        tree->child[0]->isUsed = true;
+                        tree->child[0]->isInitialized = true;
+                        tree->child[1]->isUsed = true;
+                        tree->child[1]->isInitialized = true;
+                    }
                      
                     break;
                 case ASS:
-                    if(lhs_type != rhs_type && table->lookup(tree->child[0]->name) != NULL)
+                    if(lhs_type != rhs_type && lhs_type != "undefined type")
                     {
                         printf("ERROR(%d): '=' requires operands of the same type but lhs is type %s and rhs is type %s.\n", tree->lineno, lhs_type, rhs_type);
                         n_errors++;
                     }
-                    else if(lhs_type != rhs_type && table->lookup(tree->child[1]->name) != NULL)
+                    else if( (tree->child[0] != NULL) && (tree->child[0]->isArray == true) && (tree->child[1] != NULL) && (tree->child[1]->isArray == false))
                     {
                         printf("ERROR(%d): '=' requires operands of the same type but lhs is type %s and rhs is type %s.\n", tree->lineno, lhs_type, rhs_type);
                         n_errors++;
                     }
-                    else if(lhs_type != rhs_type)
+                    else if( (tree->child[0] != NULL) && (tree->child[0]->isArray == true) && (tree->child[1] != NULL) && (tree->child[1]->isArray == false))
                     {
                         printf("ERROR(%d): '=' requires operands of the same type but lhs is type %s and rhs is type %s.\n", tree->lineno, lhs_type, rhs_type);
                         n_errors++;
+                    }
+                    else
+                    {
+                        tree->child[0]->isUsed = true;
+                        tree->child[0]->isInitialized = true;
+                        tree->child[1]->isUsed = true;
+                        tree->child[1]->isInitialized = true;
+                    }
+                    
+                    if(tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == IdK && table->lookup(tree->child[0]->name))
+                    {
+                        tree->expType = tree->child[0]->expType;
+                        ((TreeNode *)table->lookup(tree->child[0]->name))->isInitialized = true;
+                        ((TreeNode *)table->lookup(tree->child[0]->name))->isUsed = true;
+                    }
+                    else if(tree->child[0]->child[0] != NULL && tree->child[0]->child[0]->nodekind == ExpK && tree->child[0]->child[0]->subkind.exp == IdK && table->lookup(tree->name))
+                    {
+                        tree->expType = tree->child[0]->child[0]->expType;
+                        tree->child[0]->child[0]->isInitialized = true;
+                        tree->child[0]->child[0]->isUsed = true;
                     }
                      
                     break;
@@ -578,10 +621,17 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '+=' requires operands of type int but lhs is type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(rhs_type != intstring)
+                    else if(rhs_type != intstring)
                     {
                         printf("ERROR(%d): '+=' requires operands of type int but lhs is type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
+                    }
+                    else
+                    {
+                        tree->child[0]->isUsed = true;
+                        tree->child[0]->isInitialized = true;
+                        tree->child[1]->isUsed = true;
+                        tree->child[1]->isInitialized = true;
                     }
                      
                     break;
@@ -592,12 +642,18 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '-=' requires operands of type int but lhs is type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(rhs_type != intstring)
+                    else if(rhs_type != intstring)
                     {
                         printf("ERROR(%d): '-=' requires operands of type int but lhs is type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
                     }
-                     
+                    else
+                    {
+                        tree->child[0]->isUsed = true;
+                        tree->child[0]->isInitialized = true;
+                        tree->child[1]->isUsed = true;
+                        tree->child[1]->isInitialized = true;
+                    }
                     break;
                 case MULASS:
                     
@@ -606,10 +662,17 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '*=' requires operands of type int but lhs is type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(rhs_type != intstring)
+                    else if(rhs_type != intstring)
                     {
                         printf("ERROR(%d): '*=' requires operands of type int but lhs is type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
+                    }
+                    else
+                    {
+                        tree->child[0]->isUsed = true;
+                        tree->child[0]->isInitialized = true;
+                        tree->child[1]->isUsed = true;
+                        tree->child[1]->isInitialized = true;
                     }
                      
                     break;
@@ -620,10 +683,17 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '/=' requires operands of type int but lhs is type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(rhs_type != intstring)
+                    else if(rhs_type != intstring)
                     {
                         printf("ERROR(%d): '/=' requires operands of type int but lhs is type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
+                    }
+                    else
+                    {
+                        tree->child[0]->isUsed = true;
+                        tree->child[0]->isInitialized = true;
+                        tree->child[1]->isUsed = true;
+                        tree->child[1]->isInitialized = true;
                     }
                     break;
                 case MAX:
@@ -651,7 +721,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '--' requires operands of type int but lhs is type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(rhs_type != intstring)
+                    else if(rhs_type != intstring)
                     {
                         printf("ERROR(%d): '--' requires operands of type int but lhs is type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
@@ -665,7 +735,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '++' requires operands of type int but lhs is type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(rhs_type != intstring)
+                    else if(rhs_type != intstring)
                     {
                         printf("ERROR(%d): '++' requires operands of type int but lhs is type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
@@ -676,12 +746,12 @@ void expend(TreeNode *tree, SymbolTable *table)
                     
                     if( lhs_type != intstring)
                     {
-                        printf("ERROR(%d): '+' requires operands of type int but lhs is type %s.\n", tree->lineno, lhs_type);
+                        printf("ERROR(%d): '+' requires operands of type int but lhs is of type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if( rhs_type != intstring)
+                    else if( rhs_type != intstring)
                     {
-                        printf("ERROR(%d): '+' requires operands of type int but rhs is type %s.\n", tree->lineno, rhs_type);
+                        printf("ERROR(%d): '+' requires operands of type int but rhs is of type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
                     }
                      
@@ -690,12 +760,12 @@ void expend(TreeNode *tree, SymbolTable *table)
                     
                     if( lhs_type != intstring)
                     {
-                        printf("ERROR(%d): '-' requires operands of type int but lhs is type %s.\n", tree->lineno, lhs_type);
+                        printf("ERROR(%d): '-' requires operands of type int but lhs is of type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if( rhs_type != intstring)
+                    else if( rhs_type != intstring)
                     {
-                        printf("ERROR(%d): '-' requires operands of type int but rhs is type %s.\n", tree->lineno, rhs_type);
+                        printf("ERROR(%d): '-' requires operands of type int but rhs is of type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
                     }
                      
@@ -719,8 +789,12 @@ void expend(TreeNode *tree, SymbolTable *table)
                      
                     break;
                 case SIZEOF:
-                    
-                    if( lhs_type != intstring)
+                    if(tree->isArray == false)
+                    {
+                        printf("ERROR(%d): The operation 'sizeof' only works with arrays.\n", tree->lineno);
+                        n_errors++;
+                    }
+                    else if( lhs_type != intstring)
                     {
                         printf("ERROR(%d): unary 'sizeof' requires an operand of type int but was given type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
@@ -743,7 +817,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '*' requires operands of type int but lhs is %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if( rhs_type != intstring)
+                    else if( rhs_type != intstring)
                     {
                         printf("ERROR(%d): '*' requires operands of type int but rhs is %s.\n", tree->lineno, rhs_type);
                         n_errors++;
@@ -751,13 +825,17 @@ void expend(TreeNode *tree, SymbolTable *table)
                      
                     break;
                 case DIV:
-                    
-                    if( lhs_type != intstring)
+                    if(tree->isArray == true)
+                    {
+                        printf("ERROR(%d): The operation '/' does not work with arrays.\n", tree->lineno);
+                        n_errors++;
+                    }
+                    else if( lhs_type != intstring)
                     {
                         printf("ERROR(%d): '/' requires operands of type int but lhs is %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if( rhs_type != intstring)
+                    else if( rhs_type != intstring)
                     {
                         printf("ERROR(%d): '/' requires operands of type int but rhs is %s.\n", tree->lineno, rhs_type);
                         n_errors++;
@@ -771,7 +849,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): '%%' requires operands of type int but lhs is %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(rhs_type != intstring)
+                    else if(rhs_type != intstring)
                     {
                         printf("ERROR(%d): '%%' requires operands of type int but rhs is %s.\n", tree->lineno, rhs_type);
                         n_errors++;
@@ -794,7 +872,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): 'and' requires operands of type bool but lhs is of type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(rhs_type != boolstring)
+                    else if(rhs_type != boolstring)
                     {
                         printf("ERROR(%d): 'and' requires operands of type bool but rhs is of type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
@@ -808,7 +886,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): 'or' requires operands of type bool but lhs is of type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(rhs_type != boolstring)
+                    else if(rhs_type != boolstring)
                     {
                         printf("ERROR(%d): 'or' requires operands of type bool but rhs is of type %s.\n", tree->lineno, rhs_type);
                         n_errors++;
@@ -822,7 +900,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): Unary 'not' requires operands of type bool but was given type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
                     }
-                    if(tree->isArray == true)
+                    else if(tree->isArray == true)
                     {
                         printf("ERROR(%d): The operation 'not' does not work with arrays.", tree->lineno);
                         n_errors++;
@@ -859,10 +937,10 @@ void expend(TreeNode *tree, SymbolTable *table)
                 default:
                     printf("Shouldn't be here");
             }
-            break;
-        case ConstantK:
-            break;
-        case IdK:
+            //break;
+        //case ConstantK:
+           // break;
+       // case IdK:
             /*
             if(!table->insert(tree->name, tree))
             {
@@ -871,15 +949,15 @@ void expend(TreeNode *tree, SymbolTable *table)
                 n_errors++;
             }
              */
-            break;
-        case AssignK:
-            break;
-        case InitK:
-            break;
-        case CallK:
-            break;
-        default:
-            break;
+         //   break;
+        //case AssignK:
+        //    break;
+       // case InitK:
+       //     break;
+        //case CallK:
+       //     break;
+       // default:
+        //    break;
     }
 }
     

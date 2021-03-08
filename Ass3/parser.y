@@ -91,20 +91,17 @@ decl : varDecl
 
 varDecl : typeSpec varDeclList SEMICOLON
     {
-        $$ = $2;
-        setType($2, $1, false);
+        $$ = setType($2, $1, false);
     }
     ;
 
 scopedVarDecl : STATIC typeSpec varDeclList SEMICOLON
     {
-        $$ = $3;
-        setType($3, $2, true);
+        $$ = setType($3, $2, true);
     }
     | typeSpec varDeclList SEMICOLON
     {
-        $$ = $2;
-        setType($2, $1, false);
+        $$ = setType($2, $1, false);
     }
     ;
 
@@ -162,7 +159,6 @@ funDecl : typeSpec ID LP parms RP stmt
     {
         $$ = newDeclNode(FuncK, $1, $2, $4, $6);
         $$->tmp = $2->idIndex;
-        setType($$, $1, true);
     }
     | ID LP parms RP stmt
     {
@@ -193,8 +189,7 @@ parmList : parmList SEMICOLON parmTypeList
 
 parmTypeList : typeSpec parmIdList
     {
-        $$ = $2;
-        setType($2, $1, false);
+        $$ = setType($2, $1, false);
     }
     ;
 
@@ -381,27 +376,33 @@ exp : mutable ASS exp
     }
     | mutable ADDASS exp
     {
-        $$ = newExpNode(AssignK, $2, $1, $3);
+        $$ = setType(newExpNode(AssignK, $2, $1, $3), Integer, false);
+        $$ -> expType = Integer;
     }
     | mutable SUBASS exp
     {
-        $$ = newExpNode(AssignK, $2, $1, $3);
+        $$ = setType(newExpNode(AssignK, $2, $1, $3), Integer, false);
+        $$ -> expType = Integer;
     }
     | mutable MULASS exp
     {
-        $$ = newExpNode(AssignK, $2, $1, $3);
+        $$ = setType(newExpNode(AssignK, $2, $1, $3), Integer, false);
+        $$ -> expType = Integer;
     }
     | mutable DIVASS exp
     {
-        $$ = newExpNode(AssignK, $2, $1, $3);
+        $$ = setType(newExpNode(AssignK, $2, $1, $3), Integer, false);
+        $$ -> expType = Integer;
     }
     | mutable INC
     {
-        $$ = newExpNode(AssignK, $2, $1);
+        $$ = setType(newExpNode(AssignK, $2, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     | mutable DEC
     {
-        $$ = newExpNode(AssignK, $2, $1);
+        $$ = setType(newExpNode(AssignK, $2, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     | simpleExp
     {
@@ -411,7 +412,9 @@ exp : mutable ASS exp
 
 simpleExp : simpleExp OR andExp
     {
-        $$ = newExpNode(OpK, $2, $1, $3);
+        $$ = setType(newExpNode(OpK, $2, $1, $3), Boolean, false);
+        $$ -> expType = Boolean;
+        $$->isBoolean = true;
     }
     | andExp
     {
@@ -421,7 +424,9 @@ simpleExp : simpleExp OR andExp
 
 andExp : andExp AND unaryRelExp
     {
-        $$ = newExpNode(OpK, $2, $1, $3);
+        $$ = setType(newExpNode(OpK, $2, $1, $3), Boolean, false);
+        $$ -> expType = Boolean;
+        $$->isBoolean = true;
     }
     | unaryRelExp
     {
@@ -431,7 +436,9 @@ andExp : andExp AND unaryRelExp
 
 unaryRelExp : NOT unaryRelExp
     {
-        $$ = newExpNode(OpK, $1, $2);
+        $$ = setType(newExpNode(OpK, $1, $2), Boolean, false);
+        $$ -> expType = Boolean;
+        $$->isBoolean = true;
     }
     | relExp
     {
@@ -453,27 +460,39 @@ relExp : minmaxExp relop minmaxExp
 
 relop : LEQ
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
+        $$ -> expType = Boolean;
+        $$->isBoolean = true;
     }
     | LT
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
+        $$ -> expType = Boolean;
+        $$->isBoolean = true;
     }
     | GT
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
+        $$ -> expType = Boolean;
+        $$->isBoolean = true;
     }
     | GEQ
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
+        $$ -> expType = Boolean;
+        $$->isBoolean = true;
     }
     | EQ
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
+        $$ -> expType = Boolean;
+        $$->isBoolean = true;
     }
     | NEQ
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
+        $$ -> expType = Boolean;
+        $$->isBoolean = true;
     }
     ;
 
@@ -491,11 +510,13 @@ minmaxExp : minmaxExp minmaxop sumExp
 
 minmaxop : MAX
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     | MIN
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     ;
 
@@ -512,11 +533,13 @@ sumExp : sumExp sumop mulExp
 
 sumop : ADD
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     | SUB
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     ;
 
@@ -534,15 +557,18 @@ mulExp : mulExp mulop unaryExp
 
 mulop : MUL
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     | DIV
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     | MOD
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     ;
 
@@ -559,16 +585,19 @@ unaryExp : unaryop unaryExp
 unaryop : SUB
     {
         $1->tokenclass=CHSIGN;
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     | MUL
     {
         $1->tokenclass=SIZEOF;
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     | RAND
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
+        $$ -> expType = Integer;
     }
     ;
 
@@ -658,6 +687,7 @@ constant :  NUMCONST
     {
         $$ = newExpNode(ConstantK, $1);
         $$->expType = Boolean;
+        $$->isBoolean = true;
         $$->value = $1->nvalue;
     }
     ;
@@ -692,6 +722,9 @@ int main(int argc, char *argv[])
     {
         printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", argv[1]);
         n_errors++;
+        printf("Number of warnings: %d\n", n_warnings);
+        printf("Number of errors: %d\n", n_errors);
+        return 1;
     }
     
     while((c = ourGetopt(argc, argv, (char *)"dDpPh")) != EOF)

@@ -39,7 +39,7 @@ enum  StmtKind {NullK, IfK, WhileK, ForK, CompoundK, ReturnK, BreakK, RangeK};
 enum ExpKind {OpK, ConstantK, IdK, AssignK, InitK, CallK};
 
 // ExpType is used for type checking (Void means no type or value, UndefinedType means undefined)
-enum ExpType {Void, Integer, Boolean, Char, String, CharInt, Equal, UndefinedType, Array};
+enum ExpType {Void, Integer, Boolean, Char, String, UndefinedType, Array};
 
 // What kind of scoping is used?  (decided during typing)
 enum VarKind {None, Local, Global, Parameter, LocalStatic};
@@ -77,6 +77,7 @@ typedef struct treeNode
     int aSize;
     bool isArray;                          // is this an array
     bool isStatic;                         // is staticly allocated?
+    bool isBoolean;
     int n_children;
     bool noScope;
     bool funcCompound;
@@ -108,7 +109,7 @@ TreeNode *addSibling(TreeNode *t, TreeNode *s);
 
 void addChild(TreeNode *t, TreeNode *c);
 
-void setType(TreeNode *t, ExpType type, bool isStatic);
+TreeNode* setType(TreeNode *t, ExpType type, bool isStatic);
 
 static void printSpaces(void);
 
