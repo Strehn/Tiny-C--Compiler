@@ -66,14 +66,14 @@ void analyzenode(TreeNode *tree, SymbolTable *table)
     }
     
     nodeend(tree, table);
-    
+
     // look at the sibling
     if( (tree->sibling) != NULL)
     {
         analyzenode(tree->sibling, table);
     }
     
-    //CHECK FOR IS USED AND INITIALIZED HERE
+        //CHECK FOR IS USED AND INITIALIZED HERE
     //checkUsage(tree, table);
 }
 
@@ -115,6 +115,7 @@ void declStart(TreeNode *tree, SymbolTable *table)
     switch(tree->subkind.decl)
     {
         case VarK:
+            tree->isInitialized = true;
             break;
         case FuncK:
             table->enter(tree->name);
@@ -158,9 +159,10 @@ void expStart(TreeNode *tree, SymbolTable *table)
                         n_errors++;
                         //temp->expType = UndefinedType;
                     }
-                    else
+                    else // temp != NULL
                     {
                         tree->expType = temp->expType;
+                        tree->isArray = temp->isArray;
                     }
                     break;
                 case AssignK:
@@ -178,6 +180,11 @@ void expStart(TreeNode *tree, SymbolTable *table)
                     else
                     {
                         tree->expType = temp->expType;
+                        if(temp->subkind.decl != FuncK)
+                        {
+                            printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", tree->lineno, temp->name);
+                            n_errors++;
+                        }
                     }
                     break;
                 default:
@@ -325,12 +332,16 @@ void expend(TreeNode *tree, SymbolTable *table)
     
     if(tree->child[0] != NULL)
     {
-        if(tree->child[0]->nodekind == DeclK)
+        if(tree->child[0]->nodekind == ExpK)
         {
-            if(tree->child[0]->subkind.decl == FuncK)
+            if(tree->child[0]->subkind.exp == CallK)
             {
-                printf("ERROR(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[0]->name);
-                n_errors++;
+                temp = (TreeNode *)table->lookup(tree->child[0]->name);
+                if(temp != NULL && temp -> nodekind == DeclK)
+                {
+                    //printf("ERROR(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[0]->name);
+                    //n_errors++;
+                }
             }
         }
         
@@ -357,10 +368,14 @@ void expend(TreeNode *tree, SymbolTable *table)
     {
         if(tree->child[1]->nodekind == DeclK)
         {
-            if(tree->child[1]->subkind.decl == FuncK)
+            if(tree->child[1]->subkind.exp == CallK)
             {
-                printf("ERROR(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[1]->name);
-                n_errors++;
+                temp = (TreeNode *)table->lookup(tree->child[1]->name);
+                if(temp != NULL && temp -> nodekind == DeclK)
+                {
+                    //printf("ERROR(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[1]->name);
+                    //n_errors++;
+                }
             }
         }
         
@@ -782,7 +797,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         printf("ERROR(%d): The operation 'sizeof' only works with arrays.\n", tree->lineno);
                         n_errors++;
                     }
-                    if( (tree->child[0] != NULL && tree->child[0]->expType != Integer) )
+                    else if( (tree->child[0] != NULL && tree->child[0]->expType != Integer) )
                     {
                         printf("ERROR(%d): Unary 'sizeof' requires an operand of type int but was given type %s.\n", tree->lineno, lhs_type);
                         n_errors++;
