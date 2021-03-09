@@ -18,8 +18,6 @@ using namespace std;
 
 extern int line;
 
-
-///// ----- PARSE TABLE TO PRINT FROM ASS2
 //{VarK, FuncK, ParamK};
 TreeNode *newDeclNode(DeclKind kind,
                       ExpType type,
@@ -45,30 +43,17 @@ TreeNode *newDeclNode(DeclKind kind,
         temp->lineno = token->linenum;
         temp->subkind.decl = kind;
         temp->expType = type;
-        if(c0 != NULL)
-        {
-            temp->child[0] = c0;
-            temp->child[0]->expType = type;
-        }
-        if(c1 != NULL)
-        {
-            temp->child[1] = c1;
-            temp->child[1]->expType = type;
-        }
-        if(c2 != NULL)
-        {
-            temp->child[2] = c2;
-            temp->child[2]->expType = type;
-        }
+        temp->child[0] = c0;
+        temp->child[1] = c1;
+        temp->child[2] = c2;
         
         // ----- Get Data From Token -----
         temp->string = token->svalue;
-        temp->name = token->tokenstr;
+        temp->name = token->idIndex;
         temp->value = token->nvalue;
         temp->cvalue = token->cvalue;
         temp->tmp = token->tokenstr;
         temp->tokenclass = token->tokenclass;
-        temp->isInitialized = false;
     }
     return temp;
 }
@@ -96,22 +81,17 @@ TreeNode *newStmtNode(StmtKind kind,
         temp->nodekind = StmtK;
         temp->lineno = token->linenum;
         temp->subkind.stmt = kind;
-        
         temp->child[0] = c0;
         temp->child[1] = c1;
         temp->child[2] = c2;
         
-        temp->expType = UndefinedType;
-        
         // ----- Get Data From Token -----
         temp->string = token->svalue;
-        temp->name = token->tokenstr;
+        temp->name = token->idIndex;
         temp->value = token->nvalue;
         temp->cvalue = token->cvalue;
         temp->tmp = token->tokenstr;
         temp->tokenclass = token->tokenclass;
-        temp->isInitialized = false;
-        
     }
     
     return temp;
@@ -137,20 +117,16 @@ TreeNode *newExpNode(ExpKind kind,
         temp->nodekind = ExpK;
         temp->lineno = token->linenum;
         temp->subkind.exp = kind;
-        
         temp->child[0] = c0;
         temp->child[1] = c1;
         
-        temp->expType = UndefinedType;
-        
         // ----- Get Data From Token -----
         temp->string = token->svalue;
-        temp->name = token->tokenstr;
+        temp->name = token->idIndex;
         temp->value = token->nvalue;
         temp->cvalue = token->cvalue;
         temp->tmp = token->tokenstr;
         temp->tokenclass = token->tokenclass;
-        temp->isInitialized = false;
     }
     
     return temp;
@@ -188,21 +164,14 @@ void addChild(TreeNode *t, TreeNode *c)
 }
 
 // pass the static and type attribute down the sibling list
-TreeNode * setType(TreeNode *t, ExpType type, bool isStatic)
+void setType(TreeNode *t, ExpType type, bool isStatic)
 {
-        TreeNode *tmp = t;
-        while(t)
-        {
-            if(type == Boolean)
-            {
-                t->isBoolean = true;
-            }
-            t->expType = type;
-            t->isStatic = isStatic;
-            t = t->sibling;
-        }
-    
-    return tmp;
+    while (t) {
+        t->expType = type;
+        t->isStatic = isStatic;
+
+        t = t->sibling;
+    }
 }
 
 /* Variable indentno is used by printTree to
@@ -238,19 +207,19 @@ void getType(TreeNode *tree)
     switch(tree->expType)
     {
         case 1:
-            printf("int");
+            printf("int ");
             break;
         case 2:
-            printf("bool");
+            printf("bool ");
             break;
         case 3:
-            printf("char");
+            printf("char ");
             break;
         case 4:
-            printf("string");
+            printf("string ");
             break;
         default:
-            printf("void");
+            printf("void ");
             break;
     }
 }
@@ -453,13 +422,11 @@ void printTree(TreeNode *tree)
                             {
                                 printf("of type bool: true ");
                                 printf("[line: %d]\n", tree->lineno);
-                                tree->expType = Boolean;
                             }
                             else
                             {
                                 printf("of type bool: false ");
                                 printf("[line: %d]\n", tree->lineno);
-                                tree->expType = Boolean;
                             }
                             break;
                         case Char:
@@ -579,3 +546,4 @@ void printTree(TreeNode *tree)
     }
     UNINDENT;
 }
+

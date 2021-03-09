@@ -45,9 +45,10 @@ bool cat()
    aa[aa];
    cat[3];
    cat(cat);
-
+   
    *ba;
- for z = 1 to 10 do z + z;
+
+   for z = 1 to 10 do z + z;
    for z = 3 to 201 by 11 do z = z;  // illegal?
    for z = 0 to 10 do {
        a = z;
@@ -62,7 +63,7 @@ bool cat()
    aa <= aa;
 
    ca = "dogs are great";
-
+   
    return aa;
 }
 
@@ -72,6 +73,8 @@ dog(int i)
        i=i;
        return;
    }
+
+
 elk(int a, a)
 {
    int a;
@@ -88,7 +91,7 @@ int mane()
 {
    static bool bbb;
    static char ccc[5];
-
+   
    ?ccc;
    ccc/ccc;
    *bbb;
@@ -104,5 +107,4 @@ int mane()
 }
 
 int mane;
-
 
