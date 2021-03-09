@@ -79,6 +79,7 @@ typedef struct treeNode
     bool isInitialized;
     bool noScope;
     bool funcCompound;
+    bool arrPrinted;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
