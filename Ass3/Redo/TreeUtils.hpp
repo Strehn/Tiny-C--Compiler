@@ -78,6 +78,7 @@ typedef struct treeNode
     bool isUsed;
     bool isInitialized;
     bool noScope;
+    bool funcCompound;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
