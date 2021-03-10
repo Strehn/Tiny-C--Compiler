@@ -2093,7 +2093,7 @@ yyreduce:
 #line 373 "parser.y"
     {
         (yyval.tree) = newExpNode(AssignK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
-        (yyval.tree)->expType = UndefinedType
+        (yyval.tree)->expType = UndefinedType;
     ;}
     break;
 

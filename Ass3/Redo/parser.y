@@ -372,7 +372,7 @@ breakStmt : BREAK SEMICOLON
 exp : mutable ASS exp
     {
         $$ = newExpNode(AssignK, $2, $1, $3);
-        $$->expType = UndefinedType
+        $$->expType = UndefinedType;
     }
     | mutable ADDASS exp
     {
