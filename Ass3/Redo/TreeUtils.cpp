@@ -282,10 +282,10 @@ void printOp(TreeNode *tree)
             printf("Op: > ");
             break;
         case SIZEOF:
-            printf("Op: SIZEOF ");
+            printf("Op: sizeof ");
             break;
         case CHSIGN:
-            printf("Op: CHSIGN ");
+            printf("Op: chsign ");
             break;
         case MUL:
             printf("Op: * ");
@@ -300,13 +300,13 @@ void printOp(TreeNode *tree)
             printf("Op: ? ");
             break;
         case AND:
-            printf("Op: AND ");
+            printf("Op: and ");
             break;
         case OR:
-            printf("Op: OR ");
+            printf("Op: or ");
             break;
         case NOT:
-            printf("Op: NOT ");
+            printf("Op: not ");
             break;
         case SEMICOLON:
             printf("Op: ; ");
@@ -412,27 +412,27 @@ void printTree(TreeNode *tree)
                     switch(tree->expType)
                     {
                         case Integer:
-                            printf("of type int: %d ", tree->value);
+                            printf("of type int ");
                             printf("[line: %d]\n", tree->lineno);
                             break;
                         case Boolean:
                             if(tree->value == 1)
                             {
-                                printf("of type bool: true ");
+                                printf("of type bool ");
                                 printf("[line: %d]\n", tree->lineno);
                             }
                             else
                             {
-                                printf("of type bool: false ");
+                                printf("of type bool ");
                                 printf("[line: %d]\n", tree->lineno);
                             }
                             break;
                         case Char:
-                            printf("of type char: '%c' ", tree->cvalue);
+                            printf("of type char ");
                             printf("[line: %d]\n", tree->lineno);
                             break;
                         case String:
-                            printf("is array of type char: %s ", tree->string);
+                            printf("is array of type char ");
                             printf("[line: %d]\n", tree->lineno);
                             break;
                         default:
@@ -461,12 +461,18 @@ void printTree(TreeNode *tree)
                             }
                             break;
                         case Char:
-                            printf("'%c' of type char: ", tree->cvalue);
-                            printf("[line: %d]\n", tree->lineno);
+                            if(tree->isArray == true)
+                            {
+                                printf("%s is array of type char: ", tree->string);
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("'%c' of type char: ", tree->cvalue);
+                                printf("[line: %d]\n", tree->lineno);
+                            }
                             break;
                         case String:
-                            printf("%s is array of type char: ", tree->string);
-                            printf("[line: %d]\n", tree->lineno);
                             break;
                         default:
                             printf("of usassigned type ");
@@ -511,27 +517,27 @@ void printTree(TreeNode *tree)
                     switch(tree->expType)
                     {
                         case Integer:
-                            printf("of type int: %d ", tree->value);
+                            printf("of type int ");
                             printf("[line: %d]\n", tree->lineno);
                             break;
                         case Boolean:
                             if(tree->value == 1)
                             {
-                                printf("of type bool: true ");
+                                printf("of type bool ");
                                 printf("[line: %d]\n", tree->lineno);
                             }
                             else
                             {
-                                printf("of type bool: false ");
+                                printf("of type bool ");
                                 printf("[line: %d]\n", tree->lineno);
                             }
                             break;
                         case Char:
-                            printf("of type char: '%c' ", tree->cvalue);
+                            printf("of type char ");
                             printf("[line: %d]\n", tree->lineno);
                             break;
                         case String:
-                            printf("is array of type char: %s ", tree->string);
+                            printf("is array of type char ");
                             printf("[line: %d]\n", tree->lineno);
                             break;
                         default:

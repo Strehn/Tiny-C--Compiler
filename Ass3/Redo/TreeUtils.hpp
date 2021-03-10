@@ -80,6 +80,8 @@ typedef struct treeNode
     bool noScope;
     bool funcCompound;
     bool arrPrinted;
+    bool isRange;
+    bool isUndeclared;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;

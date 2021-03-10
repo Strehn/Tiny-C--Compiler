@@ -406,7 +406,7 @@ exp : mutable ASS exp
 
 simpleExp : simpleExp OR andExp
     {
-        setType(newExpNode(OpK, $2, $1, $3), Boolean, false);
+        $$ = setType(newExpNode(OpK, $2, $1, $3), Boolean, false);
     }
     | andExp
     {
@@ -416,7 +416,7 @@ simpleExp : simpleExp OR andExp
 
 andExp : andExp AND unaryRelExp
     {
-        setType(newExpNode(OpK, $2, $1, $3), Boolean, false);
+        $$ = setType(newExpNode(OpK, $2, $1, $3), Boolean, false);
     }
     | unaryRelExp
     {
@@ -624,7 +624,7 @@ args : argList
 argList : argList COMMA exp
     {
         $$ = addSibling($1, $3);
-        $$->name = $2->svalue;
+        //$$->name = $2->svalue;
     }
     | exp
     {
@@ -647,8 +647,9 @@ constant :  NUMCONST
     |STRINGCONST
     {
         $$ = newExpNode(ConstantK, $1);
-        $$->expType = String;
+        $$->expType = Char;
         $$->string = $1->svalue;
+        $$->isArray = true;
     }
     |BOOLCONST
     {

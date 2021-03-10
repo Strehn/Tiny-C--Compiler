@@ -615,7 +615,7 @@ static const yytype_uint16 yyrline[] =
      470,   476,   482,   488,   492,   498,   504,   509,   513,   519,
      525,   531,   535,   539,   545,   550,   555,   560,   565,   571,
      575,   581,   586,   593,   597,   601,   607,   614,   619,   624,
-     629,   635,   641,   647,   653
+     629,   635,   641,   647,   654
 };
 #endif
 
@@ -2149,7 +2149,7 @@ yyreduce:
   case 67:
 #line 408 "parser.y"
     {
-        setType(newExpNode(OpK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree)), Boolean, false);
+        (yyval.tree) = setType(newExpNode(OpK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree)), Boolean, false);
     ;}
     break;
 
@@ -2163,7 +2163,7 @@ yyreduce:
   case 69:
 #line 418 "parser.y"
     {
-        setType(newExpNode(OpK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree)), Boolean, false);
+        (yyval.tree) = setType(newExpNode(OpK, (yyvsp[(2) - (3)].tokenData), (yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree)), Boolean, false);
     ;}
     break;
 
@@ -2459,7 +2459,7 @@ yyreduce:
 #line 625 "parser.y"
     {
         (yyval.tree) = addSibling((yyvsp[(1) - (3)].tree), (yyvsp[(3) - (3)].tree));
-        (yyval.tree)->name = (yyvsp[(2) - (3)].tokenData)->svalue;
+        //$$->name = $2->svalue;
     ;}
     break;
 
@@ -2492,13 +2492,14 @@ yyreduce:
 #line 648 "parser.y"
     {
         (yyval.tree) = newExpNode(ConstantK, (yyvsp[(1) - (1)].tokenData));
-        (yyval.tree)->expType = String;
+        (yyval.tree)->expType = Char;
         (yyval.tree)->string = (yyvsp[(1) - (1)].tokenData)->svalue;
+        (yyval.tree)->isArray = true;
     ;}
     break;
 
   case 114:
-#line 654 "parser.y"
+#line 655 "parser.y"
     {
         (yyval.tree) = newExpNode(ConstantK, (yyvsp[(1) - (1)].tokenData));
         (yyval.tree)->expType = Boolean;
@@ -2508,7 +2509,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2512 "parser.tab.c"
+#line 2513 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2728,7 +2729,7 @@ yyreturn:
 }
 
 
-#line 661 "parser.y"
+#line 662 "parser.y"
 
 
 //
