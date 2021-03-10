@@ -90,20 +90,17 @@ decl : varDecl
 
 varDecl : typeSpec varDeclList SEMICOLON
     {
-        $$ = $2;
-        setType($2, $1, false);
+        $$ = setType($2, $1, false);
     }
     ;
 
 scopedVarDecl : STATIC typeSpec varDeclList SEMICOLON
     {
-        $$ = $3;
-        setType($3, $2, true);
+        $$ = setType($3, $2, true);
     }
     | typeSpec varDeclList SEMICOLON
     {
-        $$ = $2;
-        setType($2, $1, false);
+        $$ = setType($2, $1, false);
     }
     ;
 
@@ -161,7 +158,6 @@ funDecl : typeSpec ID LP parms RP stmt
     {
         $$ = newDeclNode(FuncK, $1, $2, $4, $6);
         $$->tmp = $2->idIndex;
-        setType($$, $1, true);
     }
     | ID LP parms RP stmt
     {
@@ -192,8 +188,7 @@ parmList : parmList SEMICOLON parmTypeList
 
 parmTypeList : typeSpec parmIdList
     {
-        $$ = $2;
-        setType($2, $1, false);
+        $$ = setType($2, $1, false);
     }
     ;
 
@@ -209,12 +204,12 @@ parmIdList : parmIdList COMMA parmId
 
 parmId : ID
     {
-        $$ = newDeclNode(ParamK, Void, $1);
+        $$ = newDeclNode(ParamK, UndefinedType, $1);
         $$->tmp = $1->svalue;
     }
     | ID LB RB
     {
-        $$ = newDeclNode(ParamK, Void, $1);
+        $$ = newDeclNode(ParamK, UndefinedType, $1);
         $$->isArray = true;
         $$->tmp = $1->svalue;
     }
@@ -377,30 +372,31 @@ breakStmt : BREAK SEMICOLON
 exp : mutable ASS exp
     {
         $$ = newExpNode(AssignK, $2, $1, $3);
+        $$->expType = UndefinedType
     }
     | mutable ADDASS exp
     {
-        $$ = newExpNode(AssignK, $2, $1, $3);
+        $$ = setType(newExpNode(AssignK, $2, $1, $3), Integer, false);
     }
     | mutable SUBASS exp
     {
-        $$ = newExpNode(AssignK, $2, $1, $3);
+        $$ = setType(newExpNode(AssignK, $2, $1, $3), Integer, false);
     }
     | mutable MULASS exp
     {
-        $$ = newExpNode(AssignK, $2, $1, $3);
+        $$ = setType(newExpNode(AssignK, $2, $1, $3), Integer, false);
     }
     | mutable DIVASS exp
     {
-        $$ = newExpNode(AssignK, $2, $1, $3);
+        $$ = setType(newExpNode(AssignK, $2, $1, $3), Integer, false);
     }
     | mutable INC
     {
-        $$ = newExpNode(AssignK, $2, $1);
+        $$ = setType(newExpNode(AssignK, $2, $1), Integer, false);
     }
     | mutable DEC
     {
-        $$ = newExpNode(AssignK, $2, $1);
+        $$ = setType(newExpNode(AssignK, $2, $1), Integer, false);
     }
     | simpleExp
     {
@@ -410,7 +406,7 @@ exp : mutable ASS exp
 
 simpleExp : simpleExp OR andExp
     {
-        $$ = newExpNode(OpK, $2, $1, $3);
+        setType(newExpNode(OpK, $2, $1, $3), Boolean, false);
     }
     | andExp
     {
@@ -420,7 +416,7 @@ simpleExp : simpleExp OR andExp
 
 andExp : andExp AND unaryRelExp
     {
-        $$ = newExpNode(OpK, $2, $1, $3);
+        setType(newExpNode(OpK, $2, $1, $3), Boolean, false);
     }
     | unaryRelExp
     {
@@ -430,7 +426,7 @@ andExp : andExp AND unaryRelExp
 
 unaryRelExp : NOT unaryRelExp
     {
-        $$ = newExpNode(OpK, $1, $2);
+        $$ = setType(newExpNode(OpK, $1, $2), Boolean, false);
     }
     | relExp
     {
@@ -452,35 +448,36 @@ relExp : minmaxExp relop minmaxExp
 
 relop : LEQ
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
+        
     }
     | LT
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
     }
     | GT
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
     }
     | GEQ
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
     }
     | EQ
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
     }
     | NEQ
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Boolean, false);
     }
     ;
 
 minmaxExp : minmaxExp minmaxop sumExp
     {
         $$ = $2;
-        addChild($$,$1);
-        addChild($$,$3);
+        addChild($$, $1);
+        addChild($$, $3);
     }
     | sumExp
     {
@@ -490,19 +487,19 @@ minmaxExp : minmaxExp minmaxop sumExp
 
 minmaxop : MAX
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     | MIN
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     ;
 
 sumExp : sumExp sumop mulExp
     {
         $$ = $2;
-        addChild($$,$1);
-        addChild($$,$3);
+        addChild($$, $1);
+        addChild($$, $3);
     }
     | mulExp
     {
@@ -511,11 +508,11 @@ sumExp : sumExp sumop mulExp
 
 sumop : ADD
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     | SUB
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     ;
 
@@ -533,15 +530,15 @@ mulExp : mulExp mulop unaryExp
 
 mulop : MUL
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     | DIV
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     | MOD
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     ;
 
@@ -558,16 +555,16 @@ unaryExp : unaryop unaryExp
 unaryop : SUB
     {
         $1->tokenclass=CHSIGN;
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     | MUL
     {
         $1->tokenclass=SIZEOF;
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     | RAND
     {
-        $$ = newExpNode(OpK, $1);
+        $$ = setType(newExpNode(OpK, $1), Integer, false);
     }
     ;
 

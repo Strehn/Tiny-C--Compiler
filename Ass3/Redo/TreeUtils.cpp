@@ -164,14 +164,16 @@ void addChild(TreeNode *t, TreeNode *c)
 }
 
 // pass the static and type attribute down the sibling list
-void setType(TreeNode *t, ExpType type, bool isStatic)
+TreeNode* setType(TreeNode *t, ExpType type, bool isStatic)
 {
+    TreeNode *temp = t;
     while (t) {
         t->expType = type;
         t->isStatic = isStatic;
 
         t = t->sibling;
     }
+    return temp;
 }
 
 /* Variable indentno is used by printTree to
@@ -407,10 +409,105 @@ void printTree(TreeNode *tree)
             {
                 case OpK:
                     printOp(tree);
-                    printf("[line: %d]\n", tree->lineno);
+                    switch(tree->expType)
+                    {
+                        case Integer:
+                            printf("of type int: %d ", tree->value);
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case Boolean:
+                            if(tree->value == 1)
+                            {
+                                printf("of type bool: true ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("of type bool: false ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            break;
+                        case Char:
+                            printf("of type char: '%c' ", tree->cvalue);
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case String:
+                            printf("is array of type char: %s ", tree->string);
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        default:
+                            printf("of undefined type ");
+                            printf("[line: %d]\n", tree->lineno);
+                    }
                     break;
                 case ConstantK:
                     printf("Const ");
+                    switch(tree->expType)
+                    {
+                        case Integer:
+                            printf("%d of type int ", tree->value);
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case Boolean:
+                            if(tree->value == 1)
+                            {
+                                printf("true of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("false of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            break;
+                        case Char:
+                            printf("'%c' of type char: ", tree->cvalue);
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case String:
+                            printf("%s is array of type char: ", tree->string);
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        default:
+                            printf("of usassigned type ");
+                            printf("[line: %d]\n", tree->lineno);
+                    }
+                    break;
+                case IdK:
+                    printf("Id: %s ", tree->tmp);
+                    switch(tree->expType)
+                    {
+                        case Integer:
+                            printf("of type int ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case Boolean:
+                            if(tree->value == 1)
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            break;
+                        case Char:
+                            printf("of type char ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case String:
+                            printf("is array of type char: %s ", tree->string);
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        default:
+                            printf("of undefined type ");
+                            printf("[line: %d]\n", tree->lineno);
+                    }
+                    break;
+                case AssignK:
+                    printOp(tree);
                     switch(tree->expType)
                     {
                         case Integer:
@@ -441,13 +538,6 @@ void printTree(TreeNode *tree)
                             printf("of usassigned type ");
                             printf("[line: %d]\n", tree->lineno);
                     }
-                    break;
-                case IdK:
-                    printf("Id: %s [line: %d]\n", tree->tmp, tree->lineno);
-                    break;
-                case AssignK:
-                    printOp(tree);
-                    printf("[line: %d]\n", tree->lineno);
                     break;
                 case InitK:
                     printOp(tree);

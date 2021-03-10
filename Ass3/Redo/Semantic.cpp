@@ -64,8 +64,6 @@ void analyzenode(TreeNode *tree, SymbolTable *table)
             analyzenode(tree->child[i], table);
         }
     }
-    
-    nodeend(tree, table);
 
     // look at the sibling
     if( (tree->sibling) != NULL)
@@ -73,6 +71,7 @@ void analyzenode(TreeNode *tree, SymbolTable *table)
         analyzenode(tree->sibling, table);
     }
     
+    nodeend(tree, table);
         //CHECK FOR IS USED AND INITIALIZED HERE
     //checkUsage(tree, table);
 }
@@ -418,11 +417,47 @@ void expend(TreeNode *tree, SymbolTable *table)
     {
         if(tree->tokenclass == LB)
         {
+            //index
+            if(tree->child[0] != NULL && tree->child[0]->isArray != true)
+            {
+                printf("Error(%d): Cannot index nonarray '%s'.\n", tree->lineno, tree->child[0]->name);
+                n_errors++;
+            }
+            if(tree->child[0] != NULL && tree->child[1] != NULL && tree->child[1]->expType != Integer)
+            {
+                lhs_type = getsType(tree->child[1]);
+                printf("ERROR(%d): Array '%s' should be indexed by type int but got type %s.\n", tree->lineno, tree->child[0]->name, lhs_type);
+                n_errors++;
+            }
+            if(tree->child[1] != NULL && tree->child[1]->isArray == true)
+            {
+                lhs_type = getsType(tree->child[1]);
+                printf("ERROR(%d): Array index is the unindexed array '%s'.\n", tree->lineno, tree->child[1]->name);
+                n_errors++;
+            }
             
+            //functions as variable
+            if( (tree->child[0] != NULL) && (tree->child[0]->nodekind = ExpK) && (tree->child[0]->subkind.exp = IdK))
+            {
+                if(table->lookup(tree->child[0]->name) != NULL && ((TreeNode *)table->lookup(tree->child[0]->name))->subkind.decl == FuncK)
+                {
+                    printf("Error(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[0]->name);
+                }
+            }
+             
+             /*
+            if( (tree->child[1] != NULL) && (tree->child[1]->nodekind = ExpK) && (tree->child[1]->subkind.exp = IdK))
+            {
+                if(table->lookup(tree->child[1]->name) != NULL && ((TreeNode *)table->lookup(tree->child[1]->name))->subkind.decl == FuncK)
+                {
+                    printf("Error(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[1]->name);
+                }
+            }
+             */
             
-            
+            tree->expType = tree->child[0]->expType;
+            tree->isInitialized = tree->child[0]->isInitialized;
         }
-        
         
     //switch(tree->subkind.exp)
     //{
@@ -560,41 +595,6 @@ void expend(TreeNode *tree, SymbolTable *table)
                                 printf("ERROR(%d): '=' requires operands of the same type but lhs is type %s and rhs is type %s.\n", tree->lineno, lhs_type, rhs_type);
                                 n_errors++;
                                 
-                                //this is an array for the case that looks like this
-                               // .   .   Sibling: 2  Assign: = [line: 44] (TREE)
-                               // .   .   .   Child: 0  Op: [ [line: 44]
-                               // .   .   .   .   Child: 0  Id: ca [line: 44]
-                               // .   .   .   .   Child: 1  Op: [ [line: 44]
-                               // .   .   .   .   .   Child: 0  Id: aa [line: 44]
-                               //  .   .   .   .   .   Child: 1  Const of type int: 1 [line: 44]
-                               // .   .   .   Child: 1  Id: c [line: 44]
-                                if(tree->child[0]->child[1]->tokenclass == LB)
-                                {
-                                    if(tree->child[0]->child[1]->child[0] != NULL)
-                                    {
-                                        if(tree->child[0]->child[1]->child[0]->expType != Integer)
-                                        {
-                                            lhs_type = getsType(tree->child[0]->child[1]->child[0]);
-                                            tree->child[0]->child[1]->child[0]->isArray = true;
-                                            tree->child[0]->child[1]->child[0]->arrPrinted = true;
-                                            tree->child[0]->child[1]->arrPrinted = true;
-                                            tree->child[0]->arrPrinted = true;
-                                            printf("ERROR(%d): Array '%s' should be indexed by type int but got type %s.\n", tree->lineno, tree->child[0]->child[0]->name, lhs_type);
-                                            n_errors++;
-                                        }
-                                    }
-                                }
-                                
-                                // check if index is int
-                                if(tree->child[0]->child[0]->expType != Integer)
-                                {
-                                    tree->child[0]->arrPrinted = true;
-                                    tree->arrPrinted = true;
-                                    tree->child[0]->child[0]->arrPrinted = true;
-                                    printf("ERROR(%d): Array '%s' should be indexed by type int but got type %s.\n", tree->lineno, tree->child[0]->child[0]->name, lhs_type);
-                                    n_errors++;
-                                }
-                                tree->child[0]->child[0]->isArray = true;
                             }
                             
 
@@ -607,7 +607,8 @@ void expend(TreeNode *tree, SymbolTable *table)
                         }
                         
                     }// check for array
-                    else if((tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1]!= NULL && tree->child[1]->isArray == false))
+                    
+                    if((tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1]!= NULL && tree->child[1]->isArray == false))
                     {
                         printf("ERROR(%d): '=' requires both operands be arrays or not but lhs is an array and rhs is not an array. \n", tree->lineno);
                         n_errors++;
@@ -867,6 +868,19 @@ void expend(TreeNode *tree, SymbolTable *table)
                             n_errors++;
                         }
                     }
+                    // Check for arrays
+                    if((tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1]!= NULL && tree->child[1]->isArray == false))
+                    {
+                        printf("ERROR(%d): The operation '+' does not work with arrays. \n", tree->lineno);
+                        n_errors++;
+                    }
+
+                    else if((tree->child[0] != NULL && tree->child[0]->isArray == false) && (tree->child[1]!= NULL && tree->child[1]->isArray == true))
+                    {
+                        printf("ERROR(%d): The operation '+' does not work with arrays. \n", tree->lineno);
+                        n_errors++;
+                    }
+                    
                     break;
                 case GT:
                     if(tree->child[0] != NULL && tree->child[1] != NULL)
@@ -882,6 +896,19 @@ void expend(TreeNode *tree, SymbolTable *table)
                             printf("ERROR(%d): '>' requires operands of the same type but lhs is type %s and rhs is type %s.\n", tree->lineno, lhs_type, rhs_type);
                             n_errors++;
                         }
+                    }
+                    
+                    // Check for arrays
+                    if((tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1]!= NULL && tree->child[1]->isArray == false))
+                    {
+                        printf("ERROR(%d): The operation '+' does not work with arrays. \n", tree->lineno);
+                        n_errors++;
+                    }
+
+                    else if((tree->child[0] != NULL && tree->child[0]->isArray == false) && (tree->child[1]!= NULL && tree->child[1]->isArray == true))
+                    {
+                        printf("ERROR(%d): The operation '+' does not work with arrays. \n", tree->lineno);
+                        n_errors++;
                     }
                     break;
                 case SIZEOF:
@@ -911,6 +938,19 @@ void expend(TreeNode *tree, SymbolTable *table)
                     if(tree->child[0] != NULL)
                     {
                         tree->child[0]->isUsed = true;
+                    }
+                    
+                    // Check for arrays
+                    if((tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1]!= NULL && tree->child[1]->isArray == false))
+                    {
+                        printf("ERROR(%d): The operation '+' does not work with arrays. \n", tree->lineno);
+                        n_errors++;
+                    }
+
+                    else if((tree->child[0] != NULL && tree->child[0]->isArray == false) && (tree->child[1]!= NULL && tree->child[1]->isArray == true))
+                    {
+                        printf("ERROR(%d): The operation '+' does not work with arrays. \n", tree->lineno);
+                        n_errors++;
                     }
                     break;
                 case MUL:
@@ -1024,20 +1064,19 @@ void expend(TreeNode *tree, SymbolTable *table)
                         tree->child[1]->isUsed = true;
                     }
                     
-                    // check for array
                     // Check for arrays
                     if((tree->child[0] != NULL && tree->child[0]->isArray == true) && (tree->child[1]!= NULL && tree->child[1]->isArray == false))
                     {
                         printf("ERROR(%d): The operation 'and' does not work with arrays. \n", tree->lineno);
                         n_errors++;
                     }
-
                     else if((tree->child[0] != NULL && tree->child[0]->isArray == false) && (tree->child[1]!= NULL && tree->child[1]->isArray == true))
                     {
                         printf("ERROR(%d): The operation 'and' does not work with arrays. \n", tree->lineno);
                         n_errors++;
                     }
                     break;
+                    
                 case OR:
                     if( (tree->child[0] != NULL && tree->child[0]->expType != Boolean) )
                     {
@@ -1073,7 +1112,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                    
                     if(tree->child[0]->isArray == true)
                     {
-                        printf("ERROR(%d): The operation 'not' does not work with arrays.", tree->lineno);
+                        printf("ERROR(%d): The operation 'not' does not work with arrays.\n", tree->lineno);
                         n_errors++;
                     }
                     

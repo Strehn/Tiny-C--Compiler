@@ -107,7 +107,7 @@ TreeNode *addSibling(TreeNode *t, TreeNode *s);
 
 void addChild(TreeNode *t, TreeNode *c);
 
-void setType(TreeNode *t, ExpType type, bool isStatic);
+TreeNode * setType(TreeNode *t, ExpType type, bool isStatic);
 
 static void printSpaces(void);
 
