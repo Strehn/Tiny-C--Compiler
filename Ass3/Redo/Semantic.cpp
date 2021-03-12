@@ -932,6 +932,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                 break;
                        
             case IdK:
+                printifUninitialized(tree, table);
                 break;
                        
             case AssignK:

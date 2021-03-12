@@ -463,12 +463,12 @@ void printTree(TreeNode *tree)
                         case Char:
                             if(tree->isArray == true)
                             {
-                                printf("%s is array of type char: ", tree->string);
+                                printf("is array %s of type char ", tree->string);
                                 printf("[line: %d]\n", tree->lineno);
                             }
                             else
                             {
-                                printf("'%c' of type char: ", tree->cvalue);
+                                printf("'%c' of type char ", tree->cvalue);
                                 printf("[line: %d]\n", tree->lineno);
                             }
                             break;
