@@ -2758,8 +2758,8 @@ int main(int argc, char *argv[])
     
     if(argc < 3)
     {
-        printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", argv[1]);
-        n_errors++;
+        //printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", argv[1]);
+        //n_errors++;
         printf("Number of warnings: %d\n", n_warnings);
         printf("Number of errors: %d\n", n_errors);
         return 1;
