@@ -550,7 +550,37 @@ void printTree(TreeNode *tree)
                     printf("[line: %d]\n", tree->lineno);
                     break;
                 case CallK:
-                    printf("Call: %s [line: %d]\n", tree->tmp, tree->lineno);
+                    printf("Call: %s ", tree->tmp);
+                    switch(tree->expType)
+                    {
+                        case Integer:
+                            printf("of type int ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case Boolean:
+                            if(tree->value == 1)
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            break;
+                        case Char:
+                            printf("of type char ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case String:
+                            printf("is array of type char ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        default:
+                            printf("of type void ");
+                            printf("[line: %d]\n", tree->lineno);
+                    }
                     break;
                 default:
                     printf("Unknown ExpNode kind\n");

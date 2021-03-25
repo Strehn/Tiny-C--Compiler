@@ -355,9 +355,105 @@ void printifUninitialized(TreeNode * tree, SymbolTable * table)
     }
 }
 
+
+void addIO(TreeNode * tree, SymbolTable * table)
+{
+    // New Node
+    TreeNode * temp = new TreeNode;
+    temp->child[0] = new TreeNode;
+   
+    //void output(int)
+    temp->nodekind = DeclK;
+    temp->subkind.decl = FuncK;
+    temp->expType = Void;
+    temp->name = (char *)"output";
+    temp->lineno = (-1);
+    
+    temp->child[0]->nodekind = DeclK;
+    temp->child[0]->subkind.decl = ParamK;
+    temp->child[0]->expType = Integer;
+    temp->child[0]->name = (char *)"dummy";
+    temp->child[0]->lineno = -1;
+     
+    table->insert(temp->name, temp);
+     
+    
+    //void outputb(bool)
+     temp->nodekind = DeclK;
+     temp->subkind.decl = FuncK;
+     temp->expType = Void;
+     temp->name = (char *)"outputb";
+     temp->lineno = (-1);
+     
+     temp->child[0]->nodekind = DeclK;
+     temp->child[0]->subkind.decl = ParamK;
+     temp->child[0]->expType = Boolean;
+     temp->child[0]->name = (char *)"dummy";
+     temp->child[0]->lineno = -1;
+      
+     table->insert(temp->name, temp);
+    
+    //void outputc(char)
+    temp->nodekind = DeclK;
+    temp->subkind.decl = FuncK;
+    temp->expType = Void;
+    temp->name = (char *)"outputc";
+    temp->lineno = (-1);
+    
+    temp->child[0]->nodekind = DeclK;
+    temp->child[0]->subkind.decl = ParamK;
+    temp->child[0]->expType = Char;
+    temp->child[0]->name = (char *)"dummy";
+    temp->child[0]->lineno = -1;
+     
+    table->insert(temp->name, temp);
+    
+    temp->child[0] = NULL;
+    
+    // int input()
+    temp->nodekind = DeclK;
+    temp->subkind.decl = FuncK;
+    temp->expType = Integer;
+    temp->name = (char *)"input";
+    temp->lineno = (-1);
+    
+    table->insert(temp->name, temp);
+    
+    // bool inputb()
+    temp->nodekind = DeclK;
+    temp->subkind.decl = FuncK;
+    temp->expType = Boolean;
+    temp->name = (char *)"inputb";
+    temp->lineno = (-1);
+    
+    table->insert(temp->name, temp);
+    
+    //char inputc()
+    temp->nodekind = DeclK;
+    temp->subkind.decl = FuncK;
+    temp->expType = Char;
+    temp->name = (char *)"inputc";
+    temp->lineno = (-1);
+    
+    table->insert(temp->name, temp);
+    
+    //void outnl()
+    temp->nodekind = DeclK;
+    temp->subkind.decl = FuncK;
+    temp->expType = Void;
+    temp->name = (char *)"outnl";
+    temp->lineno = (-1);
+    
+    table->insert(temp->name, temp);
+     
+}
+
 // ----- Main Driving Code Function Declaration -----
 void symanticA(TreeNode *tree, SymbolTable *table)
 {
+    // Add the I/O functions
+    addIO(tree, table);
+    
     // analyze the tree to add the stuff to the symbol table
     // Analyze Tree
     analyzenode(tree, table);
@@ -457,6 +553,31 @@ void declStart(TreeNode *tree, SymbolTable *table)
             {
                 tree->isInitialized = true;
             }
+            
+            /*
+            if(tree->child[0] != NULL && tree->child[0]->subkind.exp == ConstantK)
+            {
+                printf("ERROR(%d): Initializer for variable '%s' is not a constant expression.\n", tree->lineno, tree->name);
+                n_errors++;
+            }
+             
+             */
+            
+            
+            char * type1;
+            char * type2;
+            if(tree->child[0] != NULL )
+            {
+                type1 = getsType(tree);
+                type2 = getsType(tree->child[0]);
+                
+                if(strcmp(type2, type1) != 0 && strcmp(type2, (char *)"undefined"))
+                {
+                    printf("ERROR(%d): Variable '%s' is of type %s but is being initialized with an expression of type %s.\n", tree->lineno, tree->name, type1, type2);
+                    n_errors++;
+                }
+            }
+             
             break;
         case FuncK:
             currentfunction = tree;
@@ -496,22 +617,12 @@ void declend(TreeNode *tree, SymbolTable *table)
     switch(tree->subkind.decl)
     {
         case VarK:
+            
             break;
         case FuncK:
             // get used
             scopeUsed(table);
             table->leave(); // leave the current scope
-            
-            // print if used
-            if(table->lookup(tree->name))
-            {
-                TreeNode * temp = (TreeNode *) table->lookup(tree->name);
-                if(temp->isUsed == false)
-                {
-                    printf("WARNING(%d): The function '%s' seems not to be used.\n", tree->lineno, tree->name);
-                    n_warnings++;
-                }
-            }
             
             currentfunction = NULL;
             break;
@@ -577,16 +688,7 @@ void stmtStart(TreeNode *tree, SymbolTable *table)
                 tree->child[0]->isInitialized = true;
                 setUsed(tree->child[0], table);
             }
-            
-            // ----- delete for NEXT ASSIGNMENT -----
-            for(int i = 0; i < 3; i++)
-            {
-                if(tree->child[1]->child[i] != NULL)
-                {
-                    tree->child[1]->child[i]->isRange = true;
-                    tree->child[1]->child[i]->expType = UndefinedType;
-                }
-            }
+             
             for(int i = 0; i < 3; i++)
             {
                 if((tree->child[i] != NULL) && (tree->child[i]->nodekind == StmtK) && (tree->child[i]->subkind.stmt == CompoundK))
@@ -610,6 +712,28 @@ void stmtStart(TreeNode *tree, SymbolTable *table)
         case BreakK:
             break;
         case RangeK:
+            // check if child is an array
+            for(int i = 0; i < 3; i++)
+            {
+                if(tree->child[i] != NULL)
+                {
+                    if(tree->child[i]->isArray == true)
+                    {
+                        printf("ERROR(%d): Cannot use array in position %d in range of for statement.\n", tree->lineno, i);
+                        n_errors++;
+                    }
+                }
+            }
+            
+            if(tree->child[0]!= NULL)
+            {
+                char * type1 = getsType(tree->child[0]);
+                if(tree->child[0]->expType != Integer)
+                {
+                    printf("ERROR(%d): Expecting type int in position 1 in range of for statement but got type %s.\n", tree->lineno, type1);
+                    n_errors++;
+                }
+            }
             break;
         default:
             break;
@@ -669,7 +793,7 @@ void stmtend(TreeNode *tree, SymbolTable *table)
                 if(tree->child[0]->expType != Boolean)
                 {
                     temp1 = getsType(tree->child[0]);
-                    printf("ERROR(%d): Expecting Boolean test condition in while statement but got type type %s.\n", tree->lineno, temp1);
+                    printf("ERROR(%d): Expecting Boolean test condition in while statement but got type %s.\n", tree->lineno, temp1);
                     n_errors++;
                 }
                 
@@ -679,11 +803,8 @@ void stmtend(TreeNode *tree, SymbolTable *table)
             break;
         case ForK:
             // get used warnings
-            if(tree->child[0] != NULL)
-            {
-                setUsed(tree, table);
-            }
             scopeUsed(table);
+            table->leave();
             loopdepth--;
             break;
         case CompoundK:
@@ -811,7 +932,6 @@ void expStart(TreeNode *tree, SymbolTable *table)
 
 void expend(TreeNode *tree, SymbolTable *table)
 {
-    
     if(tree == NULL)
     {
         printf("NULL NODE THAT SHOULD NOT BE NULL\n");
@@ -867,6 +987,7 @@ void expend(TreeNode *tree, SymbolTable *table)
      
     // Get the subkind
     
+     
     switch(tree->subkind.exp)
         {
             case OpK:
@@ -892,7 +1013,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                     }
                                 
                     tree->expType = tree->child[0]->expType;
-                    tree->isInitialized = tree->child[0]->isInitialized;
+                    //tree->isInitialized = tree->child[0]->isInitialized;
                 }
 
                 switch(tree->tokenclass)
@@ -902,42 +1023,42 @@ void expend(TreeNode *tree, SymbolTable *table)
                         typeEqual(tree);
                         typeArray(tree);
                         // print if uninitiialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case NEQ:
                         tree->name = (char *)"!=";
                         typeEqual(tree);
                         typeArray(tree);
                         // print if uninitiialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case LT:
                         tree->name = (char *)"<";
                         typeEqual(tree);
                         typeArray(tree);
                         // print if uninitiialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case GT:
                         tree->name = (char *)">";
                         typeEqual(tree);
                         typeArray(tree);
                         // print if uninitiialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case LEQ:
                         tree->name = (char *)"<=";
                         typeEqual(tree);
                         typeArray(tree);
                         // print if uninitiialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case GEQ:
                         tree->name = (char *)">=";
                         typeEqual(tree);
                         typeArray(tree);
                         // print if uninitiialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                         
                     case MUL:
@@ -946,7 +1067,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         checkArrays(tree);
                         //checkFuncasVar(tree, table);
                         // print if uninitialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case DIV:
                         tree->name = (char *)"/";
@@ -954,7 +1075,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         checkArrays(tree);
                         //checkFuncasVar(tree, table);
                         // print if uninitialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case MOD:
                         tree->name = (char *)"%";
@@ -962,7 +1083,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         checkArrays(tree);
                         //checkFuncasVar(tree, table);
                         // print if uninitialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case ADD:
                         tree->name = (char *)"+";
@@ -970,7 +1091,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         checkArrays(tree);
                         //checkFuncasVar(tree, table);
                         // print if uninitialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case SUB:
                         tree->name = (char *)"-";
@@ -978,7 +1099,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         checkArrays(tree);
                         //checkFuncasVar(tree, table);
                         // print if uninitialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case MAX:
                         tree->name = (char *)":<:";
@@ -986,7 +1107,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         checkArrays(tree);
                         //checkFuncasVar(tree, table);
                         // print if uninitialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                     case MIN:
                         tree->name = (char *)":>:";
@@ -994,7 +1115,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                         checkArrays(tree);
                         //checkFuncasVar(tree, table);
                         // print if uninitialzied
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
                         
                     case CHSIGN:
@@ -1004,7 +1125,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                             printf("ERROR(%d): The operation 'chsign' does not work with arrays.\n", tree->lineno);
                             n_errors++;
                         }
-                        printifUninitialized(tree, table);
+                        //printifUninitialized(tree, table);
                         break;
 
                     case SIZEOF:
@@ -1050,25 +1171,29 @@ void expend(TreeNode *tree, SymbolTable *table)
                 break;
                        
             case IdK:
-                //setUsed(tree, table);
-                //printifUninitialized(tree, table);
+                /*
+                temp = (TreeNode *)table->lookup(tree->name);
+                // need to look if in table and save is array if it is in the table as an array
+                if(temp->isArray == true)
+                {
+                    tree->isArray = true;
+                }
+                 */
                 break;
                        
             case AssignK:
-                
-                // SET USED
-                setUsed(tree, table);
-                                        
                 // CHECK FUNC AS VAR
                                     
                 switch(tree->tokenclass)
                 {
-                 
+                    
                     case ASS:
                         tree->name = (char *)"=";
                         typeEqual(tree);
                         setInitialized(tree, table);
                         setUsed(tree, table);
+                        setUsed(tree->child[0], table);
+                        setUsed(tree->child[1], table);
                         //printifUninitialized(tree, table);
                         typeArray(tree);
                         break;
@@ -1078,28 +1203,40 @@ void expend(TreeNode *tree, SymbolTable *table)
                             typeInt(tree);
                             checkArrays(tree);
                             setInitialized(tree, table);
-                            printifUninitialized(tree, table);
+                            setUsed(tree, table);
+                            setUsed(tree->child[0], table);
+                            setUsed(tree->child[1], table);
+                            //printifUninitialized(tree, table);
                         break;
                     case SUBASS:
                             tree->name = (char *)"-=";
                             typeInt(tree);
                             checkArrays(tree);
                             setInitialized(tree, table);
-                            printifUninitialized(tree, table);
+                            setUsed(tree, table);
+                            setUsed(tree->child[0], table);
+                            setUsed(tree->child[1], table);
+                            //printifUninitialized(tree, table);
                         break;
                     case MULASS:
                             tree->name = (char *)"*=";
                             typeInt(tree);
                             checkArrays(tree);
                             setInitialized(tree, table);
-                            printifUninitialized(tree, table);
+                            setUsed(tree, table);
+                            setUsed(tree->child[0], table);
+                            setUsed(tree->child[1], table);
+                            //printifUninitialized(tree, table);
                         break;
                     case DIVASS:
                             tree->name = (char *)"/=";
                             typeInt(tree);
                             checkArrays(tree);
                             setInitialized(tree, table);
-                            printifUninitialized(tree, table);
+                            setUsed(tree, table);
+                            setUsed(tree->child[0], table);
+                            setUsed(tree->child[1], table);
+                            //printifUninitialized(tree, table);
                         break;
                                     
                     case INC:
@@ -1133,14 +1270,16 @@ void expend(TreeNode *tree, SymbolTable *table)
                                 checkArrays(tree);
                                 break;
                     }
+                     
                 break;
             case InitK:
+                /*
                 tree->isInitialized = true;
                 setUsed(tree, table);
                 break;
-                
+                 */
             case CallK:
-               
+                
                 if( (tree->child[0] != NULL) && (tree->child[0]->nodekind = ExpK) && (tree->child[0]->subkind.exp == IdK) )
                 {
                     if(table->lookup(tree->child[0]->name) != NULL && ((TreeNode *)table->lookup(tree->child[0]->name))->subkind.decl == FuncK)
@@ -1149,6 +1288,8 @@ void expend(TreeNode *tree, SymbolTable *table)
                         n_errors++;
                     }
                 }
+                
+                /*
                 else
                 {
                     TreeNode * function = (TreeNode *) table->lookup(tree->name);
@@ -1174,16 +1315,42 @@ void expend(TreeNode *tree, SymbolTable *table)
                             n_errors++;
                         }
                        
+                        // parameter type checking
+                        if(passed != NULL && expected != NULL)
+                        {
+                            char *exptype = getsType(expected);
+                            char *acttype = getsType(passed);
+                                    
+                            if(strcmp(acttype, (char *)"undefined") != 0 && strcmp(acttype, exptype) != 0)
+                            {
+                                printf("ERROR(%d): Expecting type %s in parameter %d of call to '%s' declared on line %d but got type %s.\n", tree->lineno, exptype, i, tree->name, function->lineno, acttype);
+                                n_errors++;
+                            }
+                            
+                            // check for arrays
+                            if(passed->isArray && !expected->isArray)
+                            {
+                                printf("ERROR(%d): Not expecting array in parameter %d of call to '%s' declared on line %d.\n", tree->lineno, i, tree->name, function->lineno);
+                                n_errors++;
+                            }
+                            else if(!passed->isArray && expected->isArray)
+                            {
+                                printf("ERROR(%d): Expecting array in parameter %d of call to '%s' declared on line %d.\n", tree->lineno, i, tree->name, function->lineno);
+                                n_errors++;
+                            }
+                        }
                     }while(passed != NULL && expected != NULL);
                 }
                 
                 setUsed(tree, table);
                 printifUninitialized(tree, table);
+                 */
                 break;
             default:
                 break;
                             
         }
+     
 }
 
 char * getsType(TreeNode *tree)
