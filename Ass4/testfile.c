@@ -1,65 +1,167 @@
-nothin();
+// C-S21
+// just test all the ops mostly in a singlton expression
+//
+int y[10];
+bool x;
 
-main() {
-    int x, y;
+main()
+{
+    int a;
+    int b;
+    int c;
+    bool z;
 
-    x = true;
-    y = false;
+    y[0] = 50;
+    y[5] = 1;
+    y[8] = 2;
 
-    if x then 111;
+    a = 50;
+    b = 1;
+    c = 8;
 
-    if y then 222;
-    else 333;
+    x = false;
+    z = true;
 
-    if x then if y then 444;
-        else 555;
+    outputb(a <= 1);            // F
+    outputb(b <= 50);           // T
+    outputb(50 <= 50);          // T
+    outnl();
 
-    if x then
-        if y then 444;
-        else if 555 then 556;
-            else if x then 557;
-                 else if 559 then x;
+    outputb(50<1);              // F
+    outputb(b<a);               // T
+    outputb(a<a);               // F
+    outnl();
 
-    while x do 666;
+    outputb(50>1);              // T
+    outputb(1>50);              // F
+    outputb(50>50);             // F
+    outnl();
 
-    while nothin() do {
-        777;
-        break;
-        888;
-        break;
-        999;
-    }
+    outputb(50 >= 1);           // T
+    outputb(1 >= 50);           // F
+    outputb(50 >= 50);          // T
+    outnl();
 
-    while x do {
-        111;
-        break;
-        while y do {
-            222;
-            break;
-            333;
-        }
-        break;
-        444;
-    }
-    break;
+    outputb(y[0] == b);         // F
+    outputb(a == b);            // F
+    outputb(b == b);            // T
+    outnl();
 
-    for z = 1 to 11 do break;
+    outputb(y[0] != a);         // F
+    outputb(y[0] != b);         // T
+    outputb(a != b);            // T
+    outputb(b != b);            // F
+    outnl();
 
-    for i=1 to 10 do break;
+    outputb(true    and    true);     // T
+    outputb(true    and    false);    // F
+    outputb(false    and    true);    // F
+    outputb(false    and    false);   // F
+    outnl();
 
-    for i=true to 10 do ;
+    outputb(true    or    true);     // T
+    outputb(z    or    false);       // T
+    outputb(false    or    true);    // T
+    outputb(false    or    false);   // F
+    outnl();
 
-    for i=nothin() to zog do ;
-    
-    for i=1 to 10 by 99 do { char c; c = i; }
+    outputb(  not   true);           // F
+    outputb(  not   false);          // T
+    outputb(  not   x);              // T
+    outputb(  not   not   not   x);            // T
+    outnl();
 
-    for i=1 to 10 by true do break;
+    output(5 + 50);             // 55
+    output(y[c] + 50);          // 52
+    outnl();
 
-    for i=1 to 10 by nothin() do break;
+    output(5 - 50);             // -45
+    output(30 - 5 - 50);        // -25
+    outnl();
 
-    for i=1 to 10 by zog do break;
+    a = 50;
+    output(-a);                 // -50
+    output(- -a);                // 50
+    output(-a);                 // -50
+    output(-0);                 // 0
+    output(-1);                 // -1
+    outnl();
 
-    for i=1 to 10 by zog() do break;
+    output(2*3*5*7*11);         // 2310
+    output(50*y[8]);            // 100
+    output(y[8]*50);            // 100
+    outnl();
+
+    output(50/y[8]);            // 25
+    output(y[8]/50);            // 0
+    output(y[8]/b);             // 2
+    output(210/7/3);            // 10
+    outnl();
+
+    // note that negative mod is problematic in its definition
+    output(211%7);              // 1
+    output(211%6);              // 1
+    output(211%5);              // 1
+    output(211%4);              // 3
+    output(211 - 211/4*4);      // 3
+    output(211%100%3);          // 2
+    outnl();
+
+    output(a = b = c = 43);     // 43
+    output(a);                  // 43
+    a = (b=3) * (c = 4);
+    output(a);                  // 12
+    outnl();
+
+    a = 44;
+    b = 2;
+    output(a+=b);                // 46
+    output(a-=b);                // 44
+    output(a-=a);                // 0
+    output(a+=b+=10);            // 12
+    outnl();
+
+    a = 44;
+    b = 2;
+    output(a*=b);                // 88
+    output(a/=b);                // 44
+    output(a/=a/=2);             // 1
+    output(a*=b*=10);            // 20
+    outnl();
+
+    a = 44;
+    b = 2;
+    output(a++);                 // 45
+    output(b--);                 // 1
+    outnl();
+
+    output(3-4-5);               // -6
+    output(211/17/5);            //  2
+    output(211/(17/5));            // 70
+    outnl();
+
+    outputb((true   or   false)   and   false); // F
+    outputb(true   or   false   and   false);   // T
+    outputb(true   or   (false   and   false)); // T
+    outnl();
+
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?3 < 3);               // T
+    outputb(?1 == 0);              // T
+    outnl();
+
+    outputb(?10000 > 0);           // T   probably
+    outputb(?10000 > 0);           // T   probably
+    outnl();
 }
-
 
