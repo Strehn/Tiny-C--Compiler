@@ -1,30 +1,30 @@
 // C-S21
-int s:s, t:'"', u:'\'';
+DArtagnan();
 
-main(){
-    int i:666;
-    static int a:666;
-    char y:'a', b[10]:'x';
-    int x[10];
-    int k:4*5+3, lenx:*x;
-    bool ba:true, bb: true and not false, bc: 5>4;
-    char ca:'a';
+int Athos(int a; bool b; char c) {
+    DArtagnan(666);
+    DArtagnan(666, true + 6);
+    Athos(a, b, c);
+}
 
-    x[1] = 111;
-    a = *b;
-    while i<10 do {
-        int y[20];
-        bool t;
-        if t then break;
-        if t then break; else return;
-        y[2] = 222;
-    }
-    {
-        {
-           int z[30];
-           z[3] = 333;
-        }
-    }
-    output(666);
+char Aramis(int aa[]; bool ab[]; char ac[]) {
+     Athos(aa[1], ab);
+     Athos(aa[1], ab[2], ac[3]);
+     Athos(aa[1], ab[2], ac[3], 5 and 6);
+}
+
+
+bool Porthos(bool bb; char cc; int aa)
+{
+   int a[1];
+   bool b[2];
+   char c[3];
+   Athos(Athos(1, true, 'x'), Porthos(true, 'w', 78), Aramis(a, b, c));
+   Athos(Athos(1, true, 'x')*6, Porthos(true, 'w', 78) and true, Aramis(a, b, c));
+   Athos(Athos(1, true, 'x'), Porthos(true, 'w', 78));
+   Athos(Athos(1, true, 'x'), Porthos(true, 'w', 78), Aramis(a, b, c), true, 34, a, DArtagnan());
+   Athos(DArtagnan(), thx1138, a[0] = a[0]);
+
+   return Porthos(true, 'e', 90);
 }
 
