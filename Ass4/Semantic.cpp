@@ -459,7 +459,11 @@ void parameterCheck(TreeNode * tree, SymbolTable *table)
     TreeNode * expected = NULL;
     expected = function->child[0];
     
-    if(passed == NULL)
+    if(passed == NULL && expected == NULL)
+    {
+        return;
+    }
+    else if(passed == NULL)
     {
         // too few parameters
         printf("ERROR(%d): Too few parameters passed for function '%s' declared on line %d.\n", tree->lineno, function->name, function->lineno);
@@ -517,11 +521,8 @@ void parameterCheck(TreeNode * tree, SymbolTable *table)
             passed = passed->sibling;
             expected = expected->sibling;
             i++;
-            
         }
-        
-        
-    }
+    } // end of while 
 }
 
 // ----- Main Driving Code Function Declaration -----
@@ -680,7 +681,8 @@ void declend(TreeNode *tree, SymbolTable *table)
             if(tree->isArray == true)
             {
                 setUsed(tree, table);
-                tree->isInitialized = false;
+                temp = ((TreeNode *)table->lookup(tree->name));
+                temp->isInitialized = false;
             }
             char * type1;
             char * type2;
@@ -1116,20 +1118,6 @@ void expend(TreeNode *tree, SymbolTable *table)
                 {
                     // CHECK ARRAY INDEXING IS CORRECT
                     checkIndex(tree);
-                                
-                    // CHECK FUNC AS VAR
-                    //functions as variable
-                    /*
-                    if( (tree->child[0] != NULL) && (tree->child[0]->nodekind = ExpK) && (tree->child[0]->subkind.exp = IdK))
-                    {
-                        if(table->lookup(tree->child[0]->name) != NULL && ((TreeNode *)table->lookup(tree->child[0]->name))->subkind.decl == FuncK)
-                        {
-                            printf("ERROR(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[0]->name);
-                            n_errors++;
-                        }
-                    }
-                     */
-                                
                     tree->expType = tree->child[0]->expType;
                     tree->isInitialized = tree->child[0]->isInitialized;
                     
