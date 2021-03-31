@@ -82,6 +82,9 @@ typedef struct treeNode
     bool arrPrinted;
     bool isRange;
     bool isUndeclared;
+    bool hasReturned;
+    bool functionBreak;
+    ExpType returnActual;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;

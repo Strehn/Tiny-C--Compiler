@@ -1,15 +1,15 @@
 #
 # Makefile for Compiler
 # Sydney Petrehn
-# January 22, 2021
+# March 31, 2021
 #
 
 BIN = parser
 CC = g++
 OUT = c-
-LIBS = ourgetopt.h TreeUtils.hpp scanType.h Semantic.hpp
+LIBS = ourgetopt.h TreeUtils.hpp scanType.h Semantic.hpp yyerror.hpp
 FLAGS = -DCPLUSPLUS -g
-OBJS = ourgetopt.o TreeUtils.o Semantic.o
+OBJS = ourgetopt.o TreeUtils.o Semantic.o yyerror.o
 
 $(BIN) : lex.yy.c $(BIN).tab.c $(BIN).tab.h $(LIBS) $(OBJS)
 	$(CC) $(FLAGS) lex.yy.c $(BIN).tab.c $(OBJS) -o $(OUT)
