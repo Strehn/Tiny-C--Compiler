@@ -17,6 +17,7 @@
 using namespace std;
 
 extern int line;
+extern int n_errors;
 
 //{VarK, FuncK, ParamK};
 TreeNode *newDeclNode(DeclKind kind,
@@ -132,12 +133,16 @@ TreeNode *newExpNode(ExpKind kind,
     return temp;
 }
 
+
+
 // add a TreeNode to a list of siblings.
 // Adding a NULL to the list is probably a programming error!
 TreeNode *addSibling(TreeNode *t, TreeNode *s)
 {
-    if (s==NULL) {
-        printf("ERROR(SYSTEM): never add a NULL to a sibling list.\n");
+    if (s==NULL && n_errors == 0)
+    {
+            printf("ERROR(SYSTEM): never add a NULL to a sibling list.\n");
+            exit(1);
     }
     if (t!=NULL) {
         TreeNode *tmp;

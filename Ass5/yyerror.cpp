@@ -6,13 +6,19 @@
 // Code Given by Professor
 //
 
-#include "yyerror.hpp"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
 #include <string>
+#include "yyerror.hpp"
+#include "TreeUtils.hpp"
+#include "Semantic.hpp"
+#include "scanType.h"
 
+extern int n_errors;
+extern int n_warnings;
 // // // // // // // // // // // // // // // // // // // //
 //
 // Error message printing
@@ -74,11 +80,18 @@ static std::map<std::string , char *> niceTokenNameMap;    // use an ordered map
 // (strings returned as error message) --> (human readable strings)
 //
 void initErrorProcessing() {
-
+    niceTokenNameMap["LB"] = (char *)"'['";
+    niceTokenNameMap["RB"] = (char *)"']'";
+    niceTokenNameMap["LCB"] = (char *)"'{'";
+    niceTokenNameMap["RCB"] = (char *)"'}'";
+    niceTokenNameMap["COMMA"] = (char *)"','";
+    niceTokenNameMap["COLON"] = (char *)"':'";
     niceTokenNameMap["ADDASS"] = (char *)"\"+=\"";
+    niceTokenNameMap["ASS"] = (char *)"'='";
     niceTokenNameMap["AND"] = (char *)"\"and\"";
     niceTokenNameMap["BOOL"] = (char *)"\"bool\"";
     niceTokenNameMap["BOOLCONST"] = (char *)"Boolean constant";
+    niceTokenNameMap["SEMICOLON"] = (char *)"';'";
     niceTokenNameMap["BREAK"] = (char *)"\"break\"";
     niceTokenNameMap["BY"] = (char *)"\"by\"";
     niceTokenNameMap["CHAR"] = (char *)"\"char\"";
@@ -86,28 +99,39 @@ void initErrorProcessing() {
     niceTokenNameMap["CHSIGN"] = (char *)"-";
     niceTokenNameMap["DEC"] = (char *)"\"--\"";
     niceTokenNameMap["DIVASS"] = (char *)"\"/=\"";
+    niceTokenNameMap["DIV"] = (char *)"'/'";
     niceTokenNameMap["DO"] = (char *)"\"do\"";
     niceTokenNameMap["ELSE"] = (char *)"\"else\"";
     niceTokenNameMap["EQ"] = (char *)"\"==\"";
     niceTokenNameMap["FOR"] = (char *)"\"for\"";
     niceTokenNameMap["GEQ"] = (char *)"\">=\"";
+    niceTokenNameMap["GT"] = (char *)"'>'";
     niceTokenNameMap["ID"] = (char *)"identifier";
     niceTokenNameMap["IF"] = (char *)"\"if\"";
+    niceTokenNameMap["IN"] = (char *)"\"in\"";
     niceTokenNameMap["INC"] = (char *)"\"++\"";
+    niceTokenNameMap["DEC"] = (char *)"\"--\"";
     niceTokenNameMap["INT"] = (char *)"\"int\"";
     niceTokenNameMap["LEQ"] = (char *)"\"<=\"";
+    niceTokenNameMap["LT"] = (char *)"'<'";
+    niceTokenNameMap["LP"] = (char *)"'('";
+    niceTokenNameMap["RP"] = (char *)"')'";
     niceTokenNameMap["MAX"] = (char *)":>:";
     niceTokenNameMap["MIN"] = (char *)":<:";
     niceTokenNameMap["MULASS"] = (char *)"\"*=\"";
+    niceTokenNameMap["MUL"] = (char *)"'*'";
     niceTokenNameMap["NEQ"] = (char *)"\"!=\"";
     niceTokenNameMap["NOT"] = (char *)"\"not\"";
     niceTokenNameMap["NUMCONST"] = (char *)"numeric constant";
     niceTokenNameMap["OR"] = (char *)"\"or\"";
     niceTokenNameMap["RETURN"] = (char *)"\"return\"";
+    niceTokenNameMap["RAND"] = (char *)"'?'";
+    niceTokenNameMap["MOD"] = (char *)"'%'";
     niceTokenNameMap["SIZEOF"] = (char *)"\"*\"";
     niceTokenNameMap["STATIC"] = (char *)"\"static\"";
     niceTokenNameMap["STRINGCONST"] = (char *)"string constant";
     niceTokenNameMap["SUBASS"] = (char *)"\"-=\"";
+    niceTokenNameMap["SUB"] = (char *)"'-'";
     niceTokenNameMap["THEN"] = (char *)"\"then\"";
     niceTokenNameMap["TO"] = (char *)"\"to\"";
     niceTokenNameMap["WHILE"] = (char *)"\"while\"";
@@ -187,7 +211,6 @@ void yyerror(const char *msg)
     }
 
     if (numstrs>4) printf(",");
-
     // print sorted list of expected
     tinySort(strs+5, numstrs-5, 2, true);
     for (int i=4; i<numstrs; i++) {
@@ -196,7 +219,7 @@ void yyerror(const char *msg)
     printf(".\n");
     fflush(stdout);   // force a dump of the error
 
-    numErrors++;      // count the number of errors
+    n_errors++;      // count the number of errors
 
     free(space);
 }

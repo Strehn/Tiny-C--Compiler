@@ -5,11 +5,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-
 #include "scanType.h"
 #include "TreeUtils.hpp"
 #include "parser.tab.h"
+//#include "yyerror.hpp"
 
+// points to previous token
+char *lastToken = NULL;
+extern int n_errors;
+extern int n_warnings;
 int line = 1;
 
 using namespace std;
@@ -96,11 +100,13 @@ int charParser(char *tokenString)
     else if(sLength == 2) // ''
     {
         printf("ERROR(%d): Empty character ''. Characters ignored.\n", line);
+        n_errors++;
         return -1;
     }
     else if(sLength > 3) // cant have this in the first one in case string doesn't start with escape character
     {
         printf("WARNING(%d): character is %d characters long and not a single character: '%s'.  The first char will be used.\n", line, sLength - 2, tokenString);
+        n_warnings++;
         // recheck for escape characters
         if(tokenString[1] == '\\')
         {
@@ -164,6 +170,8 @@ static int newToken(int tokenClass, char *tokenString)
 
             break;
     }
+    
+    lastToken = strdup(tokenString);
     return tokenClass;
 }
 
@@ -202,7 +210,6 @@ letdig [0-9a-zA-Z]
 "?"                                  { return newToken(RAND, yytext); }
 "&"                                  { return newToken(AND, yytext); }
 "|"                                  { return newToken(OR, yytext); }
-"!"                                  { return newToken(NOT, yytext); }
 ";"                                  { return newToken(SEMICOLON, yytext); }
 ":"                                  { return newToken(COLON, yytext); }
 "("                                  { return newToken(LP, yytext); }
@@ -237,7 +244,7 @@ letdig [0-9a-zA-Z]
 '([^\n\\']|\\.)*'                    { return newToken(CHARCONST, yytext); }
 \"(\\\"|[^\n"])*\"                 { return newToken(STRINGCONST, yytext); }
 
-[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); }
+[^ \n\t]                             { if(yytext[0] != ' ') printf("ERROR(%d): Invalid or misplaced input character: '%c'. Character Ignored.\n", line, yytext[0]); n_errors++;}
 
 \n                                   { line++; }
 .                                    ;
