@@ -678,7 +678,7 @@ void declStart(TreeNode *tree, SymbolTable *table)
             }
             break;
         case ParamK:
-            tree->isInitialized = true;
+            //tree->isInitialized = true;
             break;
         default:
             break;
@@ -833,7 +833,7 @@ void stmtStart(TreeNode *tree, SymbolTable *table)
             }
             break;
         case CompoundK:
-            if(tree->noScope != true)
+            if(tree->funcCompound != true)
             {
                 table->enter("compound");
             }
@@ -1121,6 +1121,7 @@ void expStart(TreeNode *tree, SymbolTable *table)
                 case InitK:
                     break;
                 case CallK:
+                    // set that the function is used;
                     if(tree->child[0] != NULL){
                         setUsed(tree, table);
                     }
