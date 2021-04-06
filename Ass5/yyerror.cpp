@@ -87,6 +87,7 @@ void initErrorProcessing() {
     niceTokenNameMap["COMMA"] = (char *)"','";
     niceTokenNameMap["COLON"] = (char *)"':'";
     niceTokenNameMap["ADDASS"] = (char *)"\"+=\"";
+    niceTokenNameMap["COMMENT"] = (char *)"','";
     niceTokenNameMap["ASS"] = (char *)"'='";
     niceTokenNameMap["ADD"] = (char *)"'+'";
     niceTokenNameMap["SUB"] = (char *)"'-'";

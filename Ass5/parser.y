@@ -74,15 +74,15 @@ decl : varDecl                                        {$$ = $1;}
 /* ----- Variables ----- */
 
 varDecl : typeSpec varDeclList SEMICOLON              {$$ = setType($2, $1, false); yyerrok;}
-    | error varDeclList SEMICOLON                     {$$ = NULL;}
-    |  typeSpec error SEMICOLON                                {$$ = NULL; yyerrok;}
+    | error varDeclList SEMICOLON                     {$$ = NULL; yyerrok;}
+    |  typeSpec error SEMICOLON                       {$$ = NULL; yyerrok; yyerrok; }
     ;
 
 scopedVarDecl : STATIC typeSpec varDeclList SEMICOLON {$$ = setType($3, $2, true); yyerrok;}
     | typeSpec varDeclList SEMICOLON                  {$$ = setType($2, $1, false); yyerrok;}
     ;
 
-varDeclList : varDeclList COMMA varDeclInit           {$$ = addSibling($1, $3); }
+varDeclList : varDeclList COMMA varDeclInit           {$$ = addSibling($1, $3); yyerrok; }
     | varDeclInit                                     {$$ = $1;}
     | error                                           {$$ = NULL;}
     | varDeclList COMMA error                         { $$ = NULL; }
@@ -121,8 +121,7 @@ parms : parmList                                      {$$ = $1;}
 parmList : parmList SEMICOLON parmTypeList            {$$ = addSibling($1, $3); yyerrok;}
     | parmTypeList                                    {$$ = $1;}
     | parmList SEMICOLON error                        { $$ = NULL; }
-    | error SEMICOLON parmTypeList                    { $$ = NULL; yyerrok;}
-    //| error                                           { $$ = NULL; }
+    | error                                           { $$ = NULL; }
     ;
 
 parmTypeList : typeSpec parmIdList                    {$$ = setType($2, $1, false);}
@@ -135,8 +134,8 @@ parmIdList : parmIdList COMMA parmId                  {$$ = addSibling($1, $3); 
     | error                                           { $$ = NULL; }
     ;
 
-parmId : ID                                           {$$ = newDeclNode(ParamK, UndefinedType, $1);$$->tmp = $1->svalue; yyerrok;}
-    | ID LB RB                                        {$$ = newDeclNode(ParamK, UndefinedType, $1);$$->isArray = true;$$->tmp = $1->svalue; yyerrok;}
+parmId : ID                                           {$$ = newDeclNode(ParamK, UndefinedType, $1);$$->tmp = $1->svalue;}
+    | ID LB RB                                        {$$ = newDeclNode(ParamK, UndefinedType, $1);$$->isArray = true;$$->tmp = $1->svalue;}
     ;
 
 /* ----- Statements ----- */
@@ -167,7 +166,7 @@ unmatched : unmatchedselectStmt                      {$$ = $1;}
 
     ;
 
-expStmt : exp SEMICOLON                              {$$ = $1; yyerrok;}
+expStmt : exp SEMICOLON                              {$$ = $1; }
     | error SEMICOLON                                { $$ = NULL; yyerrok; }
     ;
 
@@ -205,12 +204,12 @@ iterrange : simpleExp TO simpleExp                   {$$ = newStmtNode(RangeK, $
     | simpleExp TO simpleExp BY error                { $$ = NULL; }
     ;
 
-returnStmt : RETURN SEMICOLON                        {$$ = newStmtNode(ReturnK, $1); yyerrok;}
+returnStmt : RETURN SEMICOLON                        {$$ = newStmtNode(ReturnK, $1); }
     | RETURN exp SEMICOLON                           {$$ = newStmtNode(ReturnK, $1, $2); yyerrok;}
     | RETURN error SEMICOLON                         { $$ = NULL; yyerrok; }
     ;
 
-breakStmt : BREAK SEMICOLON                          {$$ = newStmtNode(BreakK, $1); yyerrok;}
+breakStmt : BREAK SEMICOLON                          {$$ = newStmtNode(BreakK, $1);}
     ;
 
 /* ----- expressions ----- */
@@ -316,8 +315,8 @@ immutable : LP exp RP                               {$$ = $2; yyerrok;}
     | LP error                                      {$$ = NULL; }
     ;
 
-call : ID LP args RP                                {$$ = newExpNode(CallK, $1, $3);$$->name = $1->idIndex; yyerrok;}
-    | error LP                                      {$$ = NULL; }
+call : ID LP args RP                                {$$ = newExpNode(CallK, $1, $3);$$->name = $1->idIndex;}
+    | error LP                                      {$$ = NULL; yyerrok;}
     ;
 
 args : argList                                      {$$ = $1;}
@@ -329,10 +328,10 @@ argList : argList COMMA exp                         {$$ = addSibling($1, $3); yy
     | argList COMMA error                           { $$=NULL; }
     ;
 
-constant :  NUMCONST                                {$$ = newExpNode(ConstantK, $1);$$->expType = Integer; $$->value = $1->nvalue; yyerrok;}
-    | CHARCONST                                     {$$ = newExpNode(ConstantK, $1);$$->expType = Char;$$->cvalue = $1->cvalue; yyerrok;}
-    |STRINGCONST                                    {$$ = newExpNode(ConstantK, $1);$$->expType = Char;$$->string = $1->svalue;$$->isArray = true; yyerrok;}
-    |BOOLCONST                                      {$$ = newExpNode(ConstantK, $1);$$->expType = Boolean;$$->value = $1->nvalue; yyerrok;}
+constant :  NUMCONST                                {$$ = newExpNode(ConstantK, $1);$$->expType = Integer; $$->value = $1->nvalue;}
+    | CHARCONST                                     {$$ = newExpNode(ConstantK, $1);$$->expType = Char;$$->cvalue = $1->cvalue;}
+    |STRINGCONST                                    {$$ = newExpNode(ConstantK, $1);$$->expType = Char;$$->string = $1->svalue;$$->isArray = true;}
+    |BOOLCONST                                      {$$ = newExpNode(ConstantK, $1);$$->expType = Boolean;$$->value = $1->nvalue;}
     ;
 
 %%
