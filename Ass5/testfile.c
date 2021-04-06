@@ -1,86 +1,138 @@
-int ant() return 111;
-bat(int a; char c) {
-   bool b:false;
+// C-S21
+//
+// Test all the basic elements of C-
+//
+//
+int gromit, mysteriousPenguin;
 
-   a = 222;
-   b = true;
-   c = 'z';
-
-   if a>222 then  333;
-   if a<333 then  444; else 555;
-   if a<=666 then  if a>=777 then  888; else 555;
-   while 999==a do 1010;
-   if b then  if not b then  while b and true do 1111; else 1212;
-   if b then  if not b then  while b or true do 1313; else 1414; else 1515;
-   if (b=true) then 1616;
-
-   while false do break;
-
-   a+1717;
-   1818-a;
-   a*1919;
-   2020/a;
-   a%2121;
-
-   a+=1;
-   a-=2;
-   a*=3;
-   a/=4;
-
-   -a;
-   not b;
-   ?a;
-}
-
-char cat()
+// no return value
+wallace(int wrong, trousers)
 {
-   int a; bool b; char c;
-   int aa[3]; bool ba[4]; char ca[5];
-
-   aa[2];
-   ba[a] = b;
-   ca[aa[1]] = c;
-
-   *ba;
-   ?11;
-
-   for z = aa to aa do z + z;
-   for z = ba to aa by aa do b and b;
-   for z = 3+4 to 7*8 by 15%3 do {
-       a = z;
-       z = a;
-   }
-
-   aa = aa;
-   ba == ba;
-   ca != ca;
-   aa > aa;
-   ba >= ba;
-   ca < ca;
-   aa <= aa;
-
-   ca = "dogs are great";
+    bool close:true, shave:false;
+    int cheese:17;
    
-   return 'm';
+    1729;
+    close;
+    11*22+33*44;
+    close = shave;
+    wrong = trousers % (666/wrong);
+    gromit = wrong * trousers - gromit + -42;
+    gromit += 27182818;
+    gromit -= -31415927;
+    gromit /= (wrong *= 42);
+    close = wrong < trousers and trousers <= gromit;
+    shave = wrong > trousers and trousers >= gromit;
+    {
+        int a, grand:1/2, day:3*4, out:-9;
+        a = grand += day -= out;
+    }
+    close = -1*2+3<4*5 and 6+7>-3;
+    shave = true or ((-(1*(2+3)))<(4*5) and ((6+7)>(-3)));
+    if shave != close then shave = not close;
+    if not  (shave == close or  not  close) then shave = true;
+    else close = false;
+    mysteriousPenguin = - (- (- 008) - -(cheese--));
+
+    while shave do {
+        static int were, rabbit;
+        static int sheep[10];
+
+        sheep[2] = 1618;
+        if sheep[2]<496 then break;
+        wallace(gromit--, were-rabbit);
+        { 
+            int the, wrong, trousers;
+
+            the = wrong += trousers++;
+            if were == rabbit then were = wrong--;  // assignment is in test
+        }
+    }
+    return;
+}       
+
+
+bool penguin(char Feathers, McGraw[]; bool moon, cheese; int launch) 
+{
+    static char tottington:'x';
+    char  Wensleydale[17];
+    char c;
+    int i;         
+
+    tottington = Feathers;
+    moon = McGraw <= Wensleydale and moon;
+    Wensleydale = McGraw;
+    Wensleydale[*McGraw] = ('Q');
+    McGraw[3] = 'A';
+}        
+
+int Wendolene(int wool; bool shaun; int yarn[]; bool preston[])
+{
+    int skein;
+    preston[3] = yarn[1] > wool or not shaun;
+    return wool + yarn[0] + *yarn + yarn[7*wool] + yarn[yarn[3+wool*2]-4];
 }
 
-dog(int i)
-   if i==3 then  {
-       int i;
-       i=i;
-   }
+
+bool ramsBottom()
+{
+    int chicken[2];
+    bool run[3];
+    int wallace[2], gromit[3];
+
+    42 * Wendolene(1+2+3, not true or true and false, chicken, run);
+    run[*run-1];
+
+    return not wallace[1]>=-gromit[2]*3;
+}
+
+int cheese(int x, y) while x>0 do if y>3 then x--; else return x*x%y;
+
+int Wensleydale(int x; int y) return cheese(x, gromit);  // weird parm list
+
+int LadyCampanula(char c, s[]) while true do for i = *s-1 to 0 by -1 do if s[i]==c then return i;
+
+char MrsTweedy(char c, s[])
+{
+     for ginger=0  to  10 do s[ginger] = c;
+     for pastry=0 to 2 by 7 do if s[0]==s[1] then break;
+     while true do break;
+
+     return 'x';
+}
+
+char TheWereRabbit(int x)
+{
+     if x==0 then return '@';
+     else if x==1 then return 'a';
+     else if x==2 then return 'b';
+     else if x==3 then return 'c';
+     else if x==4 then return 'd';
+     else return '\0';
+}
 
 int main()
 {
-   static bool bbb;
-   static char ccc[5]:"cows";
-   
-   ant();
-   bat(676, 'g');
-   cat();
-   bat(ant(), cat());
-   bbb = ccc[2]!='r';
+    int wool, yarn[113];
+    bool shaun, preston[22];
+    char rocky[12];
 
-   return ant() + 807;
+    wallace(cheese(62, -311), gromit);
+    rocky = "molybdenum";
+
+    MrsTweedy('Z', rocky);
+
+    yarn[?100] + yarn[?*yarn];
+
+    return Wendolene(*preston**yarn, shaun, yarn, preston);
 }
+
+bool aBigLongVariableName6andthx1138;
+int    odd  ,   separation              ,of,
+stuff ;
+
+char ant[10]:"unwrinkled";
+char bat:'\'';
+char cat:'\t';
+char dog:'\n';
+char hog:'\0';
 
