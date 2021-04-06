@@ -167,7 +167,7 @@ unmatched : unmatchedselectStmt                      {$$ = $1;}
 
     ;
 
-expStmt : exp SEMICOLON                              {$$ = $1; yyerrok}
+expStmt : exp SEMICOLON                              {$$ = $1; yyerrok;}
     | error SEMICOLON                                { $$ = NULL; yyerrok; }
     ;
 

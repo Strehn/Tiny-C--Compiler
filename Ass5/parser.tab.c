@@ -2178,7 +2178,7 @@ yyreduce:
 
   case 66:
 #line 170 "parser.y"
-    {(yyval.tree) = (yyvsp[(1) - (2)].tree); yyerrok;}
+    {(yyval.tree) = (yyvsp[(1) - (2)].tree); yyerrok;;}
     break;
 
   case 67:

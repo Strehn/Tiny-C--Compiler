@@ -809,7 +809,7 @@ void declend(TreeNode *tree, SymbolTable *table)
             {
                 if(tree->expType != Void)
                 {
-                    printf("WARNING(%d): Expecting to return type %s but function %s has no return statement.\n", tree->lineno, getsType(tree), tree->name);
+                    printf("WARNING(%d): Expecting to return type %s but function '%s' has no return statement.\n", tree->lineno, getsType(tree), tree->name);
                     n_warnings++;
                 }
             }

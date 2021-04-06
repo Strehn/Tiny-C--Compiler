@@ -88,6 +88,8 @@ void initErrorProcessing() {
     niceTokenNameMap["COLON"] = (char *)"':'";
     niceTokenNameMap["ADDASS"] = (char *)"\"+=\"";
     niceTokenNameMap["ASS"] = (char *)"'='";
+    niceTokenNameMap["ADD"] = (char *)"'+'";
+    niceTokenNameMap["SUB"] = (char *)"'-'";
     niceTokenNameMap["AND"] = (char *)"\"and\"";
     niceTokenNameMap["BOOL"] = (char *)"\"bool\"";
     niceTokenNameMap["BOOLCONST"] = (char *)"Boolean constant";
