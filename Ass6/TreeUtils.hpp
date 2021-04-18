@@ -84,6 +84,10 @@ typedef struct treeNode
     bool isUndeclared;
     bool hasReturned;
     bool functionBreak;
+    bool inFunction;
+    int memlocation;
+    int memsize;
+    bool isGlobal;
     ExpType returnActual;
 
     // even more semantic stuff will go here in later assignments.
@@ -117,7 +121,8 @@ TreeNode * setType(TreeNode *t, ExpType type, bool isStatic);
 static void printSpaces(void);
 
 void printTree(TreeNode *tree);
-
+void printTreeMemory(TreeNode *tree);
+void printMemory(TreeNode * tree);
 
 
 #endif /* TreeUtils_hpp */

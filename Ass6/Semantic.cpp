@@ -16,6 +16,8 @@
 int n_errors = 0;
 int n_warnings = 0;
 int loopdepth = 0;
+int foffset = 0;
+int goffset = 0;
 TreeNode *currentfunction = NULL;
 TreeNode *currentvar = NULL;
 
@@ -414,8 +416,28 @@ void printifUninitialized(TreeNode * tree, SymbolTable * table)
 void addIO(TreeNode * tree, SymbolTable * table)
 {
     // New Node
+    /*
+     * need to do it like this since when i was trying to set it to null
+     * it was then trying to insert a null node to the table.
+     * there is probably an easier way to do this but this works so im leaving
+     * this for now.
+     */
     TreeNode * temp = new TreeNode;
     temp->child[0] = new TreeNode;
+    
+    TreeNode * temp2 = new TreeNode;
+    temp2->child[0] = new TreeNode;
+    
+    TreeNode * temp3 = new TreeNode;
+    temp3->child[0] = new TreeNode;
+    
+    TreeNode * temp4 = new TreeNode;
+    
+    TreeNode * temp5 = new TreeNode;
+    
+    TreeNode * temp6 = new TreeNode;
+    
+    TreeNode * temp7 = new TreeNode;
    
     //void output(int)
     temp->nodekind = DeclK;
@@ -424,85 +446,77 @@ void addIO(TreeNode * tree, SymbolTable * table)
     temp->name = (char *)"output";
     temp->lineno = (-1);
     temp->isUsed = true;
-    
     temp->child[0]->nodekind = DeclK;
     temp->child[0]->subkind.decl = ParamK;
     temp->child[0]->expType = Integer;
     temp->child[0]->name = (char *)"dummy";
     temp->child[0]->lineno = -1;
-     
     table->insert(temp->name, temp);
-    
-     
+
     
     //void outputb(bool)
-     temp->nodekind = DeclK;
-     temp->subkind.decl = FuncK;
-     temp->expType = Void;
-     temp->name = (char *)"outputb";
-     temp->lineno = (-1);
-     temp->isUsed = true;
-     temp->child[0]->nodekind = DeclK;
-     temp->child[0]->subkind.decl = ParamK;
-     temp->child[0]->expType = Boolean;
-     temp->child[0]->name = (char *)"dummy";
-     temp->child[0]->lineno = -1;
-      
-     table->insert(temp->name, temp);
+     temp2->nodekind = DeclK;
+     temp2->subkind.decl = FuncK;
+     temp2->expType = Void;
+     temp2->name = (char *)"outputb";
+     temp2->lineno = (-1);
+     temp2->isUsed = true;
+     temp2->child[0]->nodekind = DeclK;
+     temp2->child[0]->subkind.decl = ParamK;
+     temp2->child[0]->expType = Boolean;
+     temp2->child[0]->name = (char *)"dummy";
+     temp2->child[0]->lineno = -1;
+     table->insert(temp2->name, temp2);
     
     //void outputc(char)
-    temp->nodekind = DeclK;
-    temp->subkind.decl = FuncK;
-    temp->expType = Void;
-    temp->name = (char *)"outputc";
-    temp->lineno = (-1);
-    temp->isUsed = true;
-    temp->child[0]->nodekind = DeclK;
-    temp->child[0]->subkind.decl = ParamK;
-    temp->child[0]->expType = Char;
-    temp->child[0]->name = (char *)"dummy";
-    temp->child[0]->lineno = -1;
-     
-    table->insert(temp->name, temp);
-    
-    temp->child[0] = NULL;
+    temp3->nodekind = DeclK;
+    temp3->subkind.decl = FuncK;
+    temp3->expType = Void;
+    temp3->name = (char *)"outputc";
+    temp3->lineno = (-1);
+    temp3->isUsed = true;
+    temp3->child[0]->nodekind = DeclK;
+    temp3->child[0]->subkind.decl = ParamK;
+    temp3->child[0]->expType = Char;
+    temp3->child[0]->name = (char *)"dummy";
+    temp3->child[0]->lineno = -1;
+    table->insert(temp3->name, temp3);
     
     // int input()
-    temp->nodekind = DeclK;
-    temp->subkind.decl = FuncK;
-    temp->expType = Integer;
-    temp->name = (char *)"input";
-    temp->lineno = (-1);
-    temp->isUsed = true;
-    table->insert(temp->name, temp);
+    temp4->nodekind = DeclK;
+    temp4->subkind.decl = FuncK;
+    temp4->expType = Integer;
+    temp4->name = (char *)"input";
+    temp4->lineno = (-1);
+    temp4->isUsed = true;
+    table->insert(temp4->name, temp4);
     
     // bool inputb()
-    temp->nodekind = DeclK;
-    temp->subkind.decl = FuncK;
-    temp->expType = Boolean;
-    temp->name = (char *)"inputb";
-    temp->lineno = (-1);
-    temp->isUsed = true;
-    table->insert(temp->name, temp);
+    temp5->nodekind = DeclK;
+    temp5->subkind.decl = FuncK;
+    temp5->expType = Boolean;
+    temp5->name = (char *)"inputb";
+    temp5->lineno = (-1);
+    temp5->isUsed = true;
+    table->insert(temp5->name, temp5);
     
     //char inputc()
-    temp->nodekind = DeclK;
-    temp->subkind.decl = FuncK;
-    temp->expType = Char;
-    temp->name = (char *)"inputc";
-    temp->lineno = (-1);
-    temp->isUsed = true;
-    table->insert(temp->name, temp);
+    temp6->nodekind = DeclK;
+    temp6->subkind.decl = FuncK;
+    temp6->expType = Char;
+    temp6->name = (char *)"inputc";
+    temp6->lineno = (-1);
+    temp6->isUsed = true;
+    table->insert(temp6->name, temp6);
     
     //void outnl()
-    temp->nodekind = DeclK;
-    temp->subkind.decl = FuncK;
-    temp->expType = Void;
-    temp->name = (char *)"outnl";
-    temp->lineno = (-1);
-    temp->isUsed = true;
-    table->insert(temp->name, temp);
-     
+    temp7->nodekind = DeclK;
+    temp7->subkind.decl = FuncK;
+    temp7->expType = Void;
+    temp7->name = (char *)"outnl";
+    temp7->lineno = (-1);
+    temp7->isUsed = true;
+    table->insert(temp7->name, temp7);
 }
 
 void parameterCheck(TreeNode * tree, SymbolTable *table)
@@ -684,6 +698,61 @@ void declStart(TreeNode *tree, SymbolTable *table)
     
     tree->isUsed = false;
     
+    if(currentfunction == NULL)
+    {
+        tree->isGlobal = true;
+    }
+    
+    // memory
+    if(currentfunction != NULL )
+    {
+        if(tree->isStatic == true)
+        {
+           // global
+            if(tree->isArray == true)
+            {
+                tree->memlocation = goffset - 2;
+                goffset = goffset - tree->aSize;
+                tree->memsize = (tree->aSize + 1);
+            }
+            else
+            {
+                tree->memlocation = goffset;
+                goffset--;
+            }
+        }
+        else if(tree->isArray == true)
+        {
+            tree->memlocation = foffset - 2; // first is the location of array
+            foffset = foffset - tree->aSize - 1;
+            tree->memsize = (tree->aSize + 1);
+        }
+        else
+        {
+            tree->memlocation = foffset;
+            foffset--;
+        }
+        
+    }
+    else if(tree->subkind.decl == FuncK)
+    {
+        tree->memlocation = foffset;
+    }
+    else // global
+    {
+        if(tree->isArray == true)
+        {
+            tree->memlocation = goffset - tree->aSize - 2;
+            goffset = goffset - tree->aSize - 2;
+            tree->memsize = (tree->aSize + 1);
+        }
+        else
+        {
+            tree->memlocation = goffset;
+            goffset--;
+        }
+    }
+    
     if(!table->insert(tree->name, tree))
     {
         TreeNode *temp = (TreeNode *)table->lookup(tree->name);
@@ -715,6 +784,8 @@ void declStart(TreeNode *tree, SymbolTable *table)
                     tree->child[i]->funcCompound = true;
                 }
             }
+            tree->memsize = -2;
+            //foffset--;
             break;
         case ParamK:
             if(tree->isArray)
@@ -742,6 +813,17 @@ void declend(TreeNode *tree, SymbolTable *table)
     switch(tree->subkind.decl)
     {
         case VarK:
+            if(currentfunction == NULL )
+            {
+                if(tree->child[0] != NULL)
+                {
+                    if(tree->child[0]->isArray)
+                    {
+                        tree->child[0]->memlocation = -1;
+                        goffset = goffset + tree->aSize - 1;
+                    }
+                }
+            }
             
             if(tree->isArray == true)
             {
@@ -814,6 +896,7 @@ void declend(TreeNode *tree, SymbolTable *table)
                 }
             }
             currentfunction = NULL;
+            foffset = 0;
             break;
         case ParamK:
             temp = (TreeNode *)table->lookup(tree->name);
@@ -821,6 +904,7 @@ void declend(TreeNode *tree, SymbolTable *table)
             {
                 //scopeUsed(table);
             }
+            
             break;
         default:
             break;
@@ -896,6 +980,23 @@ void stmtStart(TreeNode *tree, SymbolTable *table)
             {
                 table->enter("compound");
             }
+            
+            if(tree->child[0] != NULL)
+            {
+                if(tree->child[0]->isArray == true)
+                {
+                    tree->memsize = (tree->child[0]->aSize + 3) * -1;
+                }
+                
+                if(tree->child[1] != NULL)
+                {
+                    if(tree->child[1]->isArray == true)
+                    {
+                        tree->memsize = tree->memsize + (tree->child[1]->aSize + 3);
+                    }
+                }
+            }
+            foffset = foffset - 1;
             break;
         case ReturnK:
             break;
@@ -1121,9 +1222,47 @@ void expStart(TreeNode *tree, SymbolTable *table)
         switch(tree->subkind.exp)
             {
                 case OpK:
+                    if(tree->tokenclass == GT)
+                    {
+                        if(tree->child[0] != NULL)
+                        {
+                            tree->child[0]->aSize = tree->child[0]->aSize + 4;
+                        }
+                        if(tree->child[1] != NULL)
+                        {
+                            tree->child[1]->aSize = tree->child[1]->aSize + 4;
+                        }
+                    }
                     break;
                 case ConstantK:
                     tree->isInitialized = true;
+                    if(currentfunction == NULL)
+                    {
+                        tree->inFunction = false;
+                    }
+                    else
+                    {
+                        tree->inFunction = true;
+                    }
+                    
+                    //used for memory in ASS 6
+                    // memory
+                    if(tree->isArray == true)
+                    {
+                        tree->memsize = (tree->aSize + 3);
+                        tree->memlocation = goffset - tree->memsize + 2;
+                        goffset = goffset - tree->aSize - 3;
+                    }
+                    
+                    /*
+                    else
+                    {
+                        tree->memlocation = goffset;
+                        goffset--;
+                    }
+                     
+                     */
+                    
                     break;
                 case IdK:
                     
@@ -1147,12 +1286,16 @@ void expStart(TreeNode *tree, SymbolTable *table)
                     }
                     else
                     {
+                        //used for memory in ASS 6
+                        tree->isStatic = temp->isStatic;
+                        tree->isGlobal = temp->isGlobal;
+                        tree->isArray = temp->isArray;
+                        tree->memlocation = temp->memlocation;
+                        tree->memsize = temp->memsize;
                         if(tree->expType == UndefinedType)
                         {
                             tree->expType = temp->expType;
                         }
-                        
-                        tree->isArray = temp->isArray;
                     }
                     
                     break;
@@ -1160,20 +1303,24 @@ void expStart(TreeNode *tree, SymbolTable *table)
                     switch (tree->tokenclass)
                     {
                         case ASS:
-                            if(tree->child[0]->tokenclass == LB)
+                            if(tree->child[0] != NULL)
                             {
-                                for(int i = 0; i < 2; i++)
+                                if(tree->child[0]->tokenclass == LB)
                                 {
-                                    if(tree->child[0]->child[i]->nodekind == ExpK && tree->child[0]->child[i]->subkind.exp == IdK)
+                                    for(int i = 0; i < 2; i++)
                                     {
-                                        temp = ((TreeNode *)table->lookup(tree->child[0]->child[i]->name));
-                                        if(temp != NULL)
+                                        if(tree->child[0]->child[i] != NULL && tree->child[0]->child[i]->nodekind == ExpK && tree->child[0]->child[i]->subkind.exp == IdK)
                                         {
-                                            temp->isInitialized = true;
+                                            temp = ((TreeNode *)table->lookup(tree->child[0]->child[i]->name));
+                                            if(temp != NULL)
+                                            {
+                                                temp->isInitialized = true;
+                                            }
                                         }
                                     }
                                 }
                             }
+                            
                             break;
                             
                         default:
@@ -1410,7 +1557,7 @@ void expend(TreeNode *tree, SymbolTable *table)
 
                     case SIZEOF:
                         tree->name = (char *)"sizeof";
-                        if(tree->child[0] != NULL && ((TreeNode *)table->lookup(tree->child[0]->name)) != NULL)
+                        if(tree->child[0] != NULL)
                         {
                             if(tree->child[0]->isArray != true)
                             {
@@ -1496,25 +1643,21 @@ void expend(TreeNode *tree, SymbolTable *table)
                 switch(tree->tokenclass)
                 {
                     case ASS:
-                        
                         tree->name = (char *)"=";
                         
-                        if(tree->child[0]->functionBreak == true)
+                        if(tree->child[0] == NULL)
+                        {
+                            return;
+                        }
+                        else if(tree->child[1] == NULL)
                         {
                             return;
                         }
                         
-                       
-                       
-                        /*
-                        if(table->lookup(tree->child[0]->name) != NULL)
+                        else if(tree->child[0]->functionBreak == true)
                         {
-                            if(  ( ((TreeNode *)table->lookup(tree->child[0]->name))->subkind.decl) == FuncK)
-                            {
-                                return;
-                            }
+                            return;
                         }
-                       */
                         
                         
                         if(tree->child[0]!= NULL && tree->child[1] != NULL)
@@ -1526,34 +1669,18 @@ void expend(TreeNode *tree, SymbolTable *table)
                                 if(!table->lookup(tree->child[0]->name))
                                 {
                                     //symbol is not declared
-                                    //printf("ERROR(%d): Symbol '%s' is not declared. \n", tree->lineno, tree->child[0]->name);
-                                    //n_errors++;
                                     return;
                                 }
                             }
-                            if(tree->child[1]->nodekind == ExpK && tree->child[1]->subkind.exp == IdK)
+                            else if(tree->child[1]->nodekind == ExpK && tree->child[1]->subkind.exp == IdK)
                             {
                                 if(!table->lookup(tree->child[1]->name))
                                 {
                                     //symbol is not declared
-                                   // printf("ERROR(%d): Symbol '%s' is not declared. \n", tree->lineno, tree->child[1]->name);
-                                    //n_errors++;
                                     return;
                                 }
-                                
-                                char * temp1 = tree->child[0]->name;
-                                char * temp2 = tree->child[1]->name;
-                                
-                                /*
-                                if(temp1 == temp2)
-                                {
-                                    printf("WARNING(%d): Variable '%s' may be uninitialized when used here.\n", tree->lineno, tree->child[1]->name);
-                                    n_warnings++;
-                                }
-                                 */
                             }
                             
-                             
                             if(tree->child[1]->isInitialized != true)
                             {
                                 // rhs is not initialized
@@ -1584,7 +1711,6 @@ void expend(TreeNode *tree, SymbolTable *table)
                                             {
                                                 printifUninitializedCall(tree->child[1], table);
                                             }
-                                            
                                         }
                                     }
                                     else
@@ -1597,16 +1723,9 @@ void expend(TreeNode *tree, SymbolTable *table)
                             {
                                 typeEqual(tree);
                             }
-                            
-                            /*
-                            if(tree->child[0]->name == tree->child[1]->name)
-                            {
-                                printf("WARNING(%d): Variable '%s' may be uninitialized when used here.\n", tree->lineno, tree->name);
-                                n_warnings++;
-                            }
-                             */
+
                         }
-                         
+                        
                         if(tree->child[0]!= NULL)
                         {
                             tree->child[0]->isInitialized = true;

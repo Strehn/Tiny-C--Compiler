@@ -345,6 +345,427 @@ void printOp(TreeNode *tree)
     }
 }
 
+void printMemory(TreeNode * tree)
+{
+    char * mem = NULL;
+    int loc = 0;
+    int size = 1;
+    
+    
+    // ----- MEM -----
+    //Default
+    mem =(char *) "Local";
+    // Local Static
+    if(tree->isStatic == true)
+    {
+        mem =(char *) "LocalStatic";
+    }
+    // Parm
+    if(tree->nodekind == DeclK && tree->subkind.decl == ParamK)
+    {
+        mem =(char *) "Parameter";
+    }
+    //compound
+    if(tree->nodekind == StmtK && tree->subkind.stmt == CompoundK)
+    {
+        mem =(char *) "None";
+    }
+    //Function
+    if(tree->nodekind == DeclK && tree->subkind.decl == FuncK)
+    {
+        mem =(char *) "Global";
+    }
+    //Global Variables
+    if(tree->nodekind == ExpK && tree->subkind.exp == ConstantK)
+    {
+        mem =(char *) "Global";
+    }
+    // see if id is global
+    if(tree->isGlobal == true)
+    {
+        mem =(char *) "Global";
+    }
+    
+    // ----- size -----
+    // default is 1
+    if(tree->memsize == 0)
+    {
+        tree->memsize = 1;
+    }
+    size = tree->memsize;
+    
+    // ----- location -----
+    //default
+    loc = tree->memlocation;
+    
+    printf("[mem: %s loc: %d size: %d] ", mem, loc, size);
+    
+}
+
+void printTreeMemory(TreeNode *tree)
+{
+    // ----- Varaibles -----
+    int i, siblingcounter = 0, ssavedstate = 0;
+    INDENT;
+    
+    while (tree != NULL)
+    {
+        printSpaces();
+        
+        // ------ If child print out child prefix -----
+        if(tisChild == true)
+        {
+            if(cisFirst == true)
+            {
+                cisFirst = false;
+                childcounter = 0;
+            }
+            printf("Child: %d  ", childcounter);
+        }
+        
+        if(tisSibling == true)
+        {
+            printf("Sibling: %d  ", siblingcounter);
+            tisSibling = false;
+        }
+
+        if (tree->nodekind==StmtK)
+        {
+            // StmtKind {NullK, IfK, WhileK, ForK, CompoundK, ReturnK, BreakK, RangeK};
+            switch (tree->subkind.stmt)
+            {
+                case NullK:
+                    printf("Null [line: %d]\n", tree->lineno);
+                    break;
+                case IfK:
+                    printf("If [line: %d]\n", tree->lineno);
+                    break;
+                case WhileK:
+                    printf("While [line: %d]\n", tree->lineno);
+                    break;
+                case ForK:
+                    printf("For [line: %d]\n", tree->lineno);
+                    break;
+                case CompoundK:
+                    printf("Compound ");
+                    printMemory(tree);
+                    printf("[line: %d]\n", tree->lineno);
+                    break;
+                case ReturnK:
+                    printf("Return [line: %d]\n", tree->lineno);
+                    break;
+                case BreakK:
+                    printf("Break [line: %d]\n", tree->lineno);
+                    break;
+                case RangeK:
+                    printf("Range [line: %d]\n", tree->lineno);
+                    break;
+                default:
+                    printf("Unknown ExpNode kind\n");
+                    break;
+            }
+        }
+        else if (tree->nodekind == ExpK)
+        {
+            // ExpKind {OpK, ConstantK, IdK, AssignK, InitK, CallK};
+            switch (tree->subkind.exp)
+            {
+                case OpK:
+                    printOp(tree);
+                    switch(tree->expType)
+                    {
+                        case Integer:
+                            printf("of type int ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case Boolean:
+                            if(tree->value == 1)
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            break;
+                        case Char:
+                            printf("of type char ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case String:
+                            printf("is array of type char ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        default:
+                            printf("of undefined type ");
+                            printf("[line: %d]\n", tree->lineno);
+                    }
+                    break;
+                case ConstantK:
+                    printf("Const ");
+                    switch(tree->expType)
+                    {
+                        case Integer:
+                            printf("%d of type int ", tree->value);
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case Boolean:
+                            if(tree->value == 1)
+                            {
+                                printf("true of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("false of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            break;
+                        case Char:
+                            if(tree->isArray == true)
+                            {
+                                printf("%s ", tree->string);
+                                printf("of array of type char ");
+                                printMemory(tree);
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("'%c' of type char ", tree->cvalue);
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            break;
+                        case String:
+                            break;
+                        default:
+                            printf("of usassigned type ");
+                            printf("[line: %d]\n", tree->lineno);
+                    }
+                    break;
+                case IdK:
+                    printf("Id: %s ", tree->tmp);
+                    
+                    if(tree->isStatic == true)
+                    {
+                        if(tree->isArray == true)
+                        {
+                            printf("of static array of type ");
+                        }
+                        else
+                        {
+                            printf("of static type ");
+                        }
+                    }
+                    else
+                    {
+                        if(tree->isArray == true)
+                        {
+                            printf("of array of type ");
+                        }
+                        else
+                        {
+                            printf("of type ");
+                        }
+                    }
+                    switch(tree->expType)
+                    {
+                        case Integer:
+                            printf("int ");
+                            break;
+                        case Boolean:
+                            printf("bool ");
+                            break;
+                        case Char:
+                            printf("char ");
+                            break;
+                        default:
+                            printf("undefined type ");
+                    }
+                    printMemory(tree);
+                    printf("[line: %d]\n", tree->lineno);
+                    break;
+                case AssignK:
+                    printOp(tree);
+                    switch(tree->expType)
+                    {
+                        case Integer:
+                            printf("of type int ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case Boolean:
+                            if(tree->value == 1)
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            break;
+                        case Char:
+                            printf("of array of type char ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case String:
+                            printf("of array of type char ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        default:
+                            printf("of usassigned type ");
+                            printf("[line: %d]\n", tree->lineno);
+                    }
+                    break;
+                case InitK:
+                    printOp(tree);
+                    printf("[line: %d]\n", tree->lineno);
+                    break;
+                case CallK:
+                    printf("Call: %s ", tree->tmp);
+                    switch(tree->expType)
+                    {
+                        case Integer:
+                            printf("of type int ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case Boolean:
+                            if(tree->value == 1)
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            else
+                            {
+                                printf("of type bool ");
+                                printf("[line: %d]\n", tree->lineno);
+                            }
+                            break;
+                        case Char:
+                            printf("of type char ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        case String:
+                            printf("is array of type char ");
+                            printf("[line: %d]\n", tree->lineno);
+                            break;
+                        default:
+                            printf("of type void ");
+                            printf("[line: %d]\n", tree->lineno);
+                    }
+                    break;
+                default:
+                    printf("Unknown ExpNode kind\n");
+                    break;
+                    
+                    printf("[line: %d]\n", tree->lineno);
+            }
+        }
+        else if (tree->nodekind==DeclK)
+        {
+            // DeclKind {VarK, FuncK, ParamK};
+
+            switch (tree->subkind.decl)
+            {
+                case VarK:
+                    
+                    if(tree->isStatic == true)
+                    {
+                        if(tree->isArray == true)
+                        {
+                            printf("Var: %s of static array of type ", tree->tmp);
+                        }
+                        else
+                        {
+                            printf("Var: %s of static type ", tree->tmp);
+                        }
+                    }
+                    else
+                    {
+                        if(tree->isArray == true)
+                        {
+                            printf("Var: %s of array of type ", tree->tmp);
+                        }
+                        else
+                        {
+                            printf("Var: %s of type ", tree->tmp);
+                        }
+                    }
+                    getType(tree);
+                    printMemory(tree);
+                    printf("[line: %d]\n", tree->lineno);
+                    break;
+                case FuncK:
+                    printf("Func: %s returns type ", tree->tmp);
+                    getType(tree);
+                    printMemory(tree);
+                    printf("[line: %d]\n", tree->lineno);
+                    break;
+                case ParamK:
+                    if(tree->isArray)
+                    {
+                        printf("Parm: %s is array of type ", tree->tmp);
+                        getType(tree);
+                        printMemory(tree);
+                        printf("[line: %d]\n", tree->lineno);
+                    }
+                    else
+                    {
+                        printf("Parm: %s of type ", tree->tmp);
+                        getType(tree);
+                        printMemory(tree);
+                        printf("[line: %d]\n", tree->lineno);
+                    }
+                    break;
+                default:
+                    printf("Unknown DeclNode kind\n");
+                    break;
+            }
+        }
+        else printf("Unknown node kind\n");
+        
+        for (i=0;i<MAXCHILDREN;i++)
+        {
+            if(tree->child[i] != NULL)
+            {
+                if(i == 0 && cisFirst == false)
+                {
+                    cisFirst = true;
+                }
+                childcounter = i;
+                tisChild = true;
+                printTreeMemory(tree->child[i]);
+            }
+            else
+            {
+                cisFirst = false;
+            }
+        }
+        cisFirst = false;
+        tisChild = false;
+        i = 0;
+        
+        ssavedstate = siblingcounter;
+        
+        if(tree->sibling != NULL)
+        {
+            tree = tree->sibling;
+            tisSibling = true;
+            siblingcounter++;
+        }
+        else // NULL needs to pass so the while statement gets the null
+        {
+            siblingcounter = ssavedstate;
+            tree = tree->sibling;
+        }
+        
+      
+    }
+    UNINDENT;
+}
+
 // using recursion print the tree
 void printTree(TreeNode *tree)
 {

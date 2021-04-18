@@ -136,7 +136,7 @@ parmIdList : parmIdList COMMA parmId                  {$$ = addSibling($1, $3); 
     ;
 
 parmId : ID                                           {$$ = newDeclNode(ParamK, UndefinedType, $1);$$->tmp = $1->svalue;}
-    | ID LB RB                                        {$$ = newDeclNode(ParamK, UndefinedType, $1);$$->isArray = true;$$->tmp = $1->svalue;}
+    | ID LB RB                                        {$$ = newDeclNode(ParamK, UndefinedType, $1);$$->isArray = true; $$->tmp = $1->svalue; $$->aSize = sizeof($$->tmp);}
     ;
 
 /* ----- Statements ----- */
@@ -329,9 +329,9 @@ argList : argList COMMA exp                         {$$ = addSibling($1, $3); yy
     ;
 
 constant :  NUMCONST                                {$$ = newExpNode(ConstantK, $1);$$->expType = Integer; $$->value = $1->nvalue;}
-    | CHARCONST                                     {$$ = newExpNode(ConstantK, $1);$$->expType = Char;$$->cvalue = $1->cvalue;}
-    |STRINGCONST                                    {$$ = newExpNode(ConstantK, $1);$$->expType = Char;$$->string = $1->svalue;$$->isArray = true;}
-    |BOOLCONST                                      {$$ = newExpNode(ConstantK, $1);$$->expType = Boolean;$$->value = $1->nvalue;}
+    | CHARCONST                                     {$$ = newExpNode(ConstantK, $1);$$->expType = Char; $$->cvalue = $1->cvalue;}
+    |STRINGCONST                                    {$$ = newExpNode(ConstantK, $1);$$->expType = Char; $$->string = $1->svalue; $$->isArray = true; $$->aSize = sizeof($1->svalue);}
+    |BOOLCONST                                      {$$ = newExpNode(ConstantK, $1); $$->expType = Boolean; $$->value = $1->nvalue;}
     ;
 
 %%
@@ -357,7 +357,9 @@ int main(int argc, char *argv[])
     extern char *optarg;
     extern int n_errors;
     extern int n_warnings;
-    int c, dset = 0,  pset = 0, bDset = 0, bPset = 0, hset = 0;
+    extern int goffset;
+    extern int foffset;
+    int c, dset = 0,  pset = 0, bDset = 0, bPset = 0, hset = 0, mset = 0;
     // semantic analysis
     SymbolTable *table = new SymbolTable();
     
@@ -370,7 +372,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-    while((c = ourGetopt(argc, argv, (char *)"dDpPh")) != EOF)
+    while((c = ourGetopt(argc, argv, (char *)"dDpPhM")) != EOF)
     {
         switch(c)
         {
@@ -379,6 +381,9 @@ int main(int argc, char *argv[])
                 break;
             case 'p':
                 pset = 1;
+                break;
+            case 'M':
+                mset = 1;
                 break;
             case 'h':
                 hset = 1;
@@ -403,9 +408,10 @@ int main(int argc, char *argv[])
         printf("options: \n");
         printf("-d      - turn on parser debugging \n");
         printf("-D      - turn on symbol table debugging \n");
-        printf("-h      - this usage message ");
-        printf("-p      - print the abstract syntax tree");
-        printf("-P      - print the abstract syntax tree plus type information");
+        printf("-h      - this usage message \n");
+        printf("-p      - print the abstract syntax tree \n");
+        printf("-P      - print the abstract syntax tree plus type information \n");
+        printf("-M      - print the abstract syntax tree plus memory info \n");
     }
     
     // create map
@@ -439,6 +445,20 @@ int main(int argc, char *argv[])
             if(n_errors == 0)
             {
                 printTree(syntaxTree);
+            }
+        }
+    }
+    
+    if(mset == 1)
+    {
+        if(n_errors == 0)
+        {
+            symanticA(syntaxTree, table);
+            
+            if(n_errors == 0)
+            {
+                printTreeMemory(syntaxTree);
+                printf("Offset for end of global space: %d \n", goffset );
             }
         }
     }
