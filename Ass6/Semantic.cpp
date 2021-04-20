@@ -980,23 +980,7 @@ void stmtStart(TreeNode *tree, SymbolTable *table)
             {
                 table->enter("compound");
             }
-            
-            if(tree->child[0] != NULL)
-            {
-                if(tree->child[0]->isArray == true)
-                {
-                    tree->memsize = (tree->child[0]->aSize + 3) * -1;
-                }
-                
-                if(tree->child[1] != NULL)
-                {
-                    if(tree->child[1]->isArray == true)
-                    {
-                        tree->memsize = tree->memsize + (tree->child[1]->aSize + 3);
-                    }
-                }
-            }
-            foffset = foffset - 1;
+            foffset = foffset - 2;
             break;
         case ReturnK:
             break;
@@ -1040,6 +1024,7 @@ void stmtend(TreeNode *tree, SymbolTable *table)
             char * temp1;
             char * temp2;
             
+            
             // Child[1] and Child[2]
             // Check that the condition is correct
             if(tree->child[0] != NULL)
@@ -1052,6 +1037,7 @@ void stmtend(TreeNode *tree, SymbolTable *table)
                 }
                 
             }
+             
             loopdepth--;
             table->leave();
             break;
@@ -1092,28 +1078,23 @@ void stmtend(TreeNode *tree, SymbolTable *table)
             //child 0 is the var
             // child 1 is assign
             // child 1 child 0 is where we are looking
-            
-            /*
-            if(tree->child[1]->child[0] != NULL)
-            {
-                if(table->insert(tree->child[1]->child[0]->name, table))
-                {
-                    printf("ERROR(%d): Symbol '%s' is not declared. \n", tree->lineno, tree->child[1]->child[0]->name);
-                    n_errors++;
-                }
-            }
-            */
-            /*
-            if(table->insert(tree->child[1]->child[1]->name, table))
-            {
-                printf("ERROR(%d): Symbol '%s' is not declared. \n", tree->lineno, tree->name);
-                n_errors++;
-            }
-             */
             if(tree->funcCompound != true)
             {
                 scopeUsed(table);
                 table->leave();
+            }
+            foffset = foffset + 1;
+            if(tree->isArray == true)
+            {
+                tree->memsize = foffset - 1;
+                tree->memlocation = goffset;
+                goffset = goffset - tree->memsize;
+                
+            }
+            else
+            {
+                tree->memsize = foffset - 1;
+                goffset = goffset - tree->memsize;
             }
             break;
         case ReturnK:
@@ -1139,6 +1120,13 @@ void stmtend(TreeNode *tree, SymbolTable *table)
                 n_errors++;
             }
             
+            /*
+            if(tree->child[0]->child[0] != NULL && tree->child[0]->child[0]->isArray == true || tree->isArray == true)
+            {
+                printf("ERROR(%d): Cannot return an array.\n", tree->lineno);
+                n_errors++;
+            }
+            */
             if(tree->child[0] == NULL && strcmp(expected, (char *)"void") != 0)
             {
                 printf("ERROR(%d): Function '%s' at line %d is expecting to return type %s but return has no return value.\n", tree->lineno, currentfunction->name, currentfunction->lineno, expected);
@@ -1249,33 +1237,17 @@ void expStart(TreeNode *tree, SymbolTable *table)
                     // memory
                     if(tree->isArray == true)
                     {
-                        tree->memsize = (tree->aSize + 3);
-                        tree->memlocation = goffset - tree->memsize + 2;
-                        goffset = goffset - tree->aSize - 3;
+                        tree->memlocation = goffset - tree->aSize - 2;
+                        goffset = goffset - tree->aSize - 2;
+                        tree->memsize = (tree->aSize + 1);
                     }
-                    
-                    /*
                     else
                     {
                         tree->memlocation = goffset;
                         goffset--;
                     }
-                     
-                     */
-                    
                     break;
                 case IdK:
-                    
-                    /*
-                    if(currentvar != NULL)
-                    {
-                        if(currentvar->name == tree->name)
-                        {
-                            printf("ERROR(%d): Symbol '%s' is not declared.\n", tree->lineno, tree->name);
-                            n_errors++;
-                        }
-                    }
-                    */
                     
                     // lookup in table, save exptype as that type if expType = undefined
                     temp = (TreeNode *)table->lookup(tree->name);
@@ -1399,8 +1371,6 @@ void expend(TreeNode *tree, SymbolTable *table)
     }
      
     // Get the subkind
-    
-     
     switch(tree->subkind.exp)
         {
             case OpK:
@@ -1688,6 +1658,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                                 {
                                     typeEqual(tree);
                                     
+                                    /*
                                     if(table->lookup(tree->child[1]->name)) // seeing if it is a parm
                                     {
                                         if(((TreeNode *)table->lookup(tree->child[1]->name))->subkind.decl == ParamK)
@@ -1717,6 +1688,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                                     {
                                         printifUninitializedCall(tree->child[1], table);
                                     }
+                                     */
                                 }
                             }
                             else

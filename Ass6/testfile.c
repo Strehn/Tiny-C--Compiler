@@ -1,14 +1,10 @@
-char g[10]:"pipsissewa";
+int dog() {
+int x[5];
+return x=x;
+}
+
 main()
 {
-   char a[10], b[10];
-
-   a = "manifested";
-   b = g;
-   b = a;
-   b == a;
-   "unquestionable" > "transformation";
+dog();
 }
-int endOfGlobals;
-
 
