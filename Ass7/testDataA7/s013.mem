@@ -1,0 +1,17 @@
+WARNING(7): The variable 'load' seems not to be used.
+Var: goad of type int [mem: Global loc: 0 size: 1] [line: 4]
+.   Child: 0  Const 666 of type int [line: 4]
+Sibling: 1  Func: main returns type void [mem: Global loc: 0 size: -2] [line: 5]
+.   Child: 1  Compound [mem: None loc: 0 size: -3] [line: 6]
+.   .   Child: 0  Var: load of static type int [mem: LocalStatic loc: -2 size: 1] [line: 7]
+.   .   Child: 1  Compound [mem: None loc: 0 size: -4] [line: 8]
+.   .   .   Child: 0  Var: goad of static type int [mem: LocalStatic loc: -3 size: 1] [line: 9]
+.   .   .   .   Child: 0  Const 777 of type int [line: 9]
+.   .   .   Child: 1  Call: output of type void [line: 10]
+.   .   .   .   Child: 0  Id: goad of static type int [mem: LocalStatic loc: -3 size: 1] [line: 10]
+.   .   Sibling: 1  Call: output of type void [line: 12]
+.   .   .   Child: 0  Id: goad of type int [mem: Global loc: 0 size: 1] [line: 12]
+.   .   Sibling: 2  Call: outnl of type void [line: 13]
+Offset for end of global space: 2 
+Number of warnings: 1
+Number of errors: 0

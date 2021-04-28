@@ -1,0 +1,8 @@
+Func: cat returns type void [mem: Global loc: 0 size: -2] [line: 2]
+.   Child: 1  Compound [mem: None loc: 0 size: -2] [line: 3]
+Sibling: 1  Func: main returns type void [mem: Global loc: 0 size: -2] [line: 6]
+.   Child: 1  Compound [mem: None loc: 0 size: -2] [line: 7]
+.   .   Child: 1  Call: cat of type void [line: 8]
+Offset for end of global space: 4 
+Number of warnings: 0
+Number of errors: 0

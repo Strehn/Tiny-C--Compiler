@@ -1,0 +1,25 @@
+WARNING(2): The variable 'z' seems not to be used.
+Var: z of type int [mem: Global loc: 0 size: 1] [line: 2]
+Sibling: 1  Func: cat returns type void [mem: Global loc: 0 size: -2] [line: 4]
+.   Child: 0  Parm: z of type int [mem: Parameter loc: 0 size: 1] [line: 4]
+.   Child: 1  Compound [mem: None loc: 0 size: -3] [line: 5]
+.   .   Child: 1  Call: output of type void [line: 6]
+.   .   .   Child: 0  Id: z of type int [mem: Local loc: 0 size: 1] [line: 6]
+.   .   Sibling: 1  Assign: = of type int [line: 7]
+.   .   .   Child: 0  Id: z of type int [mem: Local loc: 0 size: 1] [line: 7]
+.   .   .   Child: 1  Const 122 of type int [line: 7]
+.   .   Sibling: 2  Call: output of type void [line: 8]
+.   .   .   Child: 0  Id: z of type int [mem: Local loc: 0 size: 1] [line: 8]
+Sibling: 2  Func: main returns type void [mem: Global loc: 0 size: -2] [line: 11]
+.   Child: 1  Compound [mem: None loc: 0 size: -3] [line: 12]
+.   .   Child: 0  Var: z of type int [mem: Local loc: -2 size: 1] [line: 13]
+.   .   Child: 1  Assign: = of type int [line: 15]
+.   .   .   Child: 0  Id: z of type int [mem: Local loc: -2 size: 1] [line: 15]
+.   .   .   Child: 1  Const 637 of type int [line: 15]
+.   .   Sibling: 1  Call: cat of type void [line: 16]
+.   .   .   Child: 0  Id: z of type int [mem: Local loc: -2 size: 1] [line: 16]
+.   .   Sibling: 2  Call: output of type void [line: 17]
+.   .   .   Child: 0  Id: z of type int [mem: Local loc: -2 size: 1] [line: 17]
+Offset for end of global space: 3 
+Number of warnings: 1
+Number of errors: 0
