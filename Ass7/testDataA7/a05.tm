@@ -53,3 +53,11 @@
  37:     LD  1,0(1)	Adjust frame pointer 
  38:    LDA  7,0(3)	Return 
 * END FUNCTION outnl
+* INIT
+  0:    JMP  7,38(7)	Jump to init [backpatch] 
+ 39:     LD  0,0(0)	Set global pointer 
+ 40:    LDA  1,2(0)	Set frame pointer 
+ 41:     ST  1,0(1)	Store old frame pointer 
+ 42:    LDA  3,1(7)	Return address 
+ 43:    JMP  7,-44(7)	Jump to main 
+* END INIT

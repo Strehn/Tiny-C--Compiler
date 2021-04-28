@@ -9,7 +9,7 @@ CC = g++
 OUT = c-
 LIBS = ourgetopt.h TreeUtils.hpp scanType.h Semantic.hpp yyerror.hpp emitcode.hpp
 FLAGS = -DCPLUSPLUS -g
-OBJS = ourgetopt.o TreeUtils.o Semantic.o yyerror.o emitcode.o
+OBJS = ourgetopt.o TreeUtils.o Semantic.o yyerror.o emitcode.o 
 
 all : lex.yy.c $(BIN).tab.c $(BIN).tab.h $(LIBS) $(OBJS)
 	$(CC) $(FLAGS) lex.yy.c $(BIN).tab.c $(OBJS) -o $(OUT)

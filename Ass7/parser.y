@@ -23,6 +23,16 @@ extern TreeNode *currentfunction;
 FILE * code;
 void yyerror(const char *);
 
+// ----- VARIABLES -----
+extern int  opterr;
+extern int  optind;
+extern char *optarg;
+extern int n_errors;
+extern int n_warnings;
+extern int goffset;
+extern int foffset;
+int toffset;
+
 //
 // DATA
 //
@@ -356,14 +366,6 @@ int main(int argc, char *argv[])
     //               arg0    arg1    arg2
     // in case no filename listed
     
-    // ----- VARIABLES -----
-    extern int  opterr;
-    extern int  optind;
-    extern char *optarg;
-    extern int n_errors;
-    extern int n_warnings;
-    extern int goffset;
-    extern int foffset;
     int c, dset = 0,  pset = 0, bDset = 0, bPset = 0, hset = 0, mset = 0;
    
     
@@ -586,6 +588,7 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
                         itr->generate(globals, false);
                 emitComment((char *)"=========================================");
 
+             */
                 // init code
                 emitComment((char *)"INIT");
                 backPatchAJumpToHere(entry, (char *)"Jump to init [backpatch]");
@@ -594,14 +597,15 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
                 emitRM((char *)"ST", 1, 0, 1, (char *)"Store old frame pointer");
                 // init globals, as statics have been omitted
                 toffset = -2;
+                /*
                 for(itr = tree->sibling; itr != NULL; itr = itr->sibling)
                     if(!((Var *)itr)->isFunction)
                         itr->generate(globals, false);
-
+                 */
                 // call main
                 emitRM((char *)"LDA", 3, 1, 7, (char *)"Return address");
                 int memlocation = ((TreeNode *)table->lookupGlobal((char *)"main"))->memlocation - emitSkip(0) - 1;
                 emitRM((char *)"JMP", 7, memlocation, 7, (char *)"Jump to main");
                 emitComment((char *)"END INIT");
-             */
+             
 }

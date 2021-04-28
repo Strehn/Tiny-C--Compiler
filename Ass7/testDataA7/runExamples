@@ -7,6 +7,7 @@
 # file.tm  file of tm code
 
 compiler=../Code/c-
+tm=../tm
 tmp=ztmp$$.txt
 
 if [ ! -x $compiler ]
@@ -29,14 +30,14 @@ do
         then
             if [ -f $file.in ]
             then 
-                tm $file.tm < $file.in |
+                $tm $file.tm < $file.in |
                     expand |
                     sed -e 's/^  *//' -e 's/  *$//' -e 's/ *Halted//' |
                     grep -v '^$' |
                     grep -v 'Number' |
                     egrep -v 'Status:|Memory|Addresses|Instruc|Enter|Limit|Source|command|PC|cmd|version' >> $file.out
             else 
-                tm $file.tm < runExamples.in |
+                $tm $file.tm < runExamples.in |
                     expand |
                     sed -e 's/^  *//' -e 's/  *$//' -e 's/ *Halted//' |
                     grep -v '^$' |
