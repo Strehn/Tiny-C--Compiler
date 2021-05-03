@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include "scanType.h"
 
-
 # define MAXCHILDREN 3
 // Global Operators
 // the exact type of the token or node involved.  These are divided into
