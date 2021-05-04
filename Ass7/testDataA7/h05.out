@@ -1,5 +1,0 @@
-Number of warnings: 0
-Number of errors: 0
-------------------------------------
-Loading file: h05.tm
-ERROR(setDMem): instruction at addr 24 attempting to set out of bounds data memory at loc: -1

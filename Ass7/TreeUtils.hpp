@@ -88,6 +88,7 @@ typedef struct treeNode
     int memsize;
     bool isGlobal;
     ExpType returnActual;
+    bool CallParm;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;

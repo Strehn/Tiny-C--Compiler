@@ -32,7 +32,9 @@ extern int n_warnings;
 extern int goffset;
 extern int foffset;
 int toffset;
-
+int entry;
+int parmc;
+int toffset_old;
 //
 // DATA
 //
@@ -358,9 +360,11 @@ TreeNode * parse(void)
 }
 
 // function declaration
+void startgeneration(TreeNode * tree, SymbolTable * table);
 void codegen(char *filename, TreeNode * tree, SymbolTable * table);
-void nodegen(TreeNode *tree, SymbolTable * table, bool tf);
-void generate(TreeNode * tree, SymbolTable * table, bool tf);
+void nodegenstart(TreeNode *tree, SymbolTable * table);
+void nodegenend(TreeNode *tree, SymbolTable * table);
+void generate(TreeNode * tree, SymbolTable * table);
 
 int main(int argc, char *argv[])
 {
@@ -512,11 +516,21 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
 
         
         // backpatch a jump to init
-        int entry = emitSkip(1);
+        entry = emitSkip(1);
 
         // I/O Library
         
-        // ----- OUTPUT -----
+        // input
+        currentfunction = (TreeNode *)table->lookup((char *)"input");
+        //fun->memlocation = emitSkip(0);
+        emitComment((char *)"FUNCTION input");
+        emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
+        emitRO((char *)"IN", 2, 2, 2, (char *)"Grab int input");
+        emitRM((char *)"LD", 3, -1, 1, (char *)"Load return address");
+        emitRM((char *)"LD", 1, 0, 1, (char *)"Adjust frame pointer");
+        emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
+        emitComment((char *)"END FUNCTION input");
+        
         // output
         currentfunction = (TreeNode *)table->lookup((char *)"output");
        // currentfunction->memlocation = emitSkip(0);
@@ -529,6 +543,16 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
         emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
         emitComment((char *)"END FUNCTION output");
 
+        // inputb
+        currentfunction = (TreeNode *)table->lookup((char *)"inputb");
+        //fun->memlocation = emitSkip(0);
+        emitComment((char *)"FUNCTION inputb");
+        emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
+        emitRO((char *)"INB", 2, 2, 2, (char *)"Grab bool input");
+        emitRM((char *)"LD", 3, -1, 1, (char *)"Load return address");
+        emitRM((char *)"LD", 1, 0, 1, (char *)"Adjust frame pointer");
+        emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
+        emitComment((char *)"END FUNCTION inputb");
         
         // outputb
         currentfunction = (TreeNode *)table->lookup((char *)"outputb");
@@ -542,6 +566,17 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
         emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
         emitComment((char *)"END FUNCTION outputb");
 
+        // inputc
+        currentfunction = (TreeNode *)table->lookup((char *)"inputc");
+        //fun->memlocation = emitSkip(0);
+        emitComment((char *)"FUNCTION inputc");
+        emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
+        emitRO((char *)"INC", 2, 2, 2, (char *)"Grab char input");
+        emitRM((char *)"LD", 3, -1, 1, (char *)"Load return address");
+        emitRM((char *)"LD", 1, 0, 1, (char *)"Adjust frame pointer");
+        emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
+        emitComment((char *)"END FUNCTION inputc");
+        
         // outputc
         currentfunction = (TreeNode *)table->lookup((char *)"outputc");
        // currentfunction->memlocation = emitSkip(0);
@@ -565,97 +600,70 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
         emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
         emitComment((char *)"END FUNCTION outnl");
         
-        // ----- INPUT -----
-        
-        // input
-        currentfunction = (TreeNode *)table->lookup((char *)"input");
-        //fun->memlocation = emitSkip(0);
-        emitComment((char *)"FUNCTION input");
-        emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
-        emitRO((char *)"IN", 2, 2, 2, (char *)"Grab int input");
-        emitRM((char *)"LD", 3, -1, 1, (char *)"Load return address");
-        emitRM((char *)"LD", 1, 0, 1, (char *)"Adjust frame pointer");
-        emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
-        emitComment((char *)"END FUNCTION input");
-
-        // inputb
-        currentfunction = (TreeNode *)table->lookup((char *)"inputb");
-        //fun->memlocation = emitSkip(0);
-        emitComment((char *)"FUNCTION inputb");
-        emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
-        emitRO((char *)"INB", 2, 2, 2, (char *)"Grab bool input");
-        emitRM((char *)"LD", 3, -1, 1, (char *)"Load return address");
-        emitRM((char *)"LD", 1, 0, 1, (char *)"Adjust frame pointer");
-        emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
-        emitComment((char *)"END FUNCTION inputb");
-
-        // inputc
-        currentfunction = (TreeNode *)table->lookup((char *)"inputc");
-        //fun->memlocation = emitSkip(0);
-        emitComment((char *)"FUNCTION inputc");
-        emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
-        emitRO((char *)"INC", 2, 2, 2, (char *)"Grab char input");
-        emitRM((char *)"LD", 3, -1, 1, (char *)"Load return address");
-        emitRM((char *)"LD", 1, 0, 1, (char *)"Adjust frame pointer");
-        emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
-        emitComment((char *)"END FUNCTION inputc");
-           
-        
         // main body
         emitComment((char *)"=========================================");
         
-        TreeNode *temp;
-        
-        // get all the siblings initially
-        for(temp = tree->sibling; temp != NULL; temp = temp->sibling)
+        startgeneration(tree, table);
+}
+
+void startgeneration(TreeNode * tree, SymbolTable * table)
+{
+    generate(tree, table);
+    
+    emitComment((char *)"=========================================");
+    
+    
+    emitComment((char *)"INIT");
+    
+    // idk why but add this? it should be 2.
+    if(goffset == 2)
+    {
+        goffset = 0;
+    }
+    
+    emitRM((char *)"LDA", 1, goffset, 0, (char *)"Set first frame at end of globals");
+    emitRM((char *)"ST", 1, 0, 1, (char *)"Store old fp (point to self)");
+    
+    emitComment((char *)"INIT GLOBALS AND STATICS");
+    emitComment((char *)"END INIT GLOBALS AND STATICS");
+    
+    //printf(" \n mem size %d \n", tree->memsize);
+    //printf("  emit size %d \n", emitSkip(0));
+    // get to the main function
+    
+    emitRM((char *)"LDA", 3, 1, 7, (char *)"Return address in ac");
+    emitRM((char *)"JMP", 7, -16 , 7, (char *)"Jump to main");
+    emitRM((char *)"HALT", 0, 0, 0, (char *)"DONE!");
+    emitComment((char *)"END INIT");
+     
+}
+
+void generate(TreeNode * tree, SymbolTable * table)
+{
+    nodegenstart(tree, table);
+    
+    for(int i = 0; i <3; i++)
+    {
+        if( (tree->child[i]) != NULL)
         {
-            generate(temp, table, false);
+            generate(tree->child[i], table);
         }
-         
-        emitComment((char *)"=========================================");
-         
-             
-            // init code
-            emitComment((char *)"INIT");
-            backPatchAJumpToHere(entry, (char *)"Jump to init [backpatch]");
-            emitRM((char *)"LD", 0, 0, 0, (char *)"Set global pointer");
-            emitRM((char *)"LDA", 1, goffset, 0, (char *)"Set frame pointer");
-            emitRM((char *)"ST", 1, 0, 1, (char *)"Store old frame pointer");
-           
-           
-           // init globals, as statics have been omitted
-            toffset = -2;
-               
-            /*
-            for(temp = tree->sibling; temp != NULL; temp = temp->sibling)
-            {
-                if(((TreeNode *)temp)->nodekind == DeclK && ((TreeNode *)temp)->subkind.decl == FuncK )
-                {
-                    generate(temp, table, false);
-                }
-            }
-           */
-            generate(temp, table, false);
-           // main
-            emitRM((char *)"LDA", 3, 1, 7, (char *)"Return address");
-            emitRM((char *)"JMP", 7, tree->memlocation, 7, (char *)"Jump to main");
-            emitComment((char *)"END INIT");
-             
-}
-
-void generate(TreeNode * tree, SymbolTable * table, bool tf)
-{
-    nodegen(tree, table, tf);
+    }
+    
+    nodegenend(tree, table);
+    // look at the sibling
+    if( (tree->sibling) != NULL)
+    {
+        generate(tree->sibling, table);
+    }
     
 }
 
-void generateChild(TreeNode * tree, SymbolTable *table)
+void nodegenstart(TreeNode *tree, SymbolTable * table)
 {
+    int i;
+    TreeNode *temp;
     
-}
-
-void nodegen(TreeNode *tree, SymbolTable * table, bool tf)
-{
     if (tree->nodekind == StmtK)
     {
         switch(tree->subkind.stmt)
@@ -669,6 +677,15 @@ void nodegen(TreeNode *tree, SymbolTable * table, bool tf)
             case ForK:
                 break;
             case CompoundK:
+            
+                toffset_old = toffset;
+                if(!tree->noScope)
+                {
+                    emitComment((char *)"COMPOUND");
+                    toffset = -2;
+                    emitComment((char *)"TOFF set: " );
+                }
+                emitComment((char *)"Compound body");
                 break;
             case ReturnK:
                 break;
@@ -686,42 +703,118 @@ void nodegen(TreeNode *tree, SymbolTable * table, bool tf)
         switch(tree->subkind.decl)
         {
             case VarK:
-                if(tree->isArray == true)
-                {
-                    emitRM((char *)"LDC", 3, tree->aSize, 6, (char *)"Load size of array", tree->name);
-                    // size is stored at 0th element
-                    emitRM((char *)"ST", 3, tree->memlocation + 1, (tree->isGlobal ? 0 : 1), (char *)"Store size of array", tree->name);
-                }
-                
-                if(tree->child[0] != NULL)
-                {
-                    generateChild(tree->child[0], table);
-                    emitRM((char *)"ST", 3, tree->memlocation, (tree->isGlobal ? 0 : 1), (char *)"Initialize variable", tree->name);
-                }
-                
-                if(tf)
-                {
-                    generate(tree->sibling, table, tf);
-                }
                 break;
             case FuncK:
                 emitComment((char *)"FUNCTION", tree->name);
-                //loc = emitSkip(0);
-                toffset = tree->memsize;
-                emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
-                if(tree->child[1] != NULL)
+                //tree->memlocation = emitSkip(0);
+                toffset = -2;
+                emitComment((char *)"TOFF set: " );
+                emitRM((char *)"ST", 3, -1, 1, (char *)"store return address");
+                break;
+            case ParamK:
+                // do nothing
+                break;
+            default:
+                break;
+        }
+    }
+    else // ExpK
+    {
+        emitComment((char *)"EXPRESSION");
+        switch(tree->subkind.exp)
+            {
+                case OpK:
+                    break;
+                case ConstantK:
+                    break;
+                case IdK:
+                    break;
+                case AssignK:
+                    break;
+                case InitK:
+                    break;
+                case CallK:
+                    
+                    emitComment((char *)"CALL", tree->name);
+                    emitRM((char *)"ST", 1, toffset, 1, (char *)"Store fp in ghost frame for ", tree->name);
+                    toffset_old = toffset;
+                    emitComment((char *)"TOFF dec: ");
+                    emitComment((char *)"TOFF dec: ");
+                    toffset -= 2;
+                    
+                    if(tree->child[0] != NULL)
+                    {
+                        parmc++;
+                        tree->child[0]->CallParm = true;
+                    }
+                    
+                    if(tree->child[1] != NULL)
+                    {
+                        parmc++;
+                        tree->child[1]->CallParm = true;
+                    }
+                    
+                    if(tree->child[2] != NULL)
+                    {
+                        parmc++;
+                        tree->child[2]->CallParm = true;
+                    }
+                    
+                   break;
+                default:
+                    break;
+            }
+    }
+}
+
+
+void nodegenend(TreeNode *tree, SymbolTable * table)
+{
+    TreeNode * temp;
+    
+    if (tree->nodekind == StmtK)
+    {
+        switch(tree->subkind.stmt)
+        {
+            case NullK:
+                break;
+            case IfK:
+                break;
+            case WhileK:
+                break;
+            case ForK:
+                break;
+            case CompoundK:
+                if(!tree->noScope)
                 {
-                    generateChild(tree->child[1], table);
+                    emitComment((char *)"END COMPOUND");
                 }
+                break;
+            case ReturnK:
+                break;
+            case BreakK:
+                break;
+            case RangeK:
+                break;
+            default:
+                break;
+        }
+    }
+    else if(tree->nodekind == DeclK)
+    {
+        //VarK, FuncK, ParamK
+        switch(tree->subkind.decl)
+        {
+            case VarK:
+                break;
+            case FuncK:
+                emitComment((char *)"Add standard closing in case there is no return statement");
                 emitRM((char *)"LDC", 2, 0, 6, (char *)"Set return value to 0");
                 emitRM((char *)"LD", 3, -1, 1, (char *)"Load return address");
                 emitRM((char *)"LD", 1, 0, 1, (char *)"Adjust frame pointer");
                 emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
                 emitComment((char *)"END FUNCTION", tree->name);
-                if(tf)
-                {
-                    generate(tree->sibling, table, tf);
-                }
+                backPatchAJumpToHere(entry, (char *)"Jump to init [backpatch]");
                 break;
             case ParamK:
                 break;
@@ -736,6 +829,18 @@ void nodegen(TreeNode *tree, SymbolTable * table, bool tf)
                 case OpK:
                     break;
                 case ConstantK:
+                    switch(tree->tokenclass)
+                    {
+                        case CHARCONST:
+                            emitRM((char *)"LDC", 3, (int)tree->cvalue, 6, (char *)"Load char constant");
+                            break;
+                        case STRINGCONST:
+                            break;
+                        case NUMCONST:
+                        case BOOLCONST:
+                            emitRM((char *)"LDC", 3, tree->value, 6, (char *)"Load integer constant");
+                            break;
+                    }
                     break;
                 case IdK:
                     break;
@@ -744,9 +849,29 @@ void nodegen(TreeNode *tree, SymbolTable * table, bool tf)
                 case InitK:
                     break;
                 case CallK:
+                    
+                    temp = ((TreeNode *)table->lookup(tree->name));
+                    
+                    toffset = toffset_old;
+                    emitComment((char *)"Param end ", tree->name);
+                    emitRM((char *)"LDA", 1, toffset, 1, (char *)"Ghost frame becomes new active frame");
+                    emitRM((char *)"LDA", 3, 1, 7, (char *)"Return address in ac");
+                    emitRM((char *)"JMP", 7, -40, 7, (char *)"call", tree->name);
+                    emitRM((char *)"LDA", 3, 0, 2, (char *)"save the result in ac");
+                    emitComment((char *)"Call end ", tree->name);
+                    emitComment((char *)"TOFF set: ");
+                     
                     break;
                 default:
                     break;
             }
     }
+    
+    if(tree->CallParm == true)
+    {
+        emitComment((char *)"Param ");
+        emitRM((char *)"ST", 3, toffset--, 1, (char *)"Push parameter");
+        emitComment((char *)"TOFF dec: ");
+    }
+     
 }
