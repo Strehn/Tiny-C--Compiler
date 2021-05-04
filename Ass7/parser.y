@@ -445,19 +445,20 @@ int main(int argc, char *argv[])
     {
         printTree(syntaxTree);
     }
-       
+    
+    table->debug(bDset);
+    
+    if(n_errors == 0)
+    {
+        symanticA(syntaxTree, table);
+    }
+   
+    
     if(bPset == 1)
     {
-        table->debug(bDset);
-           
         if(n_errors == 0)
         {
-            symanticA(syntaxTree, table);
-               
-            if(n_errors == 0)
-            {
-                printTree(syntaxTree);
-            }
+            printTree(syntaxTree);
         }
     }
        
@@ -465,17 +466,13 @@ int main(int argc, char *argv[])
     {
         if(n_errors == 0)
         {
-            symanticA(syntaxTree, table);
-               
-            if(n_errors == 0)
-            {
-                printTreeMemory(syntaxTree);
-                printf("Offset for end of global space: %d \n", goffset );
-            }
+            printTreeMemory(syntaxTree);
+            printf("Offset for end of global space: %d \n", goffset );
         }
     }
-       
+    
     // ----- CODE GENERATION -----
+    // should do this automatically
     if(n_errors == 0)
     {
         char *path = strdup(argv[optind]);
@@ -508,21 +505,23 @@ int main(int argc, char *argv[])
 
 void codegen(char *filename, TreeNode * tree, SymbolTable * table)
 {
-    
         // insert header comment
         emitComment((char *)"C- version: 1.00");
         emitComment((char *)"by Sydney Petrehn");
         emitComment((char *)"Input file:", filename);
 
-        
         // backpatch a jump to init
         entry = emitSkip(1);
 
         // I/O Library
-        
         // input
-        currentfunction = (TreeNode *)table->lookup((char *)"input");
-        //fun->memlocation = emitSkip(0);
+        TreeNode *input;
+        input = (TreeNode *)table->lookup((char *)"input");
+        if(input != NULL)
+        {
+            input->memlocation = emitSkip(0);
+        }
+        
         emitComment((char *)"FUNCTION input");
         emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
         emitRO((char *)"IN", 2, 2, 2, (char *)"Grab int input");
@@ -532,8 +531,13 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
         emitComment((char *)"END FUNCTION input");
         
         // output
-        currentfunction = (TreeNode *)table->lookup((char *)"output");
-       // currentfunction->memlocation = emitSkip(0);
+        TreeNode *output;
+        output = (TreeNode *)table->lookup((char *)"output");
+        if(output != NULL)
+        {
+            output->memlocation = emitSkip(0);
+        }
+       
         emitComment((char *)"FUNCTION output");
         emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
         emitRM((char *)"LD", 3, -2, 1, (char *)"Load parameter");
@@ -544,8 +548,13 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
         emitComment((char *)"END FUNCTION output");
 
         // inputb
-        currentfunction = (TreeNode *)table->lookup((char *)"inputb");
-        //fun->memlocation = emitSkip(0);
+        TreeNode *inputb;
+        inputb = (TreeNode *)table->lookup((char *)"inputb");
+        if(inputb != NULL)
+        {
+            inputb->memlocation = emitSkip(0);
+        }
+        
         emitComment((char *)"FUNCTION inputb");
         emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
         emitRO((char *)"INB", 2, 2, 2, (char *)"Grab bool input");
@@ -555,8 +564,13 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
         emitComment((char *)"END FUNCTION inputb");
         
         // outputb
-        currentfunction = (TreeNode *)table->lookup((char *)"outputb");
-        //currentfunction->memlocation = emitSkip(0);
+        TreeNode *outputb;
+        outputb = (TreeNode *)table->lookup((char *)"outputb");
+        if(output != NULL)
+        {
+            outputb->memlocation = emitSkip(0);
+        }
+        
         emitComment((char *)"FUNCTION outputb");
         emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
         emitRM((char *)"LD", 3, -2, 1, (char *)"Load parameter");
@@ -567,8 +581,12 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
         emitComment((char *)"END FUNCTION outputb");
 
         // inputc
-        currentfunction = (TreeNode *)table->lookup((char *)"inputc");
-        //fun->memlocation = emitSkip(0);
+        TreeNode *inputc;
+        inputc = (TreeNode *)table->lookup((char *)"inputc");
+        if(inputc != NULL)
+        {
+            inputc->memlocation = emitSkip(0);
+        }
         emitComment((char *)"FUNCTION inputc");
         emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
         emitRO((char *)"INC", 2, 2, 2, (char *)"Grab char input");
@@ -578,8 +596,12 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
         emitComment((char *)"END FUNCTION inputc");
         
         // outputc
-        currentfunction = (TreeNode *)table->lookup((char *)"outputc");
-       // currentfunction->memlocation = emitSkip(0);
+        TreeNode *outputc;
+        outputc = (TreeNode *)table->lookup((char *)"outputc");
+        if(outputc != NULL)
+        {
+            outputc->memlocation = emitSkip(0);
+        }
         emitComment((char *)"FUNCTION outputc");
         emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
         emitRM((char *)"LD", 3, -2, 1, (char *)"Load parameter");
@@ -590,8 +612,13 @@ void codegen(char *filename, TreeNode * tree, SymbolTable * table)
         emitComment((char *)"END FUNCTION outputc");
 
         // outnl
-        currentfunction = (TreeNode *)table->lookup((char *)"outnl");
-        //currentfunction->memlocation = emitSkip(0);
+        TreeNode *outnl;
+        outnl = (TreeNode *)table->lookup((char *)"outnl");
+        if(outnl != NULL)
+        {
+            outnl->memlocation = emitSkip(0);
+        }
+        
         emitComment((char *)"FUNCTION outnl");
         emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
         emitRO((char *)"OUTNL", 3, 3, 3, (char *)"Output newline");
@@ -620,6 +647,10 @@ void startgeneration(TreeNode * tree, SymbolTable * table)
     {
         goffset = 0;
     }
+    if(goffset == 1)
+    {
+        goffset = 0;
+    }
     
     emitRM((char *)"LDA", 1, goffset, 0, (char *)"Set first frame at end of globals");
     emitRM((char *)"ST", 1, 0, 1, (char *)"Store old fp (point to self)");
@@ -627,12 +658,28 @@ void startgeneration(TreeNode * tree, SymbolTable * table)
     emitComment((char *)"INIT GLOBALS AND STATICS");
     emitComment((char *)"END INIT GLOBALS AND STATICS");
     
-    //printf(" \n mem size %d \n", tree->memsize);
-    //printf("  emit size %d \n", emitSkip(0));
+    
     // get to the main function
+    //printf(" \n mem size %d \n", tree->memsize);
+   //printf(" mem loc %d \n", tree->memlocation);
+   // printf("  emit size %d \n", emitSkip(0));
+   
+    TreeNode *memtemp;
+    int loc;
+    memtemp = (TreeNode *)table->lookup(tree->name);
+    if(memtemp != NULL)
+    {
+        loc = memtemp->memlocation - emitSkip(0) - 1;
+    }
+    else
+    {
+        loc = -9;
+    }
+    
+    //printf(" mem loc %d \n", loc);
     
     emitRM((char *)"LDA", 3, 1, 7, (char *)"Return address in ac");
-    emitRM((char *)"JMP", 7, -16 , 7, (char *)"Jump to main");
+    emitRM((char *)"JMP", 7, loc , 7, (char *)"Jump to main");
     emitRM((char *)"HALT", 0, 0, 0, (char *)"DONE!");
     emitComment((char *)"END INIT");
      
@@ -706,7 +753,14 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                 break;
             case FuncK:
                 emitComment((char *)"FUNCTION", tree->name);
-                //tree->memlocation = emitSkip(0);
+                
+                TreeNode *memtemp;
+                memtemp = (TreeNode *)table->lookupGlobal(tree->name);
+                if(memtemp != NULL)
+                {
+                    memtemp->memlocation = emitSkip(0) - 1;
+                }
+                
                 toffset = -2;
                 emitComment((char *)"TOFF set: " );
                 emitRM((char *)"ST", 3, -1, 1, (char *)"store return address");
@@ -812,7 +866,7 @@ void nodegenend(TreeNode *tree, SymbolTable * table)
                 emitRM((char *)"LDC", 2, 0, 6, (char *)"Set return value to 0");
                 emitRM((char *)"LD", 3, -1, 1, (char *)"Load return address");
                 emitRM((char *)"LD", 1, 0, 1, (char *)"Adjust frame pointer");
-                emitRM((char *)"LDA", 7, 0, 3, (char *)"Return");
+                emitRM((char *)"JMP", 7, 0, 3, (char *)"Return");
                 emitComment((char *)"END FUNCTION", tree->name);
                 backPatchAJumpToHere(entry, (char *)"Jump to init [backpatch]");
                 break;
@@ -850,13 +904,20 @@ void nodegenend(TreeNode *tree, SymbolTable * table)
                     break;
                 case CallK:
                     
-                    temp = ((TreeNode *)table->lookup(tree->name));
+                    TreeNode *calltemp;
+                    int loc;
+                    calltemp = (TreeNode *)table->lookupGlobal(tree->name);
+                    if(calltemp != NULL)
+                    {
+                        loc = calltemp->memlocation - emitSkip(0) - 3;
+                    }
+                    
                     
                     toffset = toffset_old;
                     emitComment((char *)"Param end ", tree->name);
                     emitRM((char *)"LDA", 1, toffset, 1, (char *)"Ghost frame becomes new active frame");
                     emitRM((char *)"LDA", 3, 1, 7, (char *)"Return address in ac");
-                    emitRM((char *)"JMP", 7, -40, 7, (char *)"call", tree->name);
+                    emitRM((char *)"JMP", 7, loc, 7, (char *)"call", tree->name);
                     emitRM((char *)"LDA", 3, 0, 2, (char *)"save the result in ac");
                     emitComment((char *)"Call end ", tree->name);
                     emitComment((char *)"TOFF set: ");

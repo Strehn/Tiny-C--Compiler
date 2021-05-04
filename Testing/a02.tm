@@ -85,7 +85,7 @@
 * Param end  outnl
  48:    LDA  1,-2(1)	Ghost frame becomes new active frame 
  49:    LDA  3,1(7)	Return address in ac 
- 50:    JMP  7,-40(7)	call outnl
+ 50:    JMP  7,-17(7)	call outnl
  51:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
 * TOFF set: 
@@ -94,7 +94,7 @@
  52:    LDC  2,0(6)	Set return value to 0 
  53:     LD  3,-1(1)	Load return address 
  54:     LD  1,0(1)	Adjust frame pointer 
- 55:    LDA  7,0(3)	Return 
+ 55:    JMP  7,0(3)	Return 
 * END FUNCTION main
   0:    JMP  7,55(7)	Jump to init [backpatch] 
 * =========================================
@@ -104,6 +104,6 @@
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
  58:    LDA  3,1(7)	Return address in ac 
- 59:    JMP  7,-16(7)	Jump to main 
+ 59:    JMP  7,-21(7)	Jump to main 
  60:   HALT  0,0(0)	DONE! 
 * END INIT

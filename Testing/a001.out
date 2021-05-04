@@ -2,4 +2,4 @@ Number of warnings: 0
 Number of errors: 0
 ------------------------------------
 Loading file: a001.tm
-ERROR(setDMem): instruction at addr 46 attempting to set out of bounds data memory at loc: 10000
+ERROR(setDMem): instruction at addr 45 attempting to set out of bounds data memory at loc: -2

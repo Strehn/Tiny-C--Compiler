@@ -82,12 +82,12 @@
  47:    LDC  2,0(6)	Set return value to 0 
  48:     LD  3,-1(1)	Load return address 
  49:     LD  1,0(1)	Adjust frame pointer 
- 50:    LDA  7,0(3)	Return 
+ 50:    JMP  7,0(3)	Return 
 * END FUNCTION main
   0:    JMP  7,50(7)	Jump to init [backpatch] 
 * =========================================
 * INIT
- 51:    LDA  1,1(0)	Set first frame at end of globals 
+ 51:    LDA  1,0(0)	Set first frame at end of globals 
  52:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS

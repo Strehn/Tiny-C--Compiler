@@ -785,14 +785,12 @@ void declStart(TreeNode *tree, SymbolTable *table)
                 }
             }
             tree->memsize = -2;
-            //foffset--;
             break;
         case ParamK:
             if(tree->isArray)
             {
                 tree->isInitialized = true;
             }
-            //tree->isInitialized = true;
             break;
         default:
             break;
@@ -857,8 +855,7 @@ void declend(TreeNode *tree, SymbolTable *table)
                 
                 if(tree->child[0] != NULL && tree->child[0]->subkind.exp != ConstantK)
                 {
-                    //printf("ERROR(%d): Initializer for variable '%s' is not a constant expression.\n", tree->lineno, tree->name);
-                    //n_errors++;
+                    
                 }
                 else if(strcmp(type2, type1) != 0 && strcmp(type2, (char *)"undefined"))
                 {
@@ -902,7 +899,7 @@ void declend(TreeNode *tree, SymbolTable *table)
             temp = (TreeNode *)table->lookup(tree->name);
             if(temp->isUsed == false)
             {
-                //scopeUsed(table);
+                
             }
             
             break;
@@ -962,7 +959,6 @@ void stmtStart(TreeNode *tree, SymbolTable *table)
 
             if(tree->child[0] != NULL)
             {
-                //&& (tree->child[0]->nodekind == ExpK) && (tree->child[0]->subkind.exp == IdK) && (table->lookup(tree->name))
                 tree->child[0]->isInitialized = true;
                 setUsed(tree->child[0], table);
             }
@@ -1120,13 +1116,6 @@ void stmtend(TreeNode *tree, SymbolTable *table)
                 n_errors++;
             }
             
-            /*
-            if(tree->child[0]->child[0] != NULL && tree->child[0]->child[0]->isArray == true || tree->isArray == true)
-            {
-                printf("ERROR(%d): Cannot return an array.\n", tree->lineno);
-                n_errors++;
-            }
-            */
             if(tree->child[0] == NULL && strcmp(expected, (char *)"void") != 0)
             {
                 printf("ERROR(%d): Function '%s' at line %d is expecting to return type %s but return has no return value.\n", tree->lineno, currentfunction->name, currentfunction->lineno, expected);
@@ -1657,38 +1646,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                                 if(tree->child[0]->expType != Void && tree->child[1]->expType != Void)
                                 {
                                     typeEqual(tree);
-                                    
-                                    /*
-                                    if(table->lookup(tree->child[1]->name)) // seeing if it is a parm
-                                    {
-                                        if(((TreeNode *)table->lookup(tree->child[1]->name))->subkind.decl == ParamK)
-                                        {
-                                            ((TreeNode *)table->lookup(tree->child[1]->name))->isInitialized = true;
-                                        }
-                                        if(((TreeNode *)table->lookup(tree->child[1]->name))->isInitialized != true)
-                                        {
-                                            tree->child[1]->isUsed = true;
-                                            if(tree->child[1]->expType == Integer)
-                                            {
-                                                printifUninitializedCall(tree->child[1], table);
-                                            }
-                                            
-                                            if(tree->child[1]->expType == Boolean)
-                                            {
-                                                printifUninitializedCall(tree->child[1], table);
-                                            }
-                                            
-                                            if(tree->child[1]->expType == Char)
-                                            {
-                                                printifUninitializedCall(tree->child[1], table);
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        printifUninitializedCall(tree->child[1], table);
-                                    }
-                                     */
+                                   
                                 }
                             }
                             else
@@ -1781,13 +1739,7 @@ void expend(TreeNode *tree, SymbolTable *table)
                 
                 if( (tree->child[0] != NULL) && (tree->child[0]->nodekind = ExpK) && (tree->child[0]->subkind.exp == IdK) )
                 {
-                    /*
-                    if(table->lookup(tree->child[0]->name) != NULL && ((TreeNode *)table->lookup(tree->child[0]->name))->subkind.decl == FuncK)
-                    {
-                        printf("ERROR(%d): Cannot use function '%s' as a variable.\n", tree->lineno, tree->child[0]->name);
-                        n_errors++;
-                    }
-                     */
+                    
                 }
                 
                 
