@@ -89,6 +89,9 @@ typedef struct treeNode
     bool isGlobal;
     ExpType returnActual;
     bool CallParm;
+    bool generated;
+    bool pop;
+    bool isUnary;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;

@@ -70,16 +70,13 @@
  44:    JMP  7,0(3)	Return 
 * END FUNCTION main
   0:    JMP  7,44(7)	Jump to init [backpatch] 
-* Param 
- 45:     ST  3,-2(1)	Push parameter 
-* TOFF dec: 
 * =========================================
 * INIT
- 46:    LDA  1,0(0)	Set first frame at end of globals 
- 47:     ST  1,0(1)	Store old fp (point to self) 
+ 45:    LDA  1,0(0)	Set first frame at end of globals 
+ 46:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 48:    LDA  3,1(7)	Return address in ac 
- 49:    JMP  7,-11(7)	Jump to main 
- 50:   HALT  0,0(0)	DONE! 
+ 47:    LDA  3,1(7)	Return address in ac 
+ 48:    JMP  7,-10(7)	Jump to main 
+ 49:   HALT  0,0(0)	DONE! 
 * END INIT

@@ -61,17 +61,17 @@
 * TOFF set: 
 * Compound body
 * EXPRESSION
-* CALL output
- 40:     ST  1,-2(1)	Store fp in ghost frame for  output
+* CALL  output
+ 40:     ST  1,-3(1)	Store fp in ghost frame for  output
 * TOFF dec: 
 * TOFF dec: 
 * EXPRESSION
  41:    LDC  3,987(6)	Load integer constant 
 * Param 
- 42:     ST  3,-4(1)	Push parameter 
+ 42:     ST  3,-5(1)	Push parameter 
 * TOFF dec: 
 * Param end  output
- 43:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 43:    LDA  1,-3(1)	Ghost frame becomes new active frame 
  44:    LDA  3,1(7)	Return address in ac 
  45:    JMP  7,-40(7)	call output
  46:    LDA  3,0(2)	save the result in ac 

@@ -60,6 +60,7 @@
 * COMPOUND
 * TOFF set: 
 * Compound body
+* Return
 * END COMPOUND
 * Add standard closing in case there is no return statement
  40:    LDC  2,0(6)	Set return value to 0 

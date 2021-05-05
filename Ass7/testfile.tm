@@ -61,22 +61,53 @@
 * TOFF set: 
 * Compound body
 * EXPRESSION
- 40:    LDC  3,666(6)	Load integer constant 
+* CALL  output
+ 40:     ST  1,-3(1)	Store fp in ghost frame for  output
+* TOFF dec: 
+* TOFF dec: 
+* EXPRESSION
+* EXPRESSION
+ 41:    LDC  3,666(6)	Load integer constant 
+ 42:     ST  3,-5(1)	Push left side 
+ 43:     LD  4,-5(1)	Pop left into ac1 
+* OP  chsign
+* Param 
+ 44:     ST  3,-5(1)	Push parameter 
+* TOFF dec: 
+* Param end  output
+ 45:    LDA  1,-3(1)	Ghost frame becomes new active frame 
+ 46:    LDA  3,1(7)	Return address in ac 
+ 47:    JMP  7,-42(7)	call output
+ 48:    LDA  3,0(2)	save the result in ac 
+* Call end  output
+* TOFF set: 
+* EXPRESSION
+* CALL  outnl
+ 49:     ST  1,-3(1)	Store fp in ghost frame for  outnl
+* TOFF dec: 
+* TOFF dec: 
+* Param end  outnl
+ 50:    LDA  1,-3(1)	Ghost frame becomes new active frame 
+ 51:    LDA  3,1(7)	Return address in ac 
+ 52:    JMP  7,-19(7)	call outnl
+ 53:    LDA  3,0(2)	save the result in ac 
+* Call end  outnl
+* TOFF set: 
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 41:    LDC  2,0(6)	Set return value to 0 
- 42:     LD  3,-1(1)	Load return address 
- 43:     LD  1,0(1)	Adjust frame pointer 
- 44:    JMP  7,0(3)	Return 
+ 54:    LDC  2,0(6)	Set return value to 0 
+ 55:     LD  3,-1(1)	Load return address 
+ 56:     LD  1,0(1)	Adjust frame pointer 
+ 57:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,44(7)	Jump to init [backpatch] 
+  0:    JMP  7,57(7)	Jump to init [backpatch] 
 * =========================================
 * INIT
- 45:    LDA  1,0(0)	Set first frame at end of globals 
- 46:     ST  1,0(1)	Store old fp (point to self) 
+ 58:    LDA  1,0(0)	Set first frame at end of globals 
+ 59:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 47:    LDA  3,1(7)	Return address in ac 
- 48:    JMP  7,-10(7)	Jump to main 
- 49:   HALT  0,0(0)	DONE! 
+ 60:    LDA  3,1(7)	Return address in ac 
+ 61:    JMP  7,-23(7)	Jump to main 
+ 62:   HALT  0,0(0)	DONE! 
 * END INIT

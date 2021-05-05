@@ -34,6 +34,7 @@ extern int foffset;
 int toffset;
 int entry;
 int parmc;
+int pos1, pos2;
 int toffset_old;
 //
 // DATA
@@ -373,18 +374,7 @@ int main(int argc, char *argv[])
     // in case no filename listed
     SymbolTable *table = new SymbolTable();
     int c, dset = 0,  pset = 0, bDset = 0, bPset = 0, hset = 0, mset = 0;
-   
-    
-    if(argc < 3)
-    {
-        //printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", argv[1]);
-        //n_errors++;
-        printf("Number of warnings: %d\n", n_warnings);
-        printf("Number of errors: %d\n", n_errors);
-        return 1;
-    }
-    
-    
+       
     while((c = ourGetopt(argc, argv, (char *)"dDpPhM")) != EOF)
     {
         switch(c)
@@ -647,26 +637,25 @@ void startgeneration(TreeNode * tree, SymbolTable * table)
     {
         goffset = 0;
     }
-    if(goffset == 1)
+    else if(goffset == 1)
     {
         goffset = 0;
     }
+    else if(goffset == -1)
+    {
+        goffset = 0;
+    }
+    
     
     emitRM((char *)"LDA", 1, goffset, 0, (char *)"Set first frame at end of globals");
     emitRM((char *)"ST", 1, 0, 1, (char *)"Store old fp (point to self)");
     
     emitComment((char *)"INIT GLOBALS AND STATICS");
     emitComment((char *)"END INIT GLOBALS AND STATICS");
-    
-    
-    // get to the main function
-    //printf(" \n mem size %d \n", tree->memsize);
-   //printf(" mem loc %d \n", tree->memlocation);
-   // printf("  emit size %d \n", emitSkip(0));
    
     TreeNode *memtemp;
     int loc;
-    memtemp = (TreeNode *)table->lookup(tree->name);
+    memtemp = (TreeNode *)table->lookup((char *)"main");
     if(memtemp != NULL)
     {
         loc = memtemp->memlocation - emitSkip(0) - 1;
@@ -675,8 +664,6 @@ void startgeneration(TreeNode * tree, SymbolTable * table)
     {
         loc = -9;
     }
-    
-    //printf(" mem loc %d \n", loc);
     
     emitRM((char *)"LDA", 3, 1, 7, (char *)"Return address in ac");
     emitRM((char *)"JMP", 7, loc , 7, (char *)"Jump to main");
@@ -718,10 +705,13 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
             case NullK:
                 break;
             case IfK:
+                emitComment((char *)"IF");
                 break;
             case WhileK:
+                emitComment((char *)"While");
                 break;
             case ForK:
+                emitComment((char *)"For");
                 break;
             case CompoundK:
             
@@ -729,16 +719,19 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                 if(!tree->noScope)
                 {
                     emitComment((char *)"COMPOUND");
-                    toffset = -2;
+                    toffset = -3;
                     emitComment((char *)"TOFF set: " );
                 }
                 emitComment((char *)"Compound body");
                 break;
             case ReturnK:
+                emitComment((char *)"Return");
                 break;
             case BreakK:
+                emitComment((char *)"Break");
                 break;
             case RangeK:
+                emitComment((char *)"Range");
                 break;
             default:
                 break;
@@ -750,6 +743,7 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
         switch(tree->subkind.decl)
         {
             case VarK:
+                emitComment((char *)"Var");
                 break;
             case FuncK:
                 emitComment((char *)"FUNCTION", tree->name);
@@ -766,6 +760,7 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                 emitRM((char *)"ST", 3, -1, 1, (char *)"store return address");
                 break;
             case ParamK:
+                emitComment((char *)"PARM");
                 // do nothing
                 break;
             default:
@@ -774,22 +769,57 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
     }
     else // ExpK
     {
+        TreeNode * lhs;
+        TreeNode * rhs;
         emitComment((char *)"EXPRESSION");
         switch(tree->subkind.exp)
             {
                 case OpK:
+                    //toffset_old++;
                     break;
                 case ConstantK:
+                    //emitComment((char *)"ASSIGN", tree->name);
                     break;
                 case IdK:
+                
                     break;
                 case AssignK:
+                    emitComment((char *)"ASSIGN ", tree->name);
+                    
+                    // in the case of this
+                    /*
+                     Child: 1  Assign: = of type int [line: 6]
+                     .   .   .   Child: 0  Id: x of type int [mem: Local loc: -2 size: 1] [line: 6]
+                     .   .   .   Child: 1  Const 273 of type int [line: 6]
+                     */
+                    // tree->child[1] is the integer constant
+                    lhs = tree->child[0];
+                    rhs = tree->child[1];
+                    tree->child[1]->generated = true;
+                    switch(rhs->tokenclass)
+                    {
+                        case CHARCONST:
+                            emitRM((char *)"LDC", 3, (int)rhs->cvalue, 6, (char *)"Load char constant");
+                            break;
+                        case STRINGCONST:
+                            break;
+                        case NUMCONST:
+                        case BOOLCONST:
+                            emitRM((char *)"LDC", 3, rhs->value, 6, (char *)"Load integer constant");
+                            break;
+                    }
+                    
+                    tree->child[0]->generated = true;
+                    emitRM((char *)"ST", 3, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
+                    
+                    
                     break;
                 case InitK:
+                    emitComment((char *)"INIT ", tree->name);
                     break;
                 case CallK:
-                    
-                    emitComment((char *)"CALL", tree->name);
+                    //toffset++;
+                    emitComment((char *)"CALL ", tree->name);
                     emitRM((char *)"ST", 1, toffset, 1, (char *)"Store fp in ghost frame for ", tree->name);
                     toffset_old = toffset;
                     emitComment((char *)"TOFF dec: ");
@@ -800,18 +830,30 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                     {
                         parmc++;
                         tree->child[0]->CallParm = true;
+                        
+                        if(tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == OpK)
+                        {
+                           // Push Left Side
+                           tree->child[0]->child[0]->pop = true;
+                           if(tree->tokenclass == CHSIGN)
+                           {
+                               tree->child[0]->child[0]->pop = false;
+                               tree->child[0]->child[0]->isUnary = true;
+                           }
+                        }
                     }
                     
                     if(tree->child[1] != NULL)
                     {
                         parmc++;
                         tree->child[1]->CallParm = true;
+                        //tree->generated = true;
                     }
                     
                     if(tree->child[2] != NULL)
                     {
                         parmc++;
-                        tree->child[2]->CallParm = true;
+                        //tree->child[2]->CallParm = true;
                     }
                     
                    break;
@@ -878,25 +920,145 @@ void nodegenend(TreeNode *tree, SymbolTable * table)
     }
     else // ExpK
     {
+        TreeNode * gloVar;
+        TreeNode * lhs;
+        TreeNode * rhs;
+        
         switch(tree->subkind.exp)
             {
                 case OpK:
+
+                
+                emitComment((char *)"OP ", tree->name);
+                //toffset_old;
+                // for this case
+                /*
+                 Child: 0  Op: * of type int [line: 4]
+                 .   .   .   .   Child: 0  Const 50 of type int [line: 4]
+                 .   .   .   .   Child: 1  Const 13 of type int [line: 4]
+                 */
+                lhs = tree->child[0];
+                rhs = tree->child[1];
+                
+                switch(tree->tokenclass)
+                {
+                        case ADD:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"ADD", 3, 4, 3, (char *)"Op +");
+                            break;
+                        case SUB:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"SUB", 3, 4, 3, (char *)"Op -");
+                            break;
+                        case MUL:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            if(tree->child[1] == NULL) // unary
+                                emitRM((char *)"LD", 3, 1, 3, (char *)"Load array size"); // size is 1 above index
+                            else
+                                emitRO((char *)"MUL", 3, 4, 3, (char *)"Op *");
+                            break;
+                        case DIV:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"DIV", 3, 4, 3, (char *)"Op /");
+                            break;
+                        case MOD:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"MOD", 3, 4, 3, (char *)"Op %");
+                            break;
+                        case RAND:
+                            emitRO((char *)"RND", 3, 3, 6, (char *)"Op ?");
+                            emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
+                            // push left side
+                            tree->child[0]->pop = true;
+                            break;
+                        case AND:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"AND", 3, 4, 3, (char *)"Op &");
+                            break;
+                        case OR:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"OR", 3, 4, 3, (char *)"Op |");
+                            break;
+                        case EQ:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"TEQ", 3, 4, 3, (char *)"Op ==");
+                            break;
+                        case NEQ:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"TNE", 3, 4, 3, (char *)"Op !=");
+                            break;
+                        case GEQ:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"TGE", 3, 4, 3, (char *)"Op >=");
+                            break;
+                        case LEQ:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"TLE", 3, 4, 3, (char *)"Op <=");
+                            break;
+                        case LT:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"TLT", 3, 4, 3, (char *)"Op <");
+                            break;
+                        case GT:
+                        //load
+                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"TGT", 3, 4, 3, (char *)"Op >");
+                            break;
+                        case NOT:
+                            emitRM((char *)"LDC", 4, 1, 6, (char *)"Load 1");
+                            emitRO((char *)"XOR", 3, 3, 4, (char *)"Logical not");
+                            break;
+                        case CHSIGN:
+                            tree->child[0]->pop = false;
+                            emitRO((char *)"NEG", 3, 3, 3, (char *)"Op Unary -");
+                }
                     break;
                 case ConstantK:
-                    switch(tree->tokenclass)
+                
+                    if(tree->generated == false)
                     {
-                        case CHARCONST:
-                            emitRM((char *)"LDC", 3, (int)tree->cvalue, 6, (char *)"Load char constant");
-                            break;
-                        case STRINGCONST:
-                            break;
-                        case NUMCONST:
-                        case BOOLCONST:
-                            emitRM((char *)"LDC", 3, tree->value, 6, (char *)"Load integer constant");
-                            break;
+                        switch(tree->tokenclass)
+                        {
+                            case CHARCONST:
+                                emitRM((char *)"LDC", 3, (int)tree->cvalue, 6, (char *)"Load char constant");
+                                break;
+                            case STRINGCONST:
+                                break;
+                            case NUMCONST:
+                            case BOOLCONST:
+                                emitRM((char *)"LDC", 3, tree->value, 6, (char *)"Load integer constant");
+                                //emitComment((char *)"HERE ");
+                                break;
+                        }
                     }
+                    
+                    if(tree->isUnary == true)
+                    {
+                        tree->pop = false;
+                    }
+                    
+                    // see if push left side
+                    if(tree->pop == true)
+                    {
+                        // Push Left Side
+                        emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
+                    }
+                    
                     break;
                 case IdK:
+                     
                     break;
                 case AssignK:
                     break;
@@ -914,6 +1076,7 @@ void nodegenend(TreeNode *tree, SymbolTable * table)
                     
                     
                     toffset = toffset_old;
+                    
                     emitComment((char *)"Param end ", tree->name);
                     emitRM((char *)"LDA", 1, toffset, 1, (char *)"Ghost frame becomes new active frame");
                     emitRM((char *)"LDA", 3, 1, 7, (char *)"Return address in ac");
@@ -921,7 +1084,8 @@ void nodegenend(TreeNode *tree, SymbolTable * table)
                     emitRM((char *)"LDA", 3, 0, 2, (char *)"save the result in ac");
                     emitComment((char *)"Call end ", tree->name);
                     emitComment((char *)"TOFF set: ");
-                     
+                    
+                    //parmc = 0;
                     break;
                 default:
                     break;
@@ -931,6 +1095,16 @@ void nodegenend(TreeNode *tree, SymbolTable * table)
     if(tree->CallParm == true)
     {
         emitComment((char *)"Param ");
+        
+        pos1 = tree->memlocation;
+        pos2 = (tree->isGlobal ? 0 : 1);
+        
+        if(tree->nodekind == ExpK && tree->subkind.exp == IdK)
+        {
+            //lhs->memlocation, (lhs->isGlobal ? 0 : 1)
+            emitRM((char *)"LD", 3, pos1, pos2, (char *)"Load variable ", tree->name);
+        }
+        
         emitRM((char *)"ST", 3, toffset--, 1, (char *)"Push parameter");
         emitComment((char *)"TOFF dec: ");
     }
