@@ -1,0 +1,5 @@
+Number of warnings: 0
+Number of errors: 0
+------------------------------------
+Loading file: c06.tm
+ERROR(setDMem): instruction at addr 78 attempting to set out of bounds data memory at loc: 10004

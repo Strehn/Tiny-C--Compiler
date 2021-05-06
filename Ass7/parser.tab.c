@@ -3352,6 +3352,73 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                     
                     // in the case of this
                     /*
+                     Child: 1  Assign: = of type int [line: 7]
+                    .   .   .   Child: 0  Op: [ of type int [line: 7]
+                    .   .   .   .   Child: 0  Id: x of array of type int [mem: Global loc: -5 size: 4] [line: 7]
+                    .   .   .   .   Child: 1  Const 2 of type int [line: 7]
+                     .   .   .   Child: 1  Const 73 of type int [line: 7]
+                     */
+                    lhs = tree->child[0];
+                    rhs = tree->child[1];
+                    
+                    if(lhs->nodekind == ExpK && lhs->subkind.exp == OpK)
+                    {
+                        if(lhs->tokenclass == LB)
+                        {
+                            // load integer constant
+                            // push index
+                            lhs = tree->child[0]->child[0];
+                            rhs = tree->child[0]->child[1];
+                            rhs->generated = true;
+                            switch(rhs->tokenclass)
+                            {
+                                case CHARCONST:
+                                    emitRM((char *)"LDC", 3, (int)rhs->cvalue, 6, (char *)"Load char constant");
+                                    break;
+                                case STRINGCONST:
+                                    break;
+                                case NUMCONST:
+                                case BOOLCONST:
+                                    emitRM((char *)"LDC", 3, rhs->value, 6, (char *)"Load integer constant");
+                                    break;
+                            }
+                            
+                            emitRM((char *)"ST", 3, toffset, 1, (char *)"Push index");
+                            //rhs->generated = true;
+                            // get the rhs of the =
+                            rhs = tree->child[1];
+                            rhs->generated = true;
+                            switch(rhs->tokenclass)
+                            {
+                                case CHARCONST:
+                                    emitRM((char *)"LDC", 3, (int)rhs->cvalue, 6, (char *)"Load char constant");
+                                    break;
+                                case STRINGCONST:
+                                    break;
+                                case NUMCONST:
+                                case BOOLCONST:
+                                    emitRM((char *)"LDC", 3, rhs->value, 6, (char *)"Load integer constant");
+                                    break;
+                            }
+                            
+                            // pop index
+                            emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop index");
+                            
+                            // load address of base of array tree->name
+                            // pop index
+                            emitRM((char *)"LDA", 5, -1, 0, (char *)"Load address of base of array", lhs->name);
+                            // compute offset of value
+                            emitRO((char *)"SUB", 5, 5, 4, (char *)"Compute offset of value");
+                            // store variable x
+                            emitRM((char *)"ST", 3, 0, 5, (char *)"Store variable", lhs->name);
+                            
+                            lhs->generated = true;
+                            return;
+                        }
+                    }
+                    
+                    // in the case of this
+                    /*
                      Child: 1  Assign: = of type int [line: 6]
                      .   .   .   Child: 0  Id: x of type int [mem: Local loc: -2 size: 1] [line: 6]
                      .   .   .   Child: 1  Const 273 of type int [line: 6]
@@ -3376,7 +3443,7 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                     tree->child[0]->generated = true;
                     emitRM((char *)"ST", 3, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
                     
-                    
+                    toffset--;
                     break;
                 case InitK:
                     emitComment((char *)"INIT ", tree->name);
@@ -3507,7 +3574,27 @@ void nodegenend(TreeNode *tree, SymbolTable * table)
                 switch(tree->tokenclass)
                 {
                         case ADD:
-                        //load
+                        //load var x
+                        // push left side
+                        // load variable y
+                        pos1 = lhs->memlocation;
+                        pos2 = (lhs->isGlobal ? 0 : 1);
+                        
+                        if(lhs->nodekind == ExpK && lhs->subkind.exp == IdK)
+                        {
+                            //lhs->memlocation, (lhs->isGlobal ? 0 : 1)
+                            emitRM((char *)"LD", 3, pos1, pos2, (char *)"Load variable ", lhs->name);
+                            emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
+                        }
+                        
+                        pos1 = rhs->memlocation;
+                        pos2 = (rhs->isGlobal ? 0 : 1);
+                        if(rhs->nodekind == ExpK && rhs->subkind.exp == IdK)
+                        {
+                            //lhs->memlocation, (lhs->isGlobal ? 0 : 1)
+                            emitRM((char *)"LD", 3, pos1, pos2, (char *)"Load variable ", rhs->name);
+                        }
+                        
                         emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
                             emitRO((char *)"ADD", 3, 4, 3, (char *)"Op +");
                             break;

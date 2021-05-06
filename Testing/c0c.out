@@ -1,0 +1,5 @@
+Number of warnings: 0
+Number of errors: 0
+------------------------------------
+Loading file: c0c.tm
+ERROR(setDMem): instruction at addr 62 attempting to set out of bounds data memory at loc: 10002
