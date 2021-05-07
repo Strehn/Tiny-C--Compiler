@@ -1,6 +1,6 @@
 * C- version: 1.00
 * by Sydney Petrehn
-* Input file: b07.c-
+* Input file: c15.c-
 * FUNCTION input
   1:     ST  3,-1(1)	Store return address 
   2:     IN  2,2,2	Grab int input 
@@ -54,59 +54,108 @@
  38:    LDA  7,0(3)	Return 
 * END FUNCTION outnl
 * =========================================
+* Var
+* Var
 * FUNCTION main
 * TOFF set: 
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
 * TOFF set: 
 * Compound body
+* Var
+* Var
+* EXPRESSION
+* ASSIGN  =
+ 40:    LDC  3,1(6)	Load integer constant 
+ 41:     ST  3,-2(1)	Store variable z
+* EXPRESSION
+* EXPRESSION
+* EXPRESSION
+* ASSIGN  =
+ 42:    LDC  3,2(6)	Load integer constant 
+ 43:     ST  3,-3(1)	Store variable zz
+* EXPRESSION
+* EXPRESSION
+* EXPRESSION
+* ASSIGN  =
+ 44:     ST  3,-5(1)	Push index 
+ 45:    LDC  3,73(6)	Load integer constant 
+ 46:     LD  4,-5(1)	Pop index 
+ 47:    LDA  5,-1(0)	Load address of base of array x
+ 48:    SUB  5,5,4	Compute offset of value 
+ 49:     ST  3,0(5)	Store variable x
+* EXPRESSION
+* EXPRESSION
+* EXPRESSION
+* OP  (null)
+* EXPRESSION
+* EXPRESSION
+* ASSIGN  =
+ 50:     ST  3,-5(1)	Push index 
+ 51:    LDC  3,211(6)	Load integer constant 
+ 52:     LD  4,-5(1)	Pop index 
+ 53:    LDA  5,-1(0)	Load address of base of array y
+ 54:    SUB  5,5,4	Compute offset of value 
+ 55:     ST  3,0(5)	Store variable y
+* EXPRESSION
+* EXPRESSION
+* EXPRESSION
+* OP  (null)
+* EXPRESSION
 * EXPRESSION
 * CALL  output
- 40:     ST  1,-3(1)	Store fp in ghost frame for  output
+ 56:     ST  1,-5(1)	Store fp in ghost frame for  output
 * TOFF dec: 
 * TOFF dec: 
 * EXPRESSION
 * EXPRESSION
- 41:    LDC  3,666(6)	Load integer constant 
-* OP  chsign
- 42:    NEG  3,3,3	Op Unary - 
-* Param 
- 43:     ST  3,-5(1)	Push parameter 
-* TOFF dec: 
+* EXPRESSION
+* EXPRESSION
+* OP  (null)
+* EXPRESSION
+* EXPRESSION
+* EXPRESSION
+* OP  (null)
+* OP  +
+ 57:     ST  3,-7(1)	Push index 
+ 58:     LD  4,-7(1)	Pop index 
+ 59:    LDA  5,-1(0)	Load address of base of array x
+ 60:    SUB  5,5,4	Compute offset of value 
+ 61:     ST  3,0(5)	Store variable x
 * Param end  output
- 44:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 45:    LDA  3,1(7)	Return address in ac 
- 46:    JMP  7,-41(7)	call output
- 47:    LDA  3,0(2)	save the result in ac 
+ 62:    LDA  1,-5(1)	Ghost frame becomes new active frame 
+ 63:    LDA  3,1(7)	Return address in ac 
+ 64:    JMP  7,-59(7)	call output
+ 65:    LDA  3,0(2)	save the result in ac 
 * Call end  output
 * TOFF set: 
 * EXPRESSION
 * CALL  outnl
- 48:     ST  1,-3(1)	Store fp in ghost frame for  outnl
+ 66:     ST  1,-5(1)	Store fp in ghost frame for  outnl
 * TOFF dec: 
 * TOFF dec: 
 * Param end  outnl
- 49:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 50:    LDA  3,1(7)	Return address in ac 
- 51:    JMP  7,-18(7)	call outnl
- 52:    LDA  3,0(2)	save the result in ac 
+ 67:    LDA  1,-5(1)	Ghost frame becomes new active frame 
+ 68:    LDA  3,1(7)	Return address in ac 
+ 69:    JMP  7,-36(7)	call outnl
+ 70:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
 * TOFF set: 
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 53:    LDC  2,0(6)	Set return value to 0 
- 54:     LD  3,-1(1)	Load return address 
- 55:     LD  1,0(1)	Adjust frame pointer 
- 56:    JMP  7,0(3)	Return 
+ 71:    LDC  2,0(6)	Set return value to 0 
+ 72:     LD  3,-1(1)	Load return address 
+ 73:     LD  1,0(1)	Adjust frame pointer 
+ 74:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,56(7)	Jump to init [backpatch] 
+  0:    JMP  7,74(7)	Jump to init [backpatch] 
 * =========================================
 * INIT
- 57:    LDA  1,0(0)	Set first frame at end of globals 
- 58:     ST  1,0(1)	Store old fp (point to self) 
+ 75:    LDA  1,-11(0)	Set first frame at end of globals 
+ 76:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 59:    LDA  3,1(7)	Return address in ac 
- 60:    JMP  7,-22(7)	Jump to main 
- 61:   HALT  0,0(0)	DONE! 
+ 77:    LDA  3,1(7)	Return address in ac 
+ 78:    JMP  7,-40(7)	Jump to main 
+ 79:   HALT  0,0(0)	DONE! 
 * END INIT

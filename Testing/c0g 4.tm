@@ -1,6 +1,6 @@
 * C- version: 1.00
 * by Sydney Petrehn
-* Input file: b07.c-
+* Input file: c0g.c-
 * FUNCTION input
   1:     ST  3,-1(1)	Store return address 
   2:     IN  2,2,2	Grab int input 
@@ -54,6 +54,7 @@
  38:    LDA  7,0(3)	Return 
 * END FUNCTION outnl
 * =========================================
+* Var
 * FUNCTION main
 * TOFF set: 
  39:     ST  3,-1(1)	store return address 
@@ -61,52 +62,25 @@
 * TOFF set: 
 * Compound body
 * EXPRESSION
+* ASSIGN  =
+ 40:    LDC  3,3(6)	Load integer constant 
+ 41:     ST  3,-3(1)	Push index 
+ 42:    LDC  3,1023(6)	Load integer constant 
+ 43:     LD  4,-3(1)	Pop index 
+ 44:    LDA  5,-1(0)	Load address of base of array x
+ 45:    SUB  5,5,4	Compute offset of value 
+ 46:     ST  3,0(5)	Store variable x
+* EXPRESSION
+* EXPRESSION
+* EXPRESSION
+* OP  (null)
+* EXPRESSION
+* EXPRESSION
 * CALL  output
- 40:     ST  1,-3(1)	Store fp in ghost frame for  output
+ 47:     ST  1,-3(1)	Store fp in ghost frame for  output
 * TOFF dec: 
 * TOFF dec: 
 * EXPRESSION
-* EXPRESSION
- 41:    LDC  3,666(6)	Load integer constant 
-* OP  chsign
- 42:    NEG  3,3,3	Op Unary - 
-* Param 
- 43:     ST  3,-5(1)	Push parameter 
-* TOFF dec: 
-* Param end  output
- 44:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 45:    LDA  3,1(7)	Return address in ac 
- 46:    JMP  7,-41(7)	call output
- 47:    LDA  3,0(2)	save the result in ac 
-* Call end  output
-* TOFF set: 
-* EXPRESSION
-* CALL  outnl
- 48:     ST  1,-3(1)	Store fp in ghost frame for  outnl
-* TOFF dec: 
-* TOFF dec: 
-* Param end  outnl
- 49:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 50:    LDA  3,1(7)	Return address in ac 
- 51:    JMP  7,-18(7)	call outnl
- 52:    LDA  3,0(2)	save the result in ac 
-* Call end  outnl
-* TOFF set: 
-* END COMPOUND
-* Add standard closing in case there is no return statement
- 53:    LDC  2,0(6)	Set return value to 0 
- 54:     LD  3,-1(1)	Load return address 
- 55:     LD  1,0(1)	Adjust frame pointer 
- 56:    JMP  7,0(3)	Return 
-* END FUNCTION main
-  0:    JMP  7,56(7)	Jump to init [backpatch] 
-* =========================================
-* INIT
- 57:    LDA  1,0(0)	Set first frame at end of globals 
- 58:     ST  1,0(1)	Store old fp (point to self) 
-* INIT GLOBALS AND STATICS
-* END INIT GLOBALS AND STATICS
- 59:    LDA  3,1(7)	Return address in ac 
- 60:    JMP  7,-22(7)	Jump to main 
- 61:   HALT  0,0(0)	DONE! 
-* END INIT
+* ASSIGN  ++
+ 48:    LDC  3,3(6)	Load integer constant 
+ 49:     ST  3,-5(1)	Push index 

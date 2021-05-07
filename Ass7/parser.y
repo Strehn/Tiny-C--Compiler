@@ -894,6 +894,8 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                     emitComment((char *)"TOFF dec: ");
                     toffset -= 2;
                     
+                   
+                    
                     if(tree->child[0] != NULL)
                     {
                         parmc++;
@@ -903,7 +905,7 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                         {
                            // Push Left Side
                            tree->child[0]->child[0]->pop = true;
-                           if(tree->tokenclass == CHSIGN)
+                           if(tree->child[0]->tokenclass == CHSIGN)
                            {
                                tree->child[0]->child[0]->pop = false;
                                tree->child[0]->child[0]->isUnary = true;
@@ -1007,6 +1009,62 @@ void nodegenend(TreeNode *tree, SymbolTable * table)
                  */
                 lhs = tree->child[0];
                 rhs = tree->child[1];
+                
+                /*
+                if(lhs->tokenclass == LB)
+                {
+                    // load integer constant
+                    // push index
+                    lhs = tree->child[0]->child[0];
+                    rhs = tree->child[0]->child[1];
+                    // this next line breaks b
+                    rhs->generated = true;
+                    switch(rhs->tokenclass)
+                    {
+                        case CHARCONST:
+                            emitRM((char *)"LDC", 3, (int)rhs->cvalue, 6, (char *)"Load char constant");
+                            break;
+                        case STRINGCONST:
+                            break;
+                        case NUMCONST:
+                        case BOOLCONST:
+                            emitRM((char *)"LDC", 3, rhs->value, 6, (char *)"Load integer constant");
+                            break;
+                    }
+                    
+                    emitRM((char *)"ST", 3, toffset, 1, (char *)"Push index");
+                    //rhs->generated = true;
+                    // get the rhs of the =
+                    rhs = tree->child[1];
+                    rhs->generated = true;
+                    switch(rhs->tokenclass)
+                    {
+                        case CHARCONST:
+                            emitRM((char *)"LDC", 3, (int)rhs->cvalue, 6, (char *)"Load char constant");
+                            break;
+                        case STRINGCONST:
+                            break;
+                        case NUMCONST:
+                        case BOOLCONST:
+                            emitRM((char *)"LDC", 3, rhs->value, 6, (char *)"Load integer constant");
+                            break;
+                    }
+                    
+                    // pop index
+                    emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop index");
+                    
+                    // load address of base of array tree->name
+                    // pop index
+                    emitRM((char *)"LDA", 5, -1, 0, (char *)"Load address of base of array", lhs->name);
+                    // compute offset of value
+                    emitRO((char *)"SUB", 5, 5, 4, (char *)"Compute offset of value");
+                    // store variable x
+                    emitRM((char *)"ST", 3, 0, 5, (char *)"Store variable", lhs->name);
+                    
+                    lhs->generated = true;
+                    return;
+                }
+                 */
                 
                 switch(tree->tokenclass)
                 {
