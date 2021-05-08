@@ -65,13 +65,13 @@
 * ASSIGN  =
  40:    LDC  3,273(6)	Load integer constant 
  41:     ST  3,0(0)	Store variable x
-* TOFF dec:  -3
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * CALL  output
  42:     ST  1,-3(1)	Store fp in ghost frame for  output
-* TOFF dec:  -3
+* TOFF dec:  -4
+* TOFF dec:  -5
 * EXPRESSION
 * Param 
  43:     LD  3,0(0)	Load variable  x
@@ -94,7 +94,7 @@
   0:    JMP  7,52(7)	Jump to init [backpatch] 
 * =========================================
 * INIT
- 53:    LDA  1,0(0)	Set first frame at end of globals 
+ 53:    LDA  1,-1(0)	Set first frame at end of globals 
  54:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS

@@ -57,10 +57,10 @@
 * Var
 * Var
 * FUNCTION main
-* TOFF set: 
+* TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set: 
+* TOFF set:  -2
 * Compound body
 * EXPRESSION
 * ASSIGN  =
@@ -76,4 +76,4 @@
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 44:     ST  1,-3(1)	Store fp in ghost frame for  output
+ 44:     ST  1,-2(1)	Store fp in ghost frame for  output

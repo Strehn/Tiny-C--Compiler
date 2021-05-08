@@ -57,23 +57,27 @@
 * Var
 * Var
 * FUNCTION main
-* TOFF set: 
+* TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set: 
+* TOFF set:  -2
 * Compound body
 * EXPRESSION
 * ASSIGN  =
  40:    LDC  3,753(6)	Load integer constant 
- 41:     ST  3,0(0)	Store variable x
+ 41:     ST  3,-2(0)	Store variable x
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * ASSIGN  =
  42:    LDC  3,444(6)	Load integer constant 
- 43:     ST  3,-1(0)	Store variable y
+ 43:     ST  3,-3(0)	Store variable y
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 44:     ST  1,-5(1)	Store fp in ghost frame for  output
+ 44:     ST  1,-2(1)	Store fp in ghost frame for  output
+* TOFF dec:  -3
+* TOFF dec:  -4
+ 45:     LD  3,0(1)	Load variable x
+ 46:     ST  3,-4(1)	Push left side 

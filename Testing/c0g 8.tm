@@ -67,7 +67,7 @@
  41:     ST  3,-2(1)	Push index 
  42:    LDC  3,1023(6)	Load integer constant 
  43:     LD  4,-2(1)	Pop index 
- 44:    LDA  5,-9(0)	Load address of base of array x
+ 44:    LDA  5,-1(0)	Load address of base of array x
  45:    SUB  5,5,4	Compute offset of value 
  46:     ST  3,0(5)	Store variable x
 * EXPRESSION
@@ -78,11 +78,12 @@
 * EXPRESSION
 * CALL  output
  47:     ST  1,-2(1)	Store fp in ghost frame for  output
-* TOFF dec:  -2
+* TOFF dec:  -3
+* TOFF dec:  -4
  48:    LDA  3,-1(0)	Load address of array x
  49:     ST  3,-4(1)	Push left side 
  50:    LDC  3,3(6)	Load integer constant 
  51:     LD  4,-4(1)	Pop left into ac1 
  52:    SUB  3,4,3	Compute location from index 
  53:     LD  3,0(3)	Load array element 
- 54:     ST  3,0(5)	Push left side 
+ 54:     ST  3,-4(1)	Push left side 

@@ -66,16 +66,14 @@
 * ASSIGN  =
  40:    LDC  3,753(6)	Load integer constant 
  41:     ST  3,0(0)	Store variable x
-* TOFF dec:  -3
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * ASSIGN  =
  42:    LDC  3,444(6)	Load integer constant 
  43:     ST  3,-1(0)	Store variable y
-* TOFF dec:  -4
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 44:     ST  1,-4(1)	Store fp in ghost frame for  output
+ 44:     ST  1,-2(1)	Store fp in ghost frame for  output

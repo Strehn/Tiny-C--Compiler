@@ -66,26 +66,24 @@
 * ASSIGN  =
  40:    LDC  3,753(6)	Load integer constant 
  41:     ST  3,0(0)	Store variable x
-* TOFF dec:  -3
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * ASSIGN  =
  42:    LDC  3,444(6)	Load integer constant 
  43:     ST  3,-1(0)	Store variable y
-* TOFF dec:  -4
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * ASSIGN  +=
  44:     ST  3,0(0)	Store variable x
-* TOFF dec:  -5
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * CALL  output
  45:     ST  1,-5(1)	Store fp in ghost frame for  output
-* TOFF dec:  -5
+* TOFF dec:  -6
+* TOFF dec:  -7
 * EXPRESSION
 * Param 
  46:     LD  3,0(0)	Load variable  x
@@ -101,13 +99,13 @@
 * EXPRESSION
 * ASSIGN  -=
  52:     ST  3,-1(0)	Store variable y
-* TOFF dec:  -6
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * CALL  output
  53:     ST  1,-6(1)	Store fp in ghost frame for  output
-* TOFF dec:  -6
+* TOFF dec:  -7
+* TOFF dec:  -8
 * EXPRESSION
 * Param 
  54:     LD  3,-1(0)	Load variable  y
@@ -123,7 +121,8 @@
 * EXPRESSION
 * CALL  outnl
  60:     ST  1,-6(1)	Store fp in ghost frame for  outnl
-* TOFF dec:  -6
+* TOFF dec:  -7
+* TOFF dec:  -8
 * Param end  outnl
  61:    LDA  1,-6(1)	Ghost frame becomes new active frame 
  62:    LDA  3,1(7)	Return address in ac 

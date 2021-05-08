@@ -63,7 +63,8 @@
 * EXPRESSION
 * CALL  outputc
  40:     ST  1,-2(1)	Store fp in ghost frame for  outputc
-* TOFF dec:  -2
+* TOFF dec:  -3
+* TOFF dec:  -4
 * EXPRESSION
  41:    LDC  3,89(6)	Load char constant 
 * Param 

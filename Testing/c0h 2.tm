@@ -55,12 +55,21 @@
 * END FUNCTION outnl
 * =========================================
 * FUNCTION dog
-* TOFF set: 
+* TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * PARM
 * COMPOUND
-* TOFF set: 
+* TOFF set:  -2
 * Compound body
 * EXPRESSION
 * CALL  output
- 40:     ST  1,-3(1)	Store fp in ghost frame for  output
+ 40:     ST  1,-2(1)	Store fp in ghost frame for  output
+* TOFF dec:  -3
+* TOFF dec:  -4
+ 41:    LDA  3,-1(0)	Load address of array x
+ 42:     ST  3,-4(1)	Push left side 
+ 43:    LDC  3,3(6)	Load integer constant 
+ 44:     LD  4,-4(1)	Pop left into ac1 
+ 45:    SUB  3,4,3	Compute location from index 
+ 46:     LD  3,0(3)	Load array element 
+ 47:     ST  3,-4(1)	Push left side 

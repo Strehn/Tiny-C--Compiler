@@ -64,11 +64,12 @@
 * EXPRESSION
 * CALL  output
  40:     ST  1,-2(1)	Store fp in ghost frame for  output
-* TOFF dec:  -2
+* TOFF dec:  -3
+* TOFF dec:  -4
  41:    LDA  3,-1(0)	Load address of array x
  42:     ST  3,-4(1)	Push left side 
  43:    LDC  3,3(6)	Load integer constant 
  44:     LD  4,-4(1)	Pop left into ac1 
  45:    SUB  3,4,3	Compute location from index 
  46:     LD  3,0(3)	Load array element 
- 47:     ST  3,0(5)	Push left side 
+ 47:     ST  3,-4(1)	Push left side 

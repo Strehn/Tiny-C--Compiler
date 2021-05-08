@@ -703,10 +703,18 @@ void declStart(TreeNode *tree, SymbolTable *table)
         tree->isGlobal = true;
     }
     
+    tree->memlocation = goffset - 2;
+    
     // memory
     if(currentfunction != NULL )
     {
-        if(tree->isStatic == true)
+        if(tree->subkind.decl == VarK && tree->isStatic == true)
+        {
+            tree->memlocation = goffset - 2;
+            goffset = goffset - tree->aSize;
+            tree->memsize = (tree->aSize + 1);
+        }
+        else if(tree->isStatic == true)
         {
            // global
             if(tree->isArray == true)
@@ -742,8 +750,8 @@ void declStart(TreeNode *tree, SymbolTable *table)
     {
         if(tree->isArray == true)
         {
-            tree->memlocation = goffset - tree->aSize - 2;
-            goffset = goffset - tree->aSize - 2;
+            tree->memlocation = goffset - 1;
+            goffset = goffset - tree->aSize - 1;
             tree->memsize = (tree->aSize + 1);
         }
         else
@@ -811,18 +819,6 @@ void declend(TreeNode *tree, SymbolTable *table)
     switch(tree->subkind.decl)
     {
         case VarK:
-            if(currentfunction == NULL )
-            {
-                if(tree->child[0] != NULL)
-                {
-                    if(tree->child[0]->isArray)
-                    {
-                        tree->child[0]->memlocation = -1;
-                        goffset = goffset + tree->aSize - 1;
-                    }
-                }
-            }
-            
             if(tree->isArray == true)
             {
                 setUsed(tree, table);
@@ -1084,13 +1080,13 @@ void stmtend(TreeNode *tree, SymbolTable *table)
             {
                 tree->memsize = foffset - 1;
                 tree->memlocation = goffset;
-                goffset = goffset - tree->memsize;
+                //goffset = goffset - tree->memsize;
                 
             }
             else
             {
                 tree->memsize = foffset - 1;
-                goffset = goffset - tree->memsize;
+                //goffset = goffset - tree->memsize;
             }
             break;
         case ReturnK:
@@ -1221,7 +1217,6 @@ void expStart(TreeNode *tree, SymbolTable *table)
                     {
                         tree->inFunction = true;
                     }
-                    
                     //used for memory in ASS 6
                     // memory
                     if(tree->isArray == true)
@@ -1233,7 +1228,7 @@ void expStart(TreeNode *tree, SymbolTable *table)
                     else
                     {
                         tree->memlocation = goffset;
-                        goffset--;
+                        //goffset--;
                     }
                     break;
                 case IdK:
@@ -1294,8 +1289,6 @@ void expStart(TreeNode *tree, SymbolTable *table)
                     // set that the function is used;
                     if(tree->child[0] != NULL){
                         setUsed(tree, table);
-                        
-                        
                     }
                     break;
                 default:
@@ -1736,13 +1729,6 @@ void expend(TreeNode *tree, SymbolTable *table)
                 
                 
             case CallK:
-                
-                if( (tree->child[0] != NULL) && (tree->child[0]->nodekind = ExpK) && (tree->child[0]->subkind.exp == IdK) )
-                {
-                    
-                }
-                
-                
                 
                 temp = (TreeNode *)table->lookup(tree->name);
                 if(temp == NULL)

@@ -2,6 +2,6 @@ Func: main returns type void [mem: Global loc: 0 size: -2] [line: 2]
 .   Child: 1  Compound [mem: None loc: 0 size: -2] [line: 3]
 .   .   Child: 1  Call: output of type void [line: 4]
 .   .   .   Child: 0  Const 987 of type int [line: 4]
-Offset for end of global space: 1 
+Offset for end of global space: 0 
 Number of warnings: 0
 Number of errors: 0

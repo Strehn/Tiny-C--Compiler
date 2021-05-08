@@ -56,17 +56,17 @@
 * =========================================
 * Var
 * FUNCTION main
-* TOFF set: 
+* TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set: 
+* TOFF set:  -2
 * Compound body
 * EXPRESSION
 * ASSIGN  =
  40:    LDC  3,3(6)	Load integer constant 
- 41:     ST  3,-3(1)	Push index 
+ 41:     ST  3,-2(1)	Push index 
  42:    LDC  3,1023(6)	Load integer constant 
- 43:     LD  4,-3(1)	Pop index 
+ 43:     LD  4,-2(1)	Pop index 
  44:    LDA  5,-1(0)	Load address of base of array x
  45:    SUB  5,5,4	Compute offset of value 
  46:     ST  3,0(5)	Store variable x
@@ -77,12 +77,13 @@
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 47:     ST  1,-3(1)	Store fp in ghost frame for  output
-* TOFF dec: 
-* TOFF dec: 
- 48:    LDA  3,-1(0)	Load address of array ++
- 49:     ST  3,-5(1)	Push left side 
-* EXPRESSION
-* ASSIGN  ++
+ 47:     ST  1,-2(1)	Store fp in ghost frame for  output
+* TOFF dec:  -3
+* TOFF dec:  -4
+ 48:    LDA  3,-1(0)	Load address of array x
+ 49:     ST  3,-4(1)	Push left side 
  50:    LDC  3,3(6)	Load integer constant 
- 51:     ST  3,-5(1)	Push index 
+ 51:     LD  4,-4(1)	Pop left into ac1 
+ 52:    SUB  3,4,3	Compute location from index 
+ 53:     LD  3,0(3)	Load array element 
+ 54:     ST  3,-4(1)	Push left side 

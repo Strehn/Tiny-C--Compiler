@@ -58,16 +58,15 @@
 * TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set:  -2
+* TOFF set:  -3
 * Compound body
 * Var
 * EXPRESSION
 * ASSIGN  =
  40:    LDC  3,1023(6)	Load integer constant 
  41:     ST  3,-2(1)	Store variable x
-* TOFF dec:  -3
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 42:     ST  1,-3(1)	Store fp in ghost frame for  output
+ 42:     ST  1,-5(1)	Store fp in ghost frame for  output

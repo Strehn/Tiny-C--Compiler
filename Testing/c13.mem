@@ -171,6 +171,6 @@ Func: main returns type void [mem: Global loc: 0 size: -2] [line: 2]
 .   .   .   .   .   .   .   .   .   .   .   .   .   Child: 0  Id: x of array of type int [mem: Local loc: -4 size: 301] [line: 34]
 .   .   .   .   .   .   .   .   .   .   .   .   .   Child: 1  Id: z of type int [mem: Local loc: -303 size: 1] [line: 34]
 .   .   Sibling: 27  Call: outnl of type void [line: 35]
-Offset for end of global space: 298 
+Offset for end of global space: 0 
 Number of warnings: 0
 Number of errors: 0

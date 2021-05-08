@@ -63,277 +63,316 @@
 * EXPRESSION
 * CALL  outputb
  40:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
-* EXPRESSION
-* EXPRESSION
- 41:    LDC  3,0(6)	Load integer constant 
+* TOFF dec:  -3
+* TOFF dec:  -4
+ 41:     LD  3,0(0)	Load variable (null)
  42:     ST  3,-4(1)	Push left side 
+ 43:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
- 43:    LDC  3,0(6)	Load integer constant 
+* EXPRESSION
+ 44:    LDC  3,0(6)	Load integer constant 
+ 45:     ST  3,-4(1)	Push left side 
+* EXPRESSION
+ 46:    LDC  3,0(6)	Load integer constant 
 * OP  or
- 44:     LD  4,-4(1)	Pop left into ac1 
- 45:     OR  3,4,3	Op | 
+ 47:     LD  4,-4(1)	Pop left into ac1 
+ 48:     OR  3,4,3	Op | 
 * Param 
- 46:     ST  3,-4(1)	Push parameter 
+ 49:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
 * Param end  outputb
- 47:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 48:    LDA  3,1(7)	Return address in ac 
- 49:    JMP  7,-33(7)	call outputb
- 50:    LDA  3,0(2)	save the result in ac 
+ 50:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 51:    LDA  3,1(7)	Return address in ac 
+ 52:    JMP  7,-36(7)	call outputb
+ 53:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
 * TOFF set: 
 * EXPRESSION
 * CALL  outputb
- 51:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
+ 54:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* TOFF dec:  -3
+* TOFF dec:  -4
+ 55:     LD  3,0(0)	Load variable (null)
+ 56:     ST  3,-4(1)	Push left side 
+ 57:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
 * EXPRESSION
- 52:    LDC  3,0(6)	Load integer constant 
- 53:     ST  3,-4(1)	Push left side 
+ 58:    LDC  3,0(6)	Load integer constant 
+ 59:     ST  3,-4(1)	Push left side 
 * EXPRESSION
- 54:    LDC  3,1(6)	Load integer constant 
+ 60:    LDC  3,1(6)	Load integer constant 
 * OP  or
- 55:     LD  4,-4(1)	Pop left into ac1 
- 56:     OR  3,4,3	Op | 
+ 61:     LD  4,-4(1)	Pop left into ac1 
+ 62:     OR  3,4,3	Op | 
 * Param 
- 57:     ST  3,-4(1)	Push parameter 
+ 63:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
 * Param end  outputb
- 58:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 59:    LDA  3,1(7)	Return address in ac 
- 60:    JMP  7,-44(7)	call outputb
- 61:    LDA  3,0(2)	save the result in ac 
+ 64:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 65:    LDA  3,1(7)	Return address in ac 
+ 66:    JMP  7,-50(7)	call outputb
+ 67:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
 * TOFF set: 
 * EXPRESSION
 * CALL  outputb
- 62:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
+ 68:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* TOFF dec:  -3
+* TOFF dec:  -4
+ 69:     LD  3,0(0)	Load variable (null)
+ 70:     ST  3,-4(1)	Push left side 
+ 71:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
 * EXPRESSION
- 63:    LDC  3,1(6)	Load integer constant 
- 64:     ST  3,-4(1)	Push left side 
+ 72:    LDC  3,1(6)	Load integer constant 
+ 73:     ST  3,-4(1)	Push left side 
 * EXPRESSION
- 65:    LDC  3,0(6)	Load integer constant 
+ 74:    LDC  3,0(6)	Load integer constant 
 * OP  or
- 66:     LD  4,-4(1)	Pop left into ac1 
- 67:     OR  3,4,3	Op | 
+ 75:     LD  4,-4(1)	Pop left into ac1 
+ 76:     OR  3,4,3	Op | 
 * Param 
- 68:     ST  3,-4(1)	Push parameter 
+ 77:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
 * Param end  outputb
- 69:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 70:    LDA  3,1(7)	Return address in ac 
- 71:    JMP  7,-55(7)	call outputb
- 72:    LDA  3,0(2)	save the result in ac 
+ 78:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 79:    LDA  3,1(7)	Return address in ac 
+ 80:    JMP  7,-64(7)	call outputb
+ 81:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
 * TOFF set: 
 * EXPRESSION
 * CALL  outputb
- 73:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
+ 82:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* TOFF dec:  -3
+* TOFF dec:  -4
+ 83:     LD  3,0(0)	Load variable (null)
+ 84:     ST  3,-4(1)	Push left side 
+ 85:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
 * EXPRESSION
- 74:    LDC  3,1(6)	Load integer constant 
- 75:     ST  3,-4(1)	Push left side 
+ 86:    LDC  3,1(6)	Load integer constant 
+ 87:     ST  3,-4(1)	Push left side 
 * EXPRESSION
- 76:    LDC  3,1(6)	Load integer constant 
+ 88:    LDC  3,1(6)	Load integer constant 
 * OP  or
- 77:     LD  4,-4(1)	Pop left into ac1 
- 78:     OR  3,4,3	Op | 
+ 89:     LD  4,-4(1)	Pop left into ac1 
+ 90:     OR  3,4,3	Op | 
 * Param 
- 79:     ST  3,-4(1)	Push parameter 
+ 91:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
 * Param end  outputb
- 80:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 81:    LDA  3,1(7)	Return address in ac 
- 82:    JMP  7,-66(7)	call outputb
- 83:    LDA  3,0(2)	save the result in ac 
+ 92:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 93:    LDA  3,1(7)	Return address in ac 
+ 94:    JMP  7,-78(7)	call outputb
+ 95:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
 * TOFF set: 
 * EXPRESSION
 * CALL  outnl
- 84:     ST  1,-2(1)	Store fp in ghost frame for  outnl
-* TOFF dec:  -2
+ 96:     ST  1,-2(1)	Store fp in ghost frame for  outnl
+* TOFF dec:  -3
+* TOFF dec:  -4
 * Param end  outnl
- 85:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 86:    LDA  3,1(7)	Return address in ac 
- 87:    JMP  7,-54(7)	call outnl
- 88:    LDA  3,0(2)	save the result in ac 
+ 97:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 98:    LDA  3,1(7)	Return address in ac 
+ 99:    JMP  7,-66(7)	call outnl
+100:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
 * TOFF set: 
 * EXPRESSION
 * CALL  outputb
- 89:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
+101:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* TOFF dec:  -3
+* TOFF dec:  -4
+102:     LD  3,0(0)	Load variable (null)
+103:     ST  3,-4(1)	Push left side 
+104:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
 * EXPRESSION
- 90:    LDC  3,0(6)	Load integer constant 
- 91:     ST  3,-4(1)	Push left side 
+105:    LDC  3,0(6)	Load integer constant 
+106:     ST  3,-4(1)	Push left side 
 * EXPRESSION
- 92:    LDC  3,0(6)	Load integer constant 
+107:    LDC  3,0(6)	Load integer constant 
 * OP  and
- 93:     LD  4,-4(1)	Pop left into ac1 
- 94:    AND  3,4,3	Op & 
+108:     LD  4,-4(1)	Pop left into ac1 
+109:    AND  3,4,3	Op & 
 * Param 
- 95:     ST  3,-4(1)	Push parameter 
+110:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
 * Param end  outputb
- 96:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 97:    LDA  3,1(7)	Return address in ac 
- 98:    JMP  7,-82(7)	call outputb
- 99:    LDA  3,0(2)	save the result in ac 
+111:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+112:    LDA  3,1(7)	Return address in ac 
+113:    JMP  7,-97(7)	call outputb
+114:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
 * TOFF set: 
 * EXPRESSION
 * CALL  outputb
-100:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
+115:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* TOFF dec:  -3
+* TOFF dec:  -4
+116:     LD  3,0(0)	Load variable (null)
+117:     ST  3,-4(1)	Push left side 
+118:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
 * EXPRESSION
-101:    LDC  3,0(6)	Load integer constant 
-102:     ST  3,-4(1)	Push left side 
+119:    LDC  3,0(6)	Load integer constant 
+120:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-103:    LDC  3,1(6)	Load integer constant 
+121:    LDC  3,1(6)	Load integer constant 
 * OP  and
-104:     LD  4,-4(1)	Pop left into ac1 
-105:    AND  3,4,3	Op & 
+122:     LD  4,-4(1)	Pop left into ac1 
+123:    AND  3,4,3	Op & 
 * Param 
-106:     ST  3,-4(1)	Push parameter 
+124:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
 * Param end  outputb
-107:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-108:    LDA  3,1(7)	Return address in ac 
-109:    JMP  7,-93(7)	call outputb
-110:    LDA  3,0(2)	save the result in ac 
+125:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+126:    LDA  3,1(7)	Return address in ac 
+127:    JMP  7,-111(7)	call outputb
+128:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
 * TOFF set: 
 * EXPRESSION
 * CALL  outputb
-111:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
+129:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* TOFF dec:  -3
+* TOFF dec:  -4
+130:     LD  3,0(0)	Load variable (null)
+131:     ST  3,-4(1)	Push left side 
+132:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
 * EXPRESSION
-112:    LDC  3,1(6)	Load integer constant 
-113:     ST  3,-4(1)	Push left side 
+133:    LDC  3,1(6)	Load integer constant 
+134:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-114:    LDC  3,0(6)	Load integer constant 
+135:    LDC  3,0(6)	Load integer constant 
 * OP  and
-115:     LD  4,-4(1)	Pop left into ac1 
-116:    AND  3,4,3	Op & 
+136:     LD  4,-4(1)	Pop left into ac1 
+137:    AND  3,4,3	Op & 
 * Param 
-117:     ST  3,-4(1)	Push parameter 
+138:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
 * Param end  outputb
-118:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-119:    LDA  3,1(7)	Return address in ac 
-120:    JMP  7,-104(7)	call outputb
-121:    LDA  3,0(2)	save the result in ac 
+139:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+140:    LDA  3,1(7)	Return address in ac 
+141:    JMP  7,-125(7)	call outputb
+142:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
 * TOFF set: 
 * EXPRESSION
 * CALL  outputb
-122:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
+143:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* TOFF dec:  -3
+* TOFF dec:  -4
+144:     LD  3,0(0)	Load variable (null)
+145:     ST  3,-4(1)	Push left side 
+146:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
 * EXPRESSION
-123:    LDC  3,1(6)	Load integer constant 
-124:     ST  3,-4(1)	Push left side 
-* EXPRESSION
-125:    LDC  3,1(6)	Load integer constant 
-* OP  and
-126:     LD  4,-4(1)	Pop left into ac1 
-127:    AND  3,4,3	Op & 
-* Param 
-128:     ST  3,-4(1)	Push parameter 
-* TOFF dec: 
-* Param end  outputb
-129:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-130:    LDA  3,1(7)	Return address in ac 
-131:    JMP  7,-115(7)	call outputb
-132:    LDA  3,0(2)	save the result in ac 
-* Call end  outputb
-* TOFF set: 
-* EXPRESSION
-* CALL  outnl
-133:     ST  1,-2(1)	Store fp in ghost frame for  outnl
-* TOFF dec:  -2
-* Param end  outnl
-134:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-135:    LDA  3,1(7)	Return address in ac 
-136:    JMP  7,-103(7)	call outnl
-137:    LDA  3,0(2)	save the result in ac 
-* Call end  outnl
-* TOFF set: 
-* EXPRESSION
-* CALL  outputb
-138:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
-* EXPRESSION
-* EXPRESSION
-139:    LDC  3,0(6)	Load integer constant 
-140:     ST  3,-4(1)	Push left side 
-* OP  not
-141:    LDC  4,1(6)	Load 1 
-142:    XOR  3,3,4	Logical not 
-* Param 
-143:     ST  3,-4(1)	Push parameter 
-* TOFF dec: 
-* Param end  outputb
-144:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-145:    LDA  3,1(7)	Return address in ac 
-146:    JMP  7,-130(7)	call outputb
-147:    LDA  3,0(2)	save the result in ac 
-* Call end  outputb
-* TOFF set: 
-* EXPRESSION
-* CALL  outputb
-148:     ST  1,-2(1)	Store fp in ghost frame for  outputb
-* TOFF dec:  -2
-* EXPRESSION
+147:    LDC  3,1(6)	Load integer constant 
+148:     ST  3,-4(1)	Push left side 
 * EXPRESSION
 149:    LDC  3,1(6)	Load integer constant 
-150:     ST  3,-4(1)	Push left side 
-* OP  not
-151:    LDC  4,1(6)	Load 1 
-152:    XOR  3,3,4	Logical not 
+* OP  and
+150:     LD  4,-4(1)	Pop left into ac1 
+151:    AND  3,4,3	Op & 
 * Param 
-153:     ST  3,-4(1)	Push parameter 
+152:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
 * Param end  outputb
-154:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-155:    LDA  3,1(7)	Return address in ac 
-156:    JMP  7,-140(7)	call outputb
-157:    LDA  3,0(2)	save the result in ac 
+153:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+154:    LDA  3,1(7)	Return address in ac 
+155:    JMP  7,-139(7)	call outputb
+156:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
 * TOFF set: 
 * EXPRESSION
 * CALL  outnl
-158:     ST  1,-2(1)	Store fp in ghost frame for  outnl
-* TOFF dec:  -2
+157:     ST  1,-2(1)	Store fp in ghost frame for  outnl
+* TOFF dec:  -3
+* TOFF dec:  -4
 * Param end  outnl
-159:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-160:    LDA  3,1(7)	Return address in ac 
-161:    JMP  7,-128(7)	call outnl
-162:    LDA  3,0(2)	save the result in ac 
+158:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+159:    LDA  3,1(7)	Return address in ac 
+160:    JMP  7,-127(7)	call outnl
+161:    LDA  3,0(2)	save the result in ac 
+* Call end  outnl
+* TOFF set: 
+* EXPRESSION
+* CALL  outputb
+162:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* TOFF dec:  -3
+* TOFF dec:  -4
+163:    LDC  3,0(6)	Load integer constant 
+* EXPRESSION
+* EXPRESSION
+164:    LDC  3,0(6)	Load integer constant 
+165:     ST  3,-4(1)	Push left side 
+* OP  not
+166:    LDC  4,1(6)	Load 1 
+167:    XOR  3,3,4	Logical not 
+* Param 
+168:     ST  3,-4(1)	Push parameter 
+* TOFF dec: 
+* Param end  outputb
+169:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+170:    LDA  3,1(7)	Return address in ac 
+171:    JMP  7,-155(7)	call outputb
+172:    LDA  3,0(2)	save the result in ac 
+* Call end  outputb
+* TOFF set: 
+* EXPRESSION
+* CALL  outputb
+173:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* TOFF dec:  -3
+* TOFF dec:  -4
+174:    LDC  3,1(6)	Load integer constant 
+* EXPRESSION
+* EXPRESSION
+175:    LDC  3,1(6)	Load integer constant 
+176:     ST  3,-4(1)	Push left side 
+* OP  not
+177:    LDC  4,1(6)	Load 1 
+178:    XOR  3,3,4	Logical not 
+* Param 
+179:     ST  3,-4(1)	Push parameter 
+* TOFF dec: 
+* Param end  outputb
+180:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+181:    LDA  3,1(7)	Return address in ac 
+182:    JMP  7,-166(7)	call outputb
+183:    LDA  3,0(2)	save the result in ac 
+* Call end  outputb
+* TOFF set: 
+* EXPRESSION
+* CALL  outnl
+184:     ST  1,-2(1)	Store fp in ghost frame for  outnl
+* TOFF dec:  -3
+* TOFF dec:  -4
+* Param end  outnl
+185:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+186:    LDA  3,1(7)	Return address in ac 
+187:    JMP  7,-154(7)	call outnl
+188:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
 * TOFF set: 
 * END COMPOUND
 * Add standard closing in case there is no return statement
-163:    LDC  2,0(6)	Set return value to 0 
-164:     LD  3,-1(1)	Load return address 
-165:     LD  1,0(1)	Adjust frame pointer 
-166:    JMP  7,0(3)	Return 
+189:    LDC  2,0(6)	Set return value to 0 
+190:     LD  3,-1(1)	Load return address 
+191:     LD  1,0(1)	Adjust frame pointer 
+192:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,166(7)	Jump to init [backpatch] 
+  0:    JMP  7,192(7)	Jump to init [backpatch] 
 * =========================================
 * INIT
-167:    LDA  1,-16(0)	Set first frame at end of globals 
-168:     ST  1,0(1)	Store old fp (point to self) 
+193:    LDA  1,0(0)	Set first frame at end of globals 
+194:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
-169:    LDA  3,1(7)	Return address in ac 
-170:    JMP  7,-132(7)	Jump to main 
-171:   HALT  0,0(0)	DONE! 
+195:    LDA  3,1(7)	Return address in ac 
+196:    JMP  7,-158(7)	Jump to main 
+197:   HALT  0,0(0)	DONE! 
 * END INIT

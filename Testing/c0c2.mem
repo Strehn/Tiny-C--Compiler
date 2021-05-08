@@ -26,6 +26,6 @@ Func: main returns type void [mem: Global loc: 0 size: -2] [line: 3]
 .   .   Sibling: 7  Call: outputc of type void [line: 16]
 .   .   .   Child: 0  Id: z of type char [mem: Local loc: -4 size: 1] [line: 16]
 .   .   Sibling: 8  Call: outnl of type void [line: 17]
-Offset for end of global space: 3 
+Offset for end of global space: 0 
 Number of warnings: 0
 Number of errors: 0

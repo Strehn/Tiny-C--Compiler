@@ -58,13 +58,14 @@
 * TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set:  -2
+* TOFF set:  -3
 * Compound body
 * Var
 * EXPRESSION
 * CALL  output
  40:     ST  1,-2(1)	Store fp in ghost frame for  output
-* TOFF dec:  -2
+* TOFF dec:  -3
+* TOFF dec:  -4
 * EXPRESSION
  41:    LDC  3,982(6)	Load integer constant 
 * Param 
@@ -80,7 +81,8 @@
 * EXPRESSION
 * CALL  outnl
  47:     ST  1,-2(1)	Store fp in ghost frame for  outnl
-* TOFF dec:  -2
+* TOFF dec:  -3
+* TOFF dec:  -4
 * Param end  outnl
  48:    LDA  1,-2(1)	Ghost frame becomes new active frame 
  49:    LDA  3,1(7)	Return address in ac 
