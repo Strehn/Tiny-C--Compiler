@@ -55,26 +55,25 @@
 * END FUNCTION outnl
 * =========================================
 * FUNCTION main
-* TOFF set: 
+* TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set: 
+* TOFF set:  -2
 * Compound body
 * EXPRESSION
 * CALL  output
- 40:     ST  1,-3(1)	Store fp in ghost frame for  output
-* TOFF dec: 
-* TOFF dec: 
+ 40:     ST  1,-2(1)	Store fp in ghost frame for  output
+* TOFF dec:  -2
 * EXPRESSION
 * EXPRESSION
  41:    LDC  3,666(6)	Load integer constant 
 * OP  chsign
  42:    NEG  3,3,3	Op Unary - 
 * Param 
- 43:     ST  3,-5(1)	Push parameter 
+ 43:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
 * Param end  output
- 44:    LDA  1,-3(1)	Ghost frame becomes new active frame 
+ 44:    LDA  1,-2(1)	Ghost frame becomes new active frame 
  45:    LDA  3,1(7)	Return address in ac 
  46:    JMP  7,-41(7)	call output
  47:    LDA  3,0(2)	save the result in ac 
@@ -82,11 +81,10 @@
 * TOFF set: 
 * EXPRESSION
 * CALL  outnl
- 48:     ST  1,-3(1)	Store fp in ghost frame for  outnl
-* TOFF dec: 
-* TOFF dec: 
+ 48:     ST  1,-2(1)	Store fp in ghost frame for  outnl
+* TOFF dec:  -2
 * Param end  outnl
- 49:    LDA  1,-3(1)	Ghost frame becomes new active frame 
+ 49:    LDA  1,-2(1)	Ghost frame becomes new active frame 
  50:    LDA  3,1(7)	Return address in ac 
  51:    JMP  7,-18(7)	call outnl
  52:    LDA  3,0(2)	save the result in ac 

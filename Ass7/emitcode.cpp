@@ -44,6 +44,12 @@ void emitComment(char *c)
     fprintf(code, "* %s\n", c);
 }
 
+void emitComment(char *c, int *cc)
+{
+    fprintf(code, "* %s %d\n", c, cc);
+}
+
+
 
 
 // emitRO emits a REGISTER-ONLY TM instruction
