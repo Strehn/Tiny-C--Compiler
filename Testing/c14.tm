@@ -81,7 +81,7 @@
  44:     ST  3,-19(1)	Push index 
  45:    LDC  3,73(6)	Load integer constant 
  46:     LD  4,-19(1)	Pop index 
- 47:    LDA  5,-4(1)	Load address of base of array x
+ 47:    LDA  5,-3(1)	Load address of base of array x
  48:    SUB  5,5,4	Compute offset of value 
  49:     ST  3,0(5)	Store variable x
 * EXPRESSION
@@ -94,7 +94,7 @@
  50:     ST  3,-19(1)	Push index 
  51:    LDC  3,211(6)	Load integer constant 
  52:     LD  4,-19(1)	Pop index 
- 53:    LDA  5,-8(1)	Load address of base of array y
+ 53:    LDA  5,-7(1)	Load address of base of array y
  54:    SUB  5,5,4	Compute offset of value 
  55:     ST  3,0(5)	Store variable y
 * EXPRESSION

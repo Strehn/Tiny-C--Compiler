@@ -731,7 +731,7 @@ void declStart(TreeNode *tree, SymbolTable *table)
         }
         else if(tree->isArray == true)
         {
-            tree->memlocation = foffset - 2; // first is the location of array
+            tree->memlocation = foffset - 1; // first is the location of array
             foffset = foffset - tree->aSize - 1;
             tree->memsize = (tree->aSize + 1);
         }
