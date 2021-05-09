@@ -99,14 +99,14 @@
  58:     ST  1,-11(1)	Store fp in ghost frame for  output
 * TOFF dec:  -12
 * TOFF dec:  -13
- 59:    LDA  3,-1(0)	Load address of array x
+ 59:    LDA  3,-3(1)	Load address of base of array x
  60:     ST  3,-13(1)	Push left side 
  61:    LDC  3,2(6)	Load integer constant 
  62:     LD  4,-13(1)	Pop left into ac1 
  63:    SUB  3,4,3	Compute location from index 
  64:     LD  3,0(3)	Load array element 
  65:     ST  3,-13(1)	Push left side 
- 66:    LDA  3,-14(0)	Load address of base of array (null)
+ 66:    LDA  3,-7(1)	Load address of base of array y
  67:     ST  3,-14(1)	Push left side 
  68:    LDC  3,1(6)	Load integer constant 
  69:     LD  4,-14(1)	Pop left into ac1 

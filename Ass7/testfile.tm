@@ -54,114 +54,97 @@
  38:    LDA  7,0(3)	Return 
 * END FUNCTION outnl
 * =========================================
+* Var
+* Var
 * FUNCTION main
 * TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set:  -11
+* TOFF set:  -2
 * Compound body
-* Var
- 40:    LDC  3,3(6)	Load size of array x
- 41:     ST  3,-4(1)	store return address 
-* Var
- 42:    LDC  3,4(6)	Load size of array y
- 43:     ST  3,-8(1)	store return address 
 * EXPRESSION
 * ASSIGN  =
- 44:    LDC  3,2(6)	Load integer constant 
- 45:     ST  3,-13(1)	Push index 
- 46:    LDC  3,73(6)	Load integer constant 
- 47:     LD  4,-13(1)	Pop index 
- 48:    LDA  5,-3(1)	Load address of base of array x
- 49:    SUB  5,5,4	Compute offset of value 
- 50:     ST  3,0(5)	Store variable x
+ 40:    LDC  3,753(6)	Load integer constant 
+ 41:     ST  3,0(0)	Store variable x
 * EXPRESSION
-* EXPRESSION
-* EXPRESSION
-* OP  (null)
 * EXPRESSION
 * EXPRESSION
 * ASSIGN  =
- 51:    LDC  3,1(6)	Load integer constant 
- 52:     ST  3,-13(1)	Push index 
- 53:    LDC  3,211(6)	Load integer constant 
- 54:     LD  4,-13(1)	Pop index 
- 55:    LDA  5,-7(1)	Load address of base of array y
- 56:    SUB  5,5,4	Compute offset of value 
- 57:     ST  3,0(5)	Store variable y
+ 42:    LDC  3,444(6)	Load integer constant 
+ 43:     ST  3,-1(0)	Store variable y
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-* OP  (null)
+* ASSIGN  +=
+ 44:     ST  3,0(0)	Store variable x
+* EXPRESSION
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 58:     ST  1,-13(1)	Store fp in ghost frame for  output
-* TOFF dec:  -14
-* TOFF dec:  -15
- 59:    LDA  3,-1(0)	Load address of array x
- 60:     ST  3,-15(1)	Push left side 
- 61:    LDC  3,2(6)	Load integer constant 
- 62:     LD  4,-15(1)	Pop left into ac1 
- 63:    SUB  3,4,3	Compute location from index 
- 64:     LD  3,0(3)	Load array element 
- 65:     ST  3,-15(1)	Push left side 
- 66:    LDA  3,-16(0)	Load address of base of array (null)
- 67:     ST  3,-16(1)	Push left side 
- 68:    LDC  3,1(6)	Load integer constant 
- 69:     LD  4,-16(1)	Pop left into ac1 
- 70:    SUB  3,4,3	Compute location from index 
- 71:     LD  3,0(3)	Load array element 
-* TOFF inc:  -15
+ 45:     ST  1,-5(1)	Store fp in ghost frame for  output
+* TOFF dec:  -6
+* TOFF dec:  -7
 * EXPRESSION
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
-* OP  (null)
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
-* OP  (null)
-* OP  +
- 72:     LD  4,-15(1)	Pop left into ac1 
- 73:    ADD  3,4,3	Op + 
 * Param 
- 74:     ST  3,-15(1)	Push parameter 
+ 46:     LD  3,0(0)	Load variable  x
+ 47:     ST  3,-7(1)	Push parameter 
 * TOFF dec: 
 * Param end  output
- 75:    LDA  1,-13(1)	Ghost frame becomes new active frame 
- 76:    LDA  3,1(7)	Return address in ac 
- 77:    JMP  7,-72(7)	call output
- 78:    LDA  3,0(2)	save the result in ac 
+ 48:    LDA  1,-5(1)	Ghost frame becomes new active frame 
+ 49:    LDA  3,1(7)	Return address in ac 
+ 50:    JMP  7,-45(7)	call output
+ 51:    LDA  3,0(2)	save the result in ac 
+* Call end  output
+* TOFF set: 
+* EXPRESSION
+* ASSIGN  -=
+ 52:     ST  3,-1(0)	Store variable y
+* EXPRESSION
+* EXPRESSION
+* EXPRESSION
+* CALL  output
+ 53:     ST  1,-6(1)	Store fp in ghost frame for  output
+* TOFF dec:  -7
+* TOFF dec:  -8
+* EXPRESSION
+* Param 
+ 54:     LD  3,-1(0)	Load variable  y
+ 55:     ST  3,-8(1)	Push parameter 
+* TOFF dec: 
+* Param end  output
+ 56:    LDA  1,-6(1)	Ghost frame becomes new active frame 
+ 57:    LDA  3,1(7)	Return address in ac 
+ 58:    JMP  7,-53(7)	call output
+ 59:    LDA  3,0(2)	save the result in ac 
 * Call end  output
 * TOFF set: 
 * EXPRESSION
 * CALL  outnl
- 79:     ST  1,-13(1)	Store fp in ghost frame for  outnl
-* TOFF dec:  -14
-* TOFF dec:  -15
+ 60:     ST  1,-6(1)	Store fp in ghost frame for  outnl
+* TOFF dec:  -7
+* TOFF dec:  -8
 * Param end  outnl
- 80:    LDA  1,-13(1)	Ghost frame becomes new active frame 
- 81:    LDA  3,1(7)	Return address in ac 
- 82:    JMP  7,-49(7)	call outnl
- 83:    LDA  3,0(2)	save the result in ac 
+ 61:    LDA  1,-6(1)	Ghost frame becomes new active frame 
+ 62:    LDA  3,1(7)	Return address in ac 
+ 63:    JMP  7,-30(7)	call outnl
+ 64:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
 * TOFF set: 
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 84:    LDC  2,0(6)	Set return value to 0 
- 85:     LD  3,-1(1)	Load return address 
- 86:     LD  1,0(1)	Adjust frame pointer 
- 87:    JMP  7,0(3)	Return 
+ 65:    LDC  2,0(6)	Set return value to 0 
+ 66:     LD  3,-1(1)	Load return address 
+ 67:     LD  1,0(1)	Adjust frame pointer 
+ 68:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,87(7)	Jump to init [backpatch] 
+  0:    JMP  7,68(7)	Jump to init [backpatch] 
 * =========================================
 * INIT
- 88:    LDA  1,0(0)	Set first frame at end of globals 
- 89:     ST  1,0(1)	Store old fp (point to self) 
+ 69:    LDA  1,-2(0)	Set first frame at end of globals 
+ 70:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 90:    LDA  3,1(7)	Return address in ac 
- 91:    JMP  7,-53(7)	Jump to main 
- 92:   HALT  0,0(0)	DONE! 
+ 71:    LDA  3,1(7)	Return address in ac 
+ 72:    JMP  7,-34(7)	Jump to main 
+ 73:   HALT  0,0(0)	DONE! 
 * END INIT

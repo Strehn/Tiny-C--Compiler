@@ -65,6 +65,7 @@
  40:     ST  1,-2(1)	Store fp in ghost frame for  outputb
 * TOFF dec:  -3
 * TOFF dec:  -4
+* TOFF inc:  -4
  41:    LDC  3,1(6)	Load integer constant 
 * EXPRESSION
 * EXPRESSION
@@ -100,6 +101,7 @@
  56:     ST  1,-2(1)	Store fp in ghost frame for  outputb
 * TOFF dec:  -3
 * TOFF dec:  -4
+* TOFF inc:  -4
  57:    LDC  3,0(6)	Load integer constant 
 * EXPRESSION
 * EXPRESSION
