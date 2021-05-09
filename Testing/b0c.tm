@@ -65,81 +65,72 @@
  40:     ST  1,-2(1)	Store fp in ghost frame for  outputb
 * TOFF dec:  -3
 * TOFF dec:  -4
- 41:     LD  3,0(0)	Load variable ?
- 42:     ST  3,-4(1)	Push left side 
- 43:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
- 44:    LDC  3,1(6)	Load integer constant 
+ 41:    LDC  3,1(6)	Load integer constant 
 * OP  ?
- 45:    RND  3,3,6	Op ? 
- 46:     ST  3,-4(1)	Push left side 
+ 42:    RND  3,3,6	Op ? 
+ 43:     ST  3,-4(1)	Push left side 
 * EXPRESSION
- 47:    LDC  3,0(6)	Load integer constant 
+ 44:    LDC  3,0(6)	Load integer constant 
 * OP  ==
- 48:     LD  4,-4(1)	Pop left into ac1 
- 49:    TEQ  3,4,3	Op == 
-* Param 
- 50:     ST  3,-4(1)	Push parameter 
-* TOFF dec: 
+ 45:     LD  4,-4(1)	Pop left into ac1 
+ 46:    TEQ  3,4,3	Op == 
+* Param  1
+ 47:     ST  3,-4(1)	Push parameter 
+* TOFF dec:  -5
 * Param end  outputb
- 51:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 52:    LDA  3,1(7)	Return address in ac 
- 53:    JMP  7,-37(7)	call outputb
- 54:    LDA  3,0(2)	save the result in ac 
+ 48:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 49:    LDA  3,1(7)	Return address in ac 
+ 50:    JMP  7,-34(7)	call outputb
+ 51:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
-* TOFF set: 
+* TOFF set:  -2
 * EXPRESSION
 * CALL  outnl
- 55:     ST  1,-2(1)	Store fp in ghost frame for  outnl
+ 52:     ST  1,-2(1)	Store fp in ghost frame for  outnl
 * TOFF dec:  -3
 * TOFF dec:  -4
 * Param end  outnl
- 56:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 57:    LDA  3,1(7)	Return address in ac 
- 58:    JMP  7,-25(7)	call outnl
- 59:    LDA  3,0(2)	save the result in ac 
+ 53:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 54:    LDA  3,1(7)	Return address in ac 
+ 55:    JMP  7,-22(7)	call outnl
+ 56:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
-* TOFF set: 
+* TOFF set:  -2
 * EXPRESSION
 * CALL  outputb
- 60:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+ 57:     ST  1,-2(1)	Store fp in ghost frame for  outputb
 * TOFF dec:  -3
 * TOFF dec:  -4
- 61:     LD  3,0(0)	Load variable ?
- 62:     ST  3,-4(1)	Push left side 
- 63:     LD  3,0(0)	Load variable (null)
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
- 64:    LDC  3,100000(6)	Load integer constant 
+ 58:    LDC  3,100000(6)	Load integer constant 
 * OP  ?
- 65:    RND  3,3,6	Op ? 
- 66:     ST  3,-4(1)	Push left side 
+ 59:    RND  3,3,6	Op ? 
+ 60:     ST  3,-4(1)	Push left side 
 * EXPRESSION
- 67:    LDC  3,0(6)	Load integer constant 
+ 61:    LDC  3,0(6)	Load integer constant 
 * OP  >
- 68:     LD  4,-4(1)	Pop left into ac1 
- 69:    TGT  3,4,3	Op > 
-* Param 
- 70:     ST  3,-4(1)	Push parameter 
-* TOFF dec: 
+ 62:     LD  4,-4(1)	Pop left into ac1 
+ 63:    TGT  3,4,3	Op > 
+* Param  2
+ 64:     ST  3,-4(1)	Push parameter 
+* TOFF dec:  -5
 * Param end  outputb
- 71:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 72:    LDA  3,1(7)	Return address in ac 
- 73:    JMP  7,-57(7)	call outputb
- 74:    LDA  3,0(2)	save the result in ac 
+ 65:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 66:    LDA  3,1(7)	Return address in ac 
+ 67:    JMP  7,-51(7)	call outputb
+ 68:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
-* TOFF set: 
+* TOFF set:  -2
 * EXPRESSION
 * CALL  outputb
- 75:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+ 69:     ST  1,-2(1)	Store fp in ghost frame for  outputb
 * TOFF dec:  -3
 * TOFF dec:  -4
- 76:     LD  3,0(0)	Load variable and
- 77:     ST  3,-4(1)	Push left side 
- 78:     LD  3,0(0)	Load variable >
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
@@ -155,213 +146,210 @@
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
- 79:    LDC  3,3(6)	Load integer constant 
+ 70:    LDC  3,3(6)	Load integer constant 
 * OP  ?
- 80:    RND  3,3,6	Op ? 
- 81:     ST  3,-4(1)	Push left side 
+ 71:    RND  3,3,6	Op ? 
+ 72:     ST  3,-4(1)	Push left side 
 * EXPRESSION
- 82:    LDC  3,0(6)	Load integer constant 
+ 73:    LDC  3,0(6)	Load integer constant 
 * OP  >
- 83:     LD  4,-4(1)	Pop left into ac1 
- 84:    TGT  3,4,3	Op > 
+ 74:     LD  4,-4(1)	Pop left into ac1 
+ 75:    TGT  3,4,3	Op > 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
- 85:    LDC  3,3(6)	Load integer constant 
+ 76:    LDC  3,3(6)	Load integer constant 
 * OP  ?
- 86:    RND  3,3,6	Op ? 
- 87:     ST  3,-4(1)	Push left side 
+ 77:    RND  3,3,6	Op ? 
+ 78:     ST  3,-4(1)	Push left side 
 * EXPRESSION
- 88:    LDC  3,0(6)	Load integer constant 
+ 79:    LDC  3,0(6)	Load integer constant 
 * OP  >
- 89:     LD  4,-4(1)	Pop left into ac1 
- 90:    TGT  3,4,3	Op > 
+ 80:     LD  4,-4(1)	Pop left into ac1 
+ 81:    TGT  3,4,3	Op > 
 * OP  and
- 91:     LD  4,-4(1)	Pop left into ac1 
- 92:    AND  3,4,3	Op & 
+ 82:     LD  4,-4(1)	Pop left into ac1 
+ 83:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
- 93:    LDC  3,3(6)	Load integer constant 
+ 84:    LDC  3,3(6)	Load integer constant 
 * OP  ?
- 94:    RND  3,3,6	Op ? 
- 95:     ST  3,-4(1)	Push left side 
+ 85:    RND  3,3,6	Op ? 
+ 86:     ST  3,-4(1)	Push left side 
 * EXPRESSION
- 96:    LDC  3,0(6)	Load integer constant 
+ 87:    LDC  3,0(6)	Load integer constant 
 * OP  >
- 97:     LD  4,-4(1)	Pop left into ac1 
- 98:    TGT  3,4,3	Op > 
+ 88:     LD  4,-4(1)	Pop left into ac1 
+ 89:    TGT  3,4,3	Op > 
 * OP  and
- 99:     LD  4,-4(1)	Pop left into ac1 
-100:    AND  3,4,3	Op & 
+ 90:     LD  4,-4(1)	Pop left into ac1 
+ 91:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-101:    LDC  3,3(6)	Load integer constant 
+ 92:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-102:    RND  3,3,6	Op ? 
-103:     ST  3,-4(1)	Push left side 
+ 93:    RND  3,3,6	Op ? 
+ 94:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-104:    LDC  3,0(6)	Load integer constant 
+ 95:    LDC  3,0(6)	Load integer constant 
 * OP  >
-105:     LD  4,-4(1)	Pop left into ac1 
-106:    TGT  3,4,3	Op > 
+ 96:     LD  4,-4(1)	Pop left into ac1 
+ 97:    TGT  3,4,3	Op > 
 * OP  and
-107:     LD  4,-4(1)	Pop left into ac1 
-108:    AND  3,4,3	Op & 
+ 98:     LD  4,-4(1)	Pop left into ac1 
+ 99:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-109:    LDC  3,3(6)	Load integer constant 
+100:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-110:    RND  3,3,6	Op ? 
-111:     ST  3,-4(1)	Push left side 
+101:    RND  3,3,6	Op ? 
+102:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-112:    LDC  3,0(6)	Load integer constant 
+103:    LDC  3,0(6)	Load integer constant 
 * OP  >
-113:     LD  4,-4(1)	Pop left into ac1 
-114:    TGT  3,4,3	Op > 
+104:     LD  4,-4(1)	Pop left into ac1 
+105:    TGT  3,4,3	Op > 
 * OP  and
-115:     LD  4,-4(1)	Pop left into ac1 
-116:    AND  3,4,3	Op & 
+106:     LD  4,-4(1)	Pop left into ac1 
+107:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-117:    LDC  3,3(6)	Load integer constant 
+108:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-118:    RND  3,3,6	Op ? 
-119:     ST  3,-4(1)	Push left side 
+109:    RND  3,3,6	Op ? 
+110:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-120:    LDC  3,0(6)	Load integer constant 
+111:    LDC  3,0(6)	Load integer constant 
 * OP  >
-121:     LD  4,-4(1)	Pop left into ac1 
-122:    TGT  3,4,3	Op > 
+112:     LD  4,-4(1)	Pop left into ac1 
+113:    TGT  3,4,3	Op > 
 * OP  and
-123:     LD  4,-4(1)	Pop left into ac1 
-124:    AND  3,4,3	Op & 
+114:     LD  4,-4(1)	Pop left into ac1 
+115:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-125:    LDC  3,3(6)	Load integer constant 
+116:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-126:    RND  3,3,6	Op ? 
-127:     ST  3,-4(1)	Push left side 
+117:    RND  3,3,6	Op ? 
+118:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-128:    LDC  3,0(6)	Load integer constant 
+119:    LDC  3,0(6)	Load integer constant 
 * OP  >
-129:     LD  4,-4(1)	Pop left into ac1 
-130:    TGT  3,4,3	Op > 
+120:     LD  4,-4(1)	Pop left into ac1 
+121:    TGT  3,4,3	Op > 
 * OP  and
-131:     LD  4,-4(1)	Pop left into ac1 
-132:    AND  3,4,3	Op & 
+122:     LD  4,-4(1)	Pop left into ac1 
+123:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-133:    LDC  3,3(6)	Load integer constant 
+124:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-134:    RND  3,3,6	Op ? 
-135:     ST  3,-4(1)	Push left side 
+125:    RND  3,3,6	Op ? 
+126:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-136:    LDC  3,0(6)	Load integer constant 
+127:    LDC  3,0(6)	Load integer constant 
 * OP  >
-137:     LD  4,-4(1)	Pop left into ac1 
-138:    TGT  3,4,3	Op > 
+128:     LD  4,-4(1)	Pop left into ac1 
+129:    TGT  3,4,3	Op > 
 * OP  and
-139:     LD  4,-4(1)	Pop left into ac1 
-140:    AND  3,4,3	Op & 
+130:     LD  4,-4(1)	Pop left into ac1 
+131:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-141:    LDC  3,3(6)	Load integer constant 
+132:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-142:    RND  3,3,6	Op ? 
-143:     ST  3,-4(1)	Push left side 
+133:    RND  3,3,6	Op ? 
+134:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-144:    LDC  3,0(6)	Load integer constant 
+135:    LDC  3,0(6)	Load integer constant 
 * OP  >
-145:     LD  4,-4(1)	Pop left into ac1 
-146:    TGT  3,4,3	Op > 
+136:     LD  4,-4(1)	Pop left into ac1 
+137:    TGT  3,4,3	Op > 
 * OP  and
-147:     LD  4,-4(1)	Pop left into ac1 
-148:    AND  3,4,3	Op & 
+138:     LD  4,-4(1)	Pop left into ac1 
+139:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-149:    LDC  3,3(6)	Load integer constant 
+140:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-150:    RND  3,3,6	Op ? 
-151:     ST  3,-4(1)	Push left side 
+141:    RND  3,3,6	Op ? 
+142:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-152:    LDC  3,0(6)	Load integer constant 
+143:    LDC  3,0(6)	Load integer constant 
 * OP  >
-153:     LD  4,-4(1)	Pop left into ac1 
-154:    TGT  3,4,3	Op > 
+144:     LD  4,-4(1)	Pop left into ac1 
+145:    TGT  3,4,3	Op > 
 * OP  and
-155:     LD  4,-4(1)	Pop left into ac1 
-156:    AND  3,4,3	Op & 
+146:     LD  4,-4(1)	Pop left into ac1 
+147:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-157:    LDC  3,3(6)	Load integer constant 
+148:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-158:    RND  3,3,6	Op ? 
-159:     ST  3,-4(1)	Push left side 
+149:    RND  3,3,6	Op ? 
+150:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-160:    LDC  3,0(6)	Load integer constant 
+151:    LDC  3,0(6)	Load integer constant 
 * OP  >
-161:     LD  4,-4(1)	Pop left into ac1 
-162:    TGT  3,4,3	Op > 
+152:     LD  4,-4(1)	Pop left into ac1 
+153:    TGT  3,4,3	Op > 
 * OP  and
-163:     LD  4,-4(1)	Pop left into ac1 
-164:    AND  3,4,3	Op & 
+154:     LD  4,-4(1)	Pop left into ac1 
+155:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-165:    LDC  3,3(6)	Load integer constant 
+156:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-166:    RND  3,3,6	Op ? 
-167:     ST  3,-4(1)	Push left side 
+157:    RND  3,3,6	Op ? 
+158:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-168:    LDC  3,0(6)	Load integer constant 
+159:    LDC  3,0(6)	Load integer constant 
 * OP  >
-169:     LD  4,-4(1)	Pop left into ac1 
-170:    TGT  3,4,3	Op > 
+160:     LD  4,-4(1)	Pop left into ac1 
+161:    TGT  3,4,3	Op > 
 * OP  and
-171:     LD  4,-4(1)	Pop left into ac1 
-172:    AND  3,4,3	Op & 
+162:     LD  4,-4(1)	Pop left into ac1 
+163:    AND  3,4,3	Op & 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-173:    LDC  3,3(6)	Load integer constant 
+164:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-174:    RND  3,3,6	Op ? 
-175:     ST  3,-4(1)	Push left side 
+165:    RND  3,3,6	Op ? 
+166:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-176:    LDC  3,0(6)	Load integer constant 
+167:    LDC  3,0(6)	Load integer constant 
 * OP  >
-177:     LD  4,-4(1)	Pop left into ac1 
-178:    TGT  3,4,3	Op > 
+168:     LD  4,-4(1)	Pop left into ac1 
+169:    TGT  3,4,3	Op > 
 * OP  and
-179:     LD  4,-4(1)	Pop left into ac1 
-180:    AND  3,4,3	Op & 
-* Param 
-181:     ST  3,-4(1)	Push parameter 
-* TOFF dec: 
+170:     LD  4,-4(1)	Pop left into ac1 
+171:    AND  3,4,3	Op & 
+* Param  3
+172:     ST  3,-4(1)	Push parameter 
+* TOFF dec:  -5
 * Param end  outputb
-182:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-183:    LDA  3,1(7)	Return address in ac 
-184:    JMP  7,-168(7)	call outputb
-185:    LDA  3,0(2)	save the result in ac 
+173:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+174:    LDA  3,1(7)	Return address in ac 
+175:    JMP  7,-159(7)	call outputb
+176:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
-* TOFF set: 
+* TOFF set:  -2
 * EXPRESSION
 * CALL  outputb
-186:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+177:     ST  1,-2(1)	Store fp in ghost frame for  outputb
 * TOFF dec:  -3
 * TOFF dec:  -4
-187:     LD  3,0(0)	Load variable or
-188:     ST  3,-4(1)	Push left side 
-189:     LD  3,0(0)	Load variable >
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
@@ -377,232 +365,232 @@
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-190:    LDC  3,3(6)	Load integer constant 
+178:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-191:    RND  3,3,6	Op ? 
-192:     ST  3,-4(1)	Push left side 
+179:    RND  3,3,6	Op ? 
+180:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-193:    LDC  3,0(6)	Load integer constant 
+181:    LDC  3,0(6)	Load integer constant 
 * OP  >
-194:     LD  4,-4(1)	Pop left into ac1 
-195:    TGT  3,4,3	Op > 
+182:     LD  4,-4(1)	Pop left into ac1 
+183:    TGT  3,4,3	Op > 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-196:    LDC  3,3(6)	Load integer constant 
+184:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-197:    RND  3,3,6	Op ? 
-198:     ST  3,-4(1)	Push left side 
+185:    RND  3,3,6	Op ? 
+186:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-199:    LDC  3,0(6)	Load integer constant 
+187:    LDC  3,0(6)	Load integer constant 
 * OP  >
-200:     LD  4,-4(1)	Pop left into ac1 
-201:    TGT  3,4,3	Op > 
+188:     LD  4,-4(1)	Pop left into ac1 
+189:    TGT  3,4,3	Op > 
 * OP  or
-202:     LD  4,-4(1)	Pop left into ac1 
-203:     OR  3,4,3	Op | 
+190:     LD  4,-4(1)	Pop left into ac1 
+191:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-204:    LDC  3,3(6)	Load integer constant 
+192:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-205:    RND  3,3,6	Op ? 
-206:     ST  3,-4(1)	Push left side 
+193:    RND  3,3,6	Op ? 
+194:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-207:    LDC  3,0(6)	Load integer constant 
+195:    LDC  3,0(6)	Load integer constant 
 * OP  >
-208:     LD  4,-4(1)	Pop left into ac1 
-209:    TGT  3,4,3	Op > 
+196:     LD  4,-4(1)	Pop left into ac1 
+197:    TGT  3,4,3	Op > 
 * OP  or
-210:     LD  4,-4(1)	Pop left into ac1 
-211:     OR  3,4,3	Op | 
+198:     LD  4,-4(1)	Pop left into ac1 
+199:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-212:    LDC  3,3(6)	Load integer constant 
+200:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-213:    RND  3,3,6	Op ? 
-214:     ST  3,-4(1)	Push left side 
+201:    RND  3,3,6	Op ? 
+202:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-215:    LDC  3,0(6)	Load integer constant 
+203:    LDC  3,0(6)	Load integer constant 
 * OP  >
-216:     LD  4,-4(1)	Pop left into ac1 
-217:    TGT  3,4,3	Op > 
+204:     LD  4,-4(1)	Pop left into ac1 
+205:    TGT  3,4,3	Op > 
 * OP  or
-218:     LD  4,-4(1)	Pop left into ac1 
-219:     OR  3,4,3	Op | 
+206:     LD  4,-4(1)	Pop left into ac1 
+207:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-220:    LDC  3,3(6)	Load integer constant 
+208:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-221:    RND  3,3,6	Op ? 
-222:     ST  3,-4(1)	Push left side 
+209:    RND  3,3,6	Op ? 
+210:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-223:    LDC  3,0(6)	Load integer constant 
+211:    LDC  3,0(6)	Load integer constant 
 * OP  >
-224:     LD  4,-4(1)	Pop left into ac1 
-225:    TGT  3,4,3	Op > 
+212:     LD  4,-4(1)	Pop left into ac1 
+213:    TGT  3,4,3	Op > 
 * OP  or
-226:     LD  4,-4(1)	Pop left into ac1 
-227:     OR  3,4,3	Op | 
+214:     LD  4,-4(1)	Pop left into ac1 
+215:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-228:    LDC  3,3(6)	Load integer constant 
+216:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-229:    RND  3,3,6	Op ? 
-230:     ST  3,-4(1)	Push left side 
+217:    RND  3,3,6	Op ? 
+218:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-231:    LDC  3,0(6)	Load integer constant 
+219:    LDC  3,0(6)	Load integer constant 
 * OP  >
-232:     LD  4,-4(1)	Pop left into ac1 
-233:    TGT  3,4,3	Op > 
+220:     LD  4,-4(1)	Pop left into ac1 
+221:    TGT  3,4,3	Op > 
 * OP  or
-234:     LD  4,-4(1)	Pop left into ac1 
-235:     OR  3,4,3	Op | 
+222:     LD  4,-4(1)	Pop left into ac1 
+223:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-236:    LDC  3,3(6)	Load integer constant 
+224:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-237:    RND  3,3,6	Op ? 
-238:     ST  3,-4(1)	Push left side 
+225:    RND  3,3,6	Op ? 
+226:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-239:    LDC  3,0(6)	Load integer constant 
+227:    LDC  3,0(6)	Load integer constant 
 * OP  >
-240:     LD  4,-4(1)	Pop left into ac1 
-241:    TGT  3,4,3	Op > 
+228:     LD  4,-4(1)	Pop left into ac1 
+229:    TGT  3,4,3	Op > 
 * OP  or
-242:     LD  4,-4(1)	Pop left into ac1 
-243:     OR  3,4,3	Op | 
+230:     LD  4,-4(1)	Pop left into ac1 
+231:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-244:    LDC  3,3(6)	Load integer constant 
+232:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-245:    RND  3,3,6	Op ? 
-246:     ST  3,-4(1)	Push left side 
+233:    RND  3,3,6	Op ? 
+234:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-247:    LDC  3,0(6)	Load integer constant 
+235:    LDC  3,0(6)	Load integer constant 
 * OP  >
-248:     LD  4,-4(1)	Pop left into ac1 
-249:    TGT  3,4,3	Op > 
+236:     LD  4,-4(1)	Pop left into ac1 
+237:    TGT  3,4,3	Op > 
 * OP  or
-250:     LD  4,-4(1)	Pop left into ac1 
-251:     OR  3,4,3	Op | 
+238:     LD  4,-4(1)	Pop left into ac1 
+239:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-252:    LDC  3,3(6)	Load integer constant 
+240:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-253:    RND  3,3,6	Op ? 
-254:     ST  3,-4(1)	Push left side 
+241:    RND  3,3,6	Op ? 
+242:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-255:    LDC  3,0(6)	Load integer constant 
+243:    LDC  3,0(6)	Load integer constant 
 * OP  >
-256:     LD  4,-4(1)	Pop left into ac1 
-257:    TGT  3,4,3	Op > 
+244:     LD  4,-4(1)	Pop left into ac1 
+245:    TGT  3,4,3	Op > 
 * OP  or
-258:     LD  4,-4(1)	Pop left into ac1 
-259:     OR  3,4,3	Op | 
+246:     LD  4,-4(1)	Pop left into ac1 
+247:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-260:    LDC  3,3(6)	Load integer constant 
+248:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-261:    RND  3,3,6	Op ? 
-262:     ST  3,-4(1)	Push left side 
+249:    RND  3,3,6	Op ? 
+250:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-263:    LDC  3,0(6)	Load integer constant 
+251:    LDC  3,0(6)	Load integer constant 
 * OP  >
-264:     LD  4,-4(1)	Pop left into ac1 
-265:    TGT  3,4,3	Op > 
+252:     LD  4,-4(1)	Pop left into ac1 
+253:    TGT  3,4,3	Op > 
 * OP  or
-266:     LD  4,-4(1)	Pop left into ac1 
-267:     OR  3,4,3	Op | 
+254:     LD  4,-4(1)	Pop left into ac1 
+255:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-268:    LDC  3,3(6)	Load integer constant 
+256:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-269:    RND  3,3,6	Op ? 
-270:     ST  3,-4(1)	Push left side 
+257:    RND  3,3,6	Op ? 
+258:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-271:    LDC  3,0(6)	Load integer constant 
+259:    LDC  3,0(6)	Load integer constant 
 * OP  >
-272:     LD  4,-4(1)	Pop left into ac1 
-273:    TGT  3,4,3	Op > 
+260:     LD  4,-4(1)	Pop left into ac1 
+261:    TGT  3,4,3	Op > 
 * OP  or
-274:     LD  4,-4(1)	Pop left into ac1 
-275:     OR  3,4,3	Op | 
+262:     LD  4,-4(1)	Pop left into ac1 
+263:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-276:    LDC  3,3(6)	Load integer constant 
+264:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-277:    RND  3,3,6	Op ? 
-278:     ST  3,-4(1)	Push left side 
+265:    RND  3,3,6	Op ? 
+266:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-279:    LDC  3,0(6)	Load integer constant 
+267:    LDC  3,0(6)	Load integer constant 
 * OP  >
-280:     LD  4,-4(1)	Pop left into ac1 
-281:    TGT  3,4,3	Op > 
+268:     LD  4,-4(1)	Pop left into ac1 
+269:    TGT  3,4,3	Op > 
 * OP  or
-282:     LD  4,-4(1)	Pop left into ac1 
-283:     OR  3,4,3	Op | 
+270:     LD  4,-4(1)	Pop left into ac1 
+271:     OR  3,4,3	Op | 
 * EXPRESSION
 * EXPRESSION
 * EXPRESSION
-284:    LDC  3,3(6)	Load integer constant 
+272:    LDC  3,3(6)	Load integer constant 
 * OP  ?
-285:    RND  3,3,6	Op ? 
-286:     ST  3,-4(1)	Push left side 
+273:    RND  3,3,6	Op ? 
+274:     ST  3,-4(1)	Push left side 
 * EXPRESSION
-287:    LDC  3,0(6)	Load integer constant 
+275:    LDC  3,0(6)	Load integer constant 
 * OP  >
-288:     LD  4,-4(1)	Pop left into ac1 
-289:    TGT  3,4,3	Op > 
+276:     LD  4,-4(1)	Pop left into ac1 
+277:    TGT  3,4,3	Op > 
 * OP  or
-290:     LD  4,-4(1)	Pop left into ac1 
-291:     OR  3,4,3	Op | 
-* Param 
-292:     ST  3,-4(1)	Push parameter 
-* TOFF dec: 
+278:     LD  4,-4(1)	Pop left into ac1 
+279:     OR  3,4,3	Op | 
+* Param  4
+280:     ST  3,-4(1)	Push parameter 
+* TOFF dec:  -5
 * Param end  outputb
-293:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-294:    LDA  3,1(7)	Return address in ac 
-295:    JMP  7,-279(7)	call outputb
-296:    LDA  3,0(2)	save the result in ac 
+281:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+282:    LDA  3,1(7)	Return address in ac 
+283:    JMP  7,-267(7)	call outputb
+284:    LDA  3,0(2)	save the result in ac 
 * Call end  outputb
-* TOFF set: 
+* TOFF set:  -2
 * EXPRESSION
 * CALL  outnl
-297:     ST  1,-2(1)	Store fp in ghost frame for  outnl
+285:     ST  1,-2(1)	Store fp in ghost frame for  outnl
 * TOFF dec:  -3
 * TOFF dec:  -4
 * Param end  outnl
-298:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-299:    LDA  3,1(7)	Return address in ac 
-300:    JMP  7,-267(7)	call outnl
-301:    LDA  3,0(2)	save the result in ac 
+286:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+287:    LDA  3,1(7)	Return address in ac 
+288:    JMP  7,-255(7)	call outnl
+289:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
-* TOFF set: 
+* TOFF set:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
-302:    LDC  2,0(6)	Set return value to 0 
-303:     LD  3,-1(1)	Load return address 
-304:     LD  1,0(1)	Adjust frame pointer 
-305:    JMP  7,0(3)	Return 
+290:    LDC  2,0(6)	Set return value to 0 
+291:     LD  3,-1(1)	Load return address 
+292:     LD  1,0(1)	Adjust frame pointer 
+293:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,305(7)	Jump to init [backpatch] 
+  0:    JMP  7,293(7)	Jump to init [backpatch] 
 * =========================================
 * INIT
-306:    LDA  1,0(0)	Set first frame at end of globals 
-307:     ST  1,0(1)	Store old fp (point to self) 
+294:    LDA  1,0(0)	Set first frame at end of globals 
+295:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
-308:    LDA  3,1(7)	Return address in ac 
-309:    JMP  7,-271(7)	Jump to main 
-310:   HALT  0,0(0)	DONE! 
+296:    LDA  3,1(7)	Return address in ac 
+297:    JMP  7,-259(7)	Jump to main 
+298:   HALT  0,0(0)	DONE! 
 * END INIT

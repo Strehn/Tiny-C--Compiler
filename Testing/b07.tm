@@ -72,16 +72,16 @@
  42:    LDC  3,666(6)	Load integer constant 
 * OP  chsign
  43:    NEG  3,3,3	Op Unary - 
-* Param 
+* Param  1
  44:     ST  3,-4(1)	Push parameter 
-* TOFF dec: 
+* TOFF dec:  -5
 * Param end  output
  45:    LDA  1,-2(1)	Ghost frame becomes new active frame 
  46:    LDA  3,1(7)	Return address in ac 
  47:    JMP  7,-42(7)	call output
  48:    LDA  3,0(2)	save the result in ac 
 * Call end  output
-* TOFF set: 
+* TOFF set:  -2
 * EXPRESSION
 * CALL  outnl
  49:     ST  1,-2(1)	Store fp in ghost frame for  outnl
@@ -93,7 +93,7 @@
  52:    JMP  7,-19(7)	call outnl
  53:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
-* TOFF set: 
+* TOFF set:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
  54:    LDC  2,0(6)	Set return value to 0 

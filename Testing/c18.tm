@@ -121,16 +121,16 @@
 * EXPRESSION
  66:    LDC  3,5(6)	Load integer constant 
 * OP  (null)
-* Param 
+* Param  1
  67:     ST  3,-22(1)	Push parameter 
-* TOFF dec: 
+* TOFF dec:  -23
 * Param end  output
  68:    LDA  1,-20(1)	Ghost frame becomes new active frame 
  69:    LDA  3,1(7)	Return address in ac 
  70:    JMP  7,-65(7)	call output
  71:    LDA  3,0(2)	save the result in ac 
 * Call end  output
-* TOFF set: 
+* TOFF set:  -20
 * EXPRESSION
 * ASSIGN  -=
  72:    LDC  3,7(6)	Load integer constant 
@@ -158,16 +158,16 @@
 * EXPRESSION
  80:    LDC  3,7(6)	Load integer constant 
 * OP  (null)
-* Param 
+* Param  2
  81:     ST  3,-22(1)	Push parameter 
-* TOFF dec: 
+* TOFF dec:  -23
 * Param end  output
  82:    LDA  1,-20(1)	Ghost frame becomes new active frame 
  83:    LDA  3,1(7)	Return address in ac 
  84:    JMP  7,-79(7)	call output
  85:    LDA  3,0(2)	save the result in ac 
 * Call end  output
-* TOFF set: 
+* TOFF set:  -20
 * EXPRESSION
 * CALL  outnl
  86:     ST  1,-20(1)	Store fp in ghost frame for  outnl
@@ -179,7 +179,7 @@
  89:    JMP  7,-56(7)	call outnl
  90:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
-* TOFF set: 
+* TOFF set:  -20
 * END COMPOUND
 * Add standard closing in case there is no return statement
  91:    LDC  2,0(6)	Set return value to 0 

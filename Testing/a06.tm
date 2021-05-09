@@ -73,17 +73,17 @@
 * TOFF dec:  -4
 * TOFF dec:  -5
 * EXPRESSION
-* Param 
+* Param  1
  43:     LD  3,0(0)	Load variable  x
  44:     ST  3,-5(1)	Push parameter 
-* TOFF dec: 
+* TOFF dec:  -6
 * Param end  output
  45:    LDA  1,-3(1)	Ghost frame becomes new active frame 
  46:    LDA  3,1(7)	Return address in ac 
  47:    JMP  7,-42(7)	call output
  48:    LDA  3,0(2)	save the result in ac 
 * Call end  output
-* TOFF set: 
+* TOFF set:  -3
 * END COMPOUND
 * Add standard closing in case there is no return statement
  49:    LDC  2,0(6)	Set return value to 0 

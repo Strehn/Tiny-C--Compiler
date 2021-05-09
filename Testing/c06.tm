@@ -125,16 +125,16 @@
 * OP  +
  72:     LD  4,-13(1)	Pop left into ac1 
  73:    ADD  3,4,3	Op + 
-* Param 
+* Param  0
  74:     ST  3,-13(1)	Push parameter 
-* TOFF dec: 
+* TOFF dec:  -14
 * Param end  output
  75:    LDA  1,-11(1)	Ghost frame becomes new active frame 
  76:    LDA  3,1(7)	Return address in ac 
  77:    JMP  7,-72(7)	call output
  78:    LDA  3,0(2)	save the result in ac 
 * Call end  output
-* TOFF set: 
+* TOFF set:  -11
 * EXPRESSION
 * CALL  outnl
  79:     ST  1,-11(1)	Store fp in ghost frame for  outnl
@@ -146,7 +146,7 @@
  82:    JMP  7,-49(7)	call outnl
  83:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
-* TOFF set: 
+* TOFF set:  -11
 * END COMPOUND
 * Add standard closing in case there is no return statement
  84:    LDC  2,0(6)	Set return value to 0 

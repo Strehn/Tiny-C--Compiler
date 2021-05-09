@@ -1,15 +1,14 @@
 // C-S21
-int x;
-int y;
 
 main()
 {
+    int x;
+    int y;
+    int z;
+
     x = 753;
     y = 444;
-    x += y;
-    output(x);
-    y -= x;
-    output(y);
+    output(z = x = y);
     outnl();
 }
 
