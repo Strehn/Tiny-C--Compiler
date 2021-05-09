@@ -92,6 +92,7 @@ typedef struct treeNode
     bool generated;
     bool pop;
     bool isUnary;
+    bool noAssign;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;

@@ -710,9 +710,11 @@ void declStart(TreeNode *tree, SymbolTable *table)
     {
         if(tree->subkind.decl == VarK && tree->isStatic == true)
         {
-            tree->memlocation = goffset - 2;
-            goffset = goffset - tree->aSize;
-            tree->memsize = (tree->aSize + 1);
+            //LocalStatic
+            tree->memlocation = foffset+2;
+            foffset--;
+            goffset--;
+            tree->memsize = 1;
         }
         else if(tree->isStatic == true)
         {

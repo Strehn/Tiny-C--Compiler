@@ -66,10 +66,13 @@
  40:     ST  1,-11(1)	Store fp in ghost frame for  output
 * TOFF dec:  -12
 * TOFF dec:  -13
- 41:    LDA  3,-1(1)	Load address of base of array x
- 42:     ST  3,-13(1)	Push left side 
- 43:    LDC  3,3(6)	Load integer constant 
- 44:     LD  4,-13(1)	Pop left into ac1 
- 45:    SUB  3,4,3	Compute location from index 
- 46:     LD  3,0(3)	Load array element 
- 47:     ST  3,-13(1)	Push left side 
+* Here: 
+* Here: 
+ 41:     LD  3,-129136312(1)	Load lhs variable  (null)
+ 42:    LDA  3,1(1)	increment value of  (null)
+ 43:     ST  3,0(1)	Store variable (null)
+ 44:     ST  3,-13(1)	Push parameter 
+* EXPRESSION
+* ASSIGN  ++
+ 45:    LDC  3,3(6)	Load integer constant 
+ 46:     ST  3,-13(1)	Push index 

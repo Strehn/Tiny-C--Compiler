@@ -57,10 +57,10 @@
 * Var
 * Var
 * FUNCTION main
-* TOFF set: 
+* TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set: 
+* TOFF set:  -2
 * Compound body
 * EXPRESSION
 * ASSIGN  =
@@ -76,71 +76,73 @@
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 44:     ST  1,-3(1)	Store fp in ghost frame for  output
-* TOFF dec: 
-* TOFF dec: 
+ 44:     ST  1,-2(1)	Store fp in ghost frame for  output
+* TOFF dec:  -3
+* TOFF dec:  -4
+* Here: 
 * EXPRESSION
 * ASSIGN  *=
- 45:     ST  3,0(0)	Store variable x
+ 45:     LD  3,-1(0)	Load variable  y
+ 46:     LD  4,0(0)	Load lhs variable  x
+ 47:     ST  3,-4(1)	Push parameter 
+ 48:     ST  3,0(0)	Store variable x
 * EXPRESSION
 * EXPRESSION
-* Param 
- 46:     ST  3,-5(1)	Push parameter 
-* TOFF dec: 
 * Param end  output
- 47:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 48:    LDA  3,1(7)	Return address in ac 
- 49:    JMP  7,-44(7)	call output
- 50:    LDA  3,0(2)	save the result in ac 
+ 49:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 50:    LDA  3,1(7)	Return address in ac 
+ 51:    JMP  7,-46(7)	call output
+ 52:    LDA  3,0(2)	save the result in ac 
 * Call end  output
-* TOFF set: 
+* TOFF set:  -2
 * EXPRESSION
 * CALL  output
- 51:     ST  1,-3(1)	Store fp in ghost frame for  output
-* TOFF dec: 
-* TOFF dec: 
+ 53:     ST  1,-2(1)	Store fp in ghost frame for  output
+* TOFF dec:  -3
+* TOFF dec:  -4
+* Here: 
 * EXPRESSION
 * ASSIGN  /=
- 52:     ST  3,-1(0)	Store variable y
+ 54:     LD  3,0(0)	Load variable  x
+ 55:     LD  4,-1(0)	Load lhs variable  y
+ 56:     ST  3,-4(1)	Push parameter 
+ 57:     ST  3,-1(0)	Store variable y
 * EXPRESSION
 * EXPRESSION
-* Param 
- 53:     ST  3,-5(1)	Push parameter 
-* TOFF dec: 
 * Param end  output
- 54:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 55:    LDA  3,1(7)	Return address in ac 
- 56:    JMP  7,-51(7)	call output
- 57:    LDA  3,0(2)	save the result in ac 
+ 58:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 59:    LDA  3,1(7)	Return address in ac 
+ 60:    JMP  7,-55(7)	call output
+ 61:    LDA  3,0(2)	save the result in ac 
 * Call end  output
-* TOFF set: 
+* TOFF set:  -2
 * EXPRESSION
 * CALL  outnl
- 58:     ST  1,-3(1)	Store fp in ghost frame for  outnl
-* TOFF dec: 
-* TOFF dec: 
+ 62:     ST  1,-2(1)	Store fp in ghost frame for  outnl
+* TOFF dec:  -3
+* TOFF dec:  -4
 * Param end  outnl
- 59:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 60:    LDA  3,1(7)	Return address in ac 
- 61:    JMP  7,-28(7)	call outnl
- 62:    LDA  3,0(2)	save the result in ac 
+ 63:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 64:    LDA  3,1(7)	Return address in ac 
+ 65:    JMP  7,-32(7)	call outnl
+ 66:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
-* TOFF set: 
+* TOFF set:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 63:    LDC  2,0(6)	Set return value to 0 
- 64:     LD  3,-1(1)	Load return address 
- 65:     LD  1,0(1)	Adjust frame pointer 
- 66:    JMP  7,0(3)	Return 
+ 67:    LDC  2,0(6)	Set return value to 0 
+ 68:     LD  3,-1(1)	Load return address 
+ 69:     LD  1,0(1)	Adjust frame pointer 
+ 70:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,66(7)	Jump to init [backpatch] 
+  0:    JMP  7,70(7)	Jump to init [backpatch] 
 * =========================================
 * INIT
- 67:    LDA  1,-2(0)	Set first frame at end of globals 
- 68:     ST  1,0(1)	Store old fp (point to self) 
+ 71:    LDA  1,-2(0)	Set first frame at end of globals 
+ 72:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 69:    LDA  3,1(7)	Return address in ac 
- 70:    JMP  7,-32(7)	Jump to main 
- 71:   HALT  0,0(0)	DONE! 
+ 73:    LDA  3,1(7)	Return address in ac 
+ 74:    JMP  7,-36(7)	Jump to main 
+ 75:   HALT  0,0(0)	DONE! 
 * END INIT

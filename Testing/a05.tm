@@ -69,21 +69,21 @@
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 42:     ST  1,-2(1)	Store fp in ghost frame for  output
-* TOFF dec:  -3
-* TOFF dec:  -4
+ 42:     ST  1,-5(1)	Store fp in ghost frame for  output
+* TOFF dec:  -6
+* TOFF dec:  -7
 * EXPRESSION
 * Param  1
  43:     LD  3,-2(1)	Load variable  x
- 44:     ST  3,-4(1)	Push parameter 
-* TOFF dec:  -5
+ 44:     ST  3,-7(1)	Push parameter 
+* TOFF dec:  -8
 * Param end  output
- 45:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 45:    LDA  1,-5(1)	Ghost frame becomes new active frame 
  46:    LDA  3,1(7)	Return address in ac 
  47:    JMP  7,-42(7)	call output
  48:    LDA  3,0(2)	save the result in ac 
 * Call end  output
-* TOFF set:  -2
+* TOFF set:  -5
 * END COMPOUND
 * Add standard closing in case there is no return statement
  49:    LDC  2,0(6)	Set return value to 0 

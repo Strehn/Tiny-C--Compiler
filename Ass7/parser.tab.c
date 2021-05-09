@@ -3332,6 +3332,10 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
         {
             case VarK:
                 emitComment((char *)"Var");
+                if(tree->isStatic == true)
+                {
+                    return;
+                }
                 if(tree->isArray == true)
                 {
                     if(inaFunction == true)
@@ -3342,9 +3346,10 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                       emitRM((char *)"ST", 3, tree->memlocation +1, 1, (char *)"store return address");
                       return;
                     }
-                toffset--;
+                
                 }
                 
+                toffset--;
                 
                 break;
             case FuncK:
@@ -3387,6 +3392,11 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                     break;
                 case AssignK:
                     emitComment((char *)"ASSIGN ", tree->name);
+                    
+                    if(tree->noAssign == true)
+                    {
+                        return;
+                    }
                     
                     if(tree->child[0] != NULL)
                     {
@@ -3525,6 +3535,7 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                     {
                         toffset = -2;
                     }
+                    
                     emitRM((char *)"ST", 1, toffset, 1, (char *)"Store fp in ghost frame for ", tree->name);
                     toffset_old = toffset;
                     
@@ -3534,6 +3545,37 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                     toffset--;
                     emitComment((char *)"TOFF dec: ", (int *) toffset);
                     
+                    /*
+                     .   .   Sibling: 1  Call: output of type void [line: 8]
+                     .   .   .   Child: 0  Assign: ++ of type int [line: 8]
+                     .   .   .   .   Child: 0  Id: x of type int [mem: Local loc: -2 size: 1] [line: 8]
+                     
+                     43:     LD  3,-2(1)    load lhs variable x
+                      44:    LDA  3,1(3)    increment value of x
+                      45:     ST  3,-2(1)    Store variable x
+                      46:     ST  3,-5(1)    Push parameter
+                     */
+                    if(tree->child[0] != NULL && tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == AssignK)
+                    {
+                        emitComment((char *)"Here: ");
+                        if(tree->child[0]->tokenclass == INC )
+                        {
+                            if(tree->child[0]->child[0] != NULL)
+                            {
+                                emitComment((char *)"Here: ");
+                                lhs = tree->child[0]->child[0];
+                                
+                                emitRM((char *)"LD", 3, rhs->memlocation, 1, (char *)"Load lhs variable ", lhs->name);
+                                emitRM((char *)"LDA", 3, 1, 1, (char *)"increment value of ", lhs->name);
+                                emitRM((char *)"ST", 3, lhs->memlocation , (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
+                                //push parameter
+                                lhs->CallParm = false;
+                                tree->child[0]->CallParm = false;
+                                emitRM((char *)"ST", 3, toffset, 1, (char *)"Push parameter");
+                                return;
+                            }
+                        }
+                    }
                     /*
                      .   .   Sibling: 2  Call: output of type void [line: 11]
                      .   .   .   Child: 0  Assign: = of type int [line: 11]
@@ -3551,6 +3593,8 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                             rhs = tree->child[0]->child[1]->child[1];
                             lhs = tree->child[0]->child[1]->child[0];
                             
+                            tree->child[0]->child[1]->noAssign = true;
+                            tree->child[0]->noAssign = true;
                             // load rhs
                             emitRM((char *)"LD", 3, rhs->memlocation, 1, (char *)"Load variable ", rhs->name);
                           
@@ -3564,6 +3608,7 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                             lhs->CallParm = false;
                             tree->CallParm = false;
                             emitRM((char *)"ST", 3, toffset, 1, (char *)"Push parameter");
+                            
                             return;
                         }
                        

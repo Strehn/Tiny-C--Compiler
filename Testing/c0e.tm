@@ -69,4 +69,4 @@
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 42:     ST  1,-2(1)	Store fp in ghost frame for  output
+ 42:     ST  1,-5(1)	Store fp in ghost frame for  output
