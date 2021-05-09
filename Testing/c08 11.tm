@@ -56,10 +56,10 @@
 * =========================================
 * Var
  39:    LDC  3,3(6)	Load size of array x
- 40:     ST  3,0(1)	store return address 
+ 40:     ST  3,-2(1)	store return address 
 * Var
  41:    LDC  3,4(6)	Load size of array y
- 42:     ST  3,-4(1)	store return address 
+ 42:     ST  3,-6(1)	store return address 
 * FUNCTION main
 * TOFF set:  -2
  43:     ST  3,-1(1)	store return address 

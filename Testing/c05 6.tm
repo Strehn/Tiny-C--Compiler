@@ -1,6 +1,6 @@
 * C- version: 1.00
 * by Sydney Petrehn
-* Input file: c08.c-
+* Input file: c05.c-
 * FUNCTION input
   1:     ST  3,-1(1)	Store return address 
   2:     IN  2,2,2	Grab int input 
@@ -56,10 +56,10 @@
 * =========================================
 * Var
  39:    LDC  3,3(6)	Load size of array x
- 40:     ST  3,0(1)	store return address 
+ 40:     ST  3,-2(1)	store return address 
 * Var
  41:    LDC  3,4(6)	Load size of array y
- 42:     ST  3,-4(1)	store return address 
+ 42:     ST  3,-6(1)	store return address 
 * FUNCTION main
 * TOFF set:  -2
  43:     ST  3,-1(1)	store return address 
@@ -70,7 +70,7 @@
 * ASSIGN  =
  44:    LDC  3,2(6)	Load integer constant 
  45:     ST  3,-2(1)	Push index 
- 46:    LDC  3,1(6)	Load integer constant 
+ 46:    LDC  3,73(6)	Load integer constant 
  47:     LD  4,-2(1)	Pop index 
  48:    LDA  5,-1(0)	Load address of base of array x
  49:    SUB  5,5,4	Compute offset of value 
@@ -84,7 +84,7 @@
 * ASSIGN  =
  51:    LDC  3,1(6)	Load integer constant 
  52:     ST  3,-2(1)	Push index 
- 53:    LDC  3,0(6)	Load integer constant 
+ 53:    LDC  3,211(6)	Load integer constant 
  54:     LD  4,-2(1)	Pop index 
  55:    LDA  5,-5(0)	Load address of base of array y
  56:    SUB  5,5,4	Compute offset of value 
@@ -95,8 +95,8 @@
 * OP  (null)
 * EXPRESSION
 * EXPRESSION
-* CALL  outputb
- 58:     ST  1,-2(1)	Store fp in ghost frame for  outputb
+* CALL  output
+ 58:     ST  1,-2(1)	Store fp in ghost frame for  output
 * TOFF dec:  -3
 * TOFF dec:  -4
  59:    LDA  3,-1(0)	Load address of array x
@@ -122,18 +122,18 @@
 * EXPRESSION
 * EXPRESSION
 * OP  (null)
-* OP  or
+* OP  +
  72:     LD  4,-4(1)	Pop left into ac1 
- 73:     OR  3,4,3	Op | 
+ 73:    ADD  3,4,3	Op + 
 * Param 
  74:     ST  3,-4(1)	Push parameter 
 * TOFF dec: 
-* Param end  outputb
+* Param end  output
  75:    LDA  1,-2(1)	Ghost frame becomes new active frame 
  76:    LDA  3,1(7)	Return address in ac 
- 77:    JMP  7,-61(7)	call outputb
+ 77:    JMP  7,-72(7)	call output
  78:    LDA  3,0(2)	save the result in ac 
-* Call end  outputb
+* Call end  output
 * TOFF set: 
 * EXPRESSION
 * CALL  outnl

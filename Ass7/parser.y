@@ -766,6 +766,18 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
         {
             case VarK:
                 emitComment((char *)"Var");
+                if(tree->isArray == true)
+                {
+                    if(tree->inFunction == false)
+                    {
+                      //load
+                      emitRM((char *)"LDC", 3, tree->memsize - 1, 6, (char *)"Load size of array", tree->name);
+                      //save
+                      emitRM((char *)"ST", 3, tree->memlocation +1, 1, (char *)"store return address");
+                      return;
+                    }
+                }
+                
                 toffset--;
                 break;
             case FuncK:
@@ -900,68 +912,6 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                         emitRM((char *)"ST", 3, lhs->memlocation , (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
                         toffset--;
                     }
-                     
-                    
-                    /*
-                    if(lhs == NULL)
-                    {
-                        return;
-                    }
-                    
-                    // get to the farthest lhs
-                    while(lhs != NULL)
-                    {
-                        lhs = lhs->child[0];
-                        rhs = rhs->child[1];
-                    }
-                    
-                    if(lhs->isArray == true && (tree->tokenclass == ASS || tree->tokenclass == SUBASS || tree->tokenclass == ADDASS))
-                    {
-                        toffset++;
-                        emitComment((char *)"TOFF inc: ", (int *) toffset );
-                        // pop index
-                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop index");
-                        // load address of base of array tree->name
-                        // pop index
-                        emitRM((char *)"LDA", 5, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Load address of base of array", lhs->name);
-                        // compute offset of value
-                        emitRO((char *)"SUB", 5, 5, 4, (char *)"Compute offset of value");
-                        // store variable x
-                    }
-                    else if(lhs->isArray == true && lhs->CallParm == false)
-                    {
-                        emitRM((char *)"LDA", 5, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Load address of base of array", lhs->name);
-                        // compute offset of value
-                        emitRO((char *)"SUB", 5, 5, 4, (char *)"Compute offset of value");
-                    }
-                    else if(lhs->isArray == true && lhs->CallParm == true)
-                    {
-                        emitRM((char *)"LD", 5, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Load address of base of array", lhs->name);
-                        // compute offset of value
-                        emitRO((char *)"SUB", 5, 5, 4, (char *)"Compute offset of value");
-                    }
-                    
-                    tree->child[1]->generated = true;
-                    switch(rhs->tokenclass)
-                    {
-                        case CHARCONST:
-                            emitRM((char *)"LDC", 3, (int)rhs->cvalue, 6, (char *)"Load char constant");
-                            break;
-                            case STRINGCONST:
-                            break;
-                            case NUMCONST:
-                            case BOOLCONST:
-                            emitRM((char *)"LDC", 3, rhs->value, 6, (char *)"Load integer constant");
-                            break;
-                    }
-                
-                    tree->child[0]->generated = true;
-                    emitRM((char *)"ST", 3, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
-                
-                    toffset--;
-                    emitComment((char *)"TOFF dec: ", (int *) toffset );
-                    
-                     */
                    
                     break;
                 case InitK:

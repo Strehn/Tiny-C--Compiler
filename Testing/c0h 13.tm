@@ -1,6 +1,6 @@
 * C- version: 1.00
 * by Sydney Petrehn
-* Input file: c0f.c-
+* Input file: c0h.c-
 * FUNCTION input
   1:     ST  3,-1(1)	Store return address 
   2:     IN  2,2,2	Grab int input 
@@ -54,38 +54,22 @@
  38:    LDA  7,0(3)	Return 
 * END FUNCTION outnl
 * =========================================
-* FUNCTION main
+* FUNCTION dog
 * TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
+* PARM
 * COMPOUND
-* TOFF set:  -10
+* TOFF set:  -11
 * Compound body
-* Var
- 40:    LDC  3,7(6)	Load size of array x
- 41:     ST  3,-2(1)	store return address 
-* EXPRESSION
-* ASSIGN  =
- 42:    LDC  3,3(6)	Load integer constant 
- 43:     ST  3,-10(1)	Push index 
- 44:    LDC  3,1023(6)	Load integer constant 
- 45:     LD  4,-10(1)	Pop index 
- 46:    LDA  5,-3(1)	Load address of base of array x
- 47:    SUB  5,5,4	Compute offset of value 
- 48:     ST  3,0(5)	Store variable x
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
-* OP  (null)
-* EXPRESSION
 * EXPRESSION
 * CALL  output
- 49:     ST  1,-10(1)	Store fp in ghost frame for  output
-* TOFF dec:  -11
+ 40:     ST  1,-11(1)	Store fp in ghost frame for  output
 * TOFF dec:  -12
- 50:    LDA  3,-1(0)	Load address of array x
- 51:     ST  3,-12(1)	Push left side 
- 52:    LDC  3,3(6)	Load integer constant 
- 53:     LD  4,-12(1)	Pop left into ac1 
- 54:    SUB  3,4,3	Compute location from index 
- 55:     LD  3,0(3)	Load array element 
- 56:     ST  3,-12(1)	Push left side 
+* TOFF dec:  -13
+ 41:    LDA  3,-1(0)	Load address of array x
+ 42:     ST  3,-13(1)	Push left side 
+ 43:    LDC  3,3(6)	Load integer constant 
+ 44:     LD  4,-13(1)	Pop left into ac1 
+ 45:    SUB  3,4,3	Compute location from index 
+ 46:     LD  3,0(3)	Load array element 
+ 47:     ST  3,-13(1)	Push left side 
