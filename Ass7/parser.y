@@ -777,6 +777,54 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                 break;
             case ReturnK:
                 emitComment((char *)"Return");
+                // Load integer constant
+                // copy result to return regiser
+                // load return addrewss/
+                // adjust fp
+                //return
+                /*
+                 .   Child: 1  Return [line: 4]
+              .   .   .   Child: 0  Const 42 of type int [line: 4]
+                 */
+                
+                if(tree->child[0] == NULL)
+                {
+                    return;
+                }
+                lhs = tree->child[0];
+                
+                if(lhs->nodekind == ExpK && lhs->subkind.exp == ConstantK)
+                {
+                    /*
+                     40:    LDC  3,42(6)    Load integer constant
+                      41:    LDA  2,0(3)    Copy result to return register
+                      42:     LD  3,-1(1)    Load return address
+                      43:     LD  1,0(1)    Adjust fp
+                      44:    JMP  7,0(3)    Return
+                     */
+                    
+                    switch(lhs->tokenclass)
+                    {
+                        case CHARCONST:
+                            emitRM((char *)"LDC", 3, (int)lhs->cvalue, 6, (char *)"Load char constant");
+                            break;
+                        case STRINGCONST:
+                            break;
+                        case NUMCONST:
+                        case BOOLCONST:
+                            emitRM((char *)"LDC", 3, lhs->value, 6, (char *)"Load integer constant");
+                            break;
+                    }
+                    
+                    emitRM((char *)"LDA", 2, 0, 3, (char *)"copy result to return register");
+                    emitRM((char *)"LD", 3, -1, 1, (char *)"Load return address");
+                    emitRM((char *)"LD", 1, 0, 1, (char *)"Adjust fp");
+                    emitRM((char *)"JMP", 7, 0, 3, (char *)"Return");
+                    break;
+                    
+                }
+              
+                
                 break;
             case BreakK:
                 emitComment((char *)"Break");
@@ -990,6 +1038,10 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                             case BOOLCONST:
                                 emitRM((char *)"LDC", 3, rhs->value, 6, (char *)"Load integer constant");
                                 break;
+                        }
+                        if(rhs->nodekind == StmtK )
+                        {
+                            return;
                         }
                         emitRM((char *)"ST", 3, lhs->memlocation , (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
                         

@@ -54,149 +54,82 @@
  38:    LDA  7,0(3)	Return 
 * END FUNCTION outnl
 * =========================================
-* FUNCTION main
+* FUNCTION cat
 * TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set:  -12
+* TOFF set:  -4
 * Compound body
-* Var
-* Var
+* Return
+ 40:    LDC  3,42(6)	Load integer constant 
+ 41:    LDA  2,0(3)	copy result to return register 
+ 42:     LD  3,-1(1)	Load return address 
+ 43:     LD  1,0(1)	Adjust fp 
+ 44:    JMP  7,0(3)	Return 
 * EXPRESSION
-* ASSIGN  =
- 40:    LDC  3,0(6)	Load integer constant 
- 41:     ST  3,-2(1)	Store variable x
-* EXPRESSION
-* EXPRESSION
-* While
- 42:     LD  3,-2(0)	Load variable  x
- 43:     ST  3,-15(1)	Push left side 
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
- 44:    LDC  3,6(6)	Load integer constant 
-* OP  <
- 45:     LD  4,-15(1)	Pop left into ac1 
- 46:    TLT  3,4,3	Op < 
-* COMPOUND
-* TOFF set:  -11
-* Compound body
-* EXPRESSION
-* ASSIGN  =
- 47:    LDC  3,0(6)	Load integer constant 
- 48:     ST  3,-3(1)	Store variable y
-* EXPRESSION
-* EXPRESSION
-* While
- 49:     LD  3,-3(0)	Load variable  y
- 50:     ST  3,-12(1)	Push left side 
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
- 51:    LDC  3,6(6)	Load integer constant 
-* OP  <
- 52:     LD  4,-12(1)	Pop left into ac1 
- 53:    TLT  3,4,3	Op < 
-* COMPOUND
-* TOFF set:  -10
-* Compound body
-* EXPRESSION
-* CALL  output
- 54:     ST  1,-10(1)	Store fp in ghost frame for  output
-* TOFF dec:  -11
-* TOFF dec:  -12
-* EXPRESSION
-* Param  1
- 55:     LD  3,-3(1)	Load variable  y
- 56:     ST  3,-12(1)	Push parameter 
-* TOFF dec:  -13
-* Param end  output
- 57:    LDA  1,-10(1)	Ghost frame becomes new active frame 
- 58:    LDA  3,1(7)	Return address in ac 
- 59:    JMP  7,-54(7)	call output
- 60:    LDA  3,0(2)	save the result in ac 
-* Call end  output
-* TOFF set:  -10
-* IF
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
- 61:    LDC  3,4(6)	Load integer constant 
-* OP  ==
- 62:     LD  4,-10(1)	Pop left into ac1 
- 63:    TEQ  3,4,3	Op == 
-* Break
-* EXPRESSION
-* ASSIGN  =
- 64:     ST  3,-3(1)	Store variable y
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
- 65:    LDC  3,1(6)	Load integer constant 
-* OP  +
- 66:     LD  3,-3(1)	Load variable  y
- 67:     ST  3,-11(1)	Push left side 
- 68:     LD  4,-11(1)	Pop left into ac1 
- 69:    ADD  3,4,3	Op + 
-* END COMPOUND
- 70:    JNZ  3,1(7)	Jump to while part 
-* EXPRESSION
-* CALL  output
- 71:     ST  1,-11(1)	Store fp in ghost frame for  output
-* TOFF dec:  -12
-* TOFF dec:  -13
-* EXPRESSION
-* Param  2
- 72:     LD  3,-2(1)	Load variable  x
- 73:     ST  3,-13(1)	Push parameter 
-* TOFF dec:  -14
-* Param end  output
- 74:    LDA  1,-11(1)	Ghost frame becomes new active frame 
- 75:    LDA  3,1(7)	Return address in ac 
- 76:    JMP  7,-71(7)	call output
- 77:    LDA  3,0(2)	save the result in ac 
-* Call end  output
-* TOFF set:  -11
-* IF
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
- 78:    LDC  3,4(6)	Load integer constant 
-* OP  ==
- 79:     LD  4,-11(1)	Pop left into ac1 
- 80:    TEQ  3,4,3	Op == 
-* Break
-* EXPRESSION
-* ASSIGN  =
- 81:     ST  3,-2(1)	Store variable x
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
-* EXPRESSION
- 82:    LDC  3,1(6)	Load integer constant 
-* OP  +
- 83:     LD  3,-2(1)	Load variable  x
- 84:     ST  3,-12(1)	Push left side 
- 85:     LD  4,-12(1)	Pop left into ac1 
- 86:    ADD  3,4,3	Op + 
-* END COMPOUND
- 87:    JNZ  3,1(7)	Jump to while part 
+ 45:    LDC  3,42(6)	Load integer constant 
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 88:    LDC  2,0(6)	Set return value to 0 
- 89:     LD  3,-1(1)	Load return address 
- 90:     LD  1,0(1)	Adjust frame pointer 
- 91:    JMP  7,0(3)	Return 
+ 46:    LDC  2,0(6)	Set return value to 0 
+ 47:     LD  3,-1(1)	Load return address 
+ 48:     LD  1,0(1)	Adjust frame pointer 
+ 49:    JMP  7,0(3)	Return 
+* END FUNCTION cat
+* FUNCTION main
+* TOFF set:  -2
+ 50:     ST  3,-1(1)	store return address 
+* COMPOUND
+* TOFF set:  -5
+* Compound body
+* Var
+* EXPRESSION
+* ASSIGN  =
+ 51:     ST  3,-2(1)	Store variable x
+* EXPRESSION
+* EXPRESSION
+* CALL  cat
+ 52:     ST  1,-7(1)	Store fp in ghost frame for  cat
+* TOFF dec:  -8
+* TOFF dec:  -9
+* Param end  cat
+ 53:    LDA  1,-7(1)	Ghost frame becomes new active frame 
+ 54:    LDA  3,1(7)	Return address in ac 
+ 55:    JMP  7,-17(7)	call cat
+ 56:    LDA  3,0(2)	save the result in ac 
+* Call end  cat
+* TOFF set:  -7
+* EXPRESSION
+* CALL  output
+ 57:     ST  1,-7(1)	Store fp in ghost frame for  output
+* TOFF dec:  -8
+* TOFF dec:  -9
+* EXPRESSION
+* Param  1
+ 58:     LD  3,-2(1)	Load variable  x
+ 59:     ST  3,-9(1)	Push parameter 
+* TOFF dec:  -10
+* Param end  output
+ 60:    LDA  1,-7(1)	Ghost frame becomes new active frame 
+ 61:    LDA  3,1(7)	Return address in ac 
+ 62:    JMP  7,-57(7)	call output
+ 63:    LDA  3,0(2)	save the result in ac 
+* Call end  output
+* TOFF set:  -7
+* END COMPOUND
+* Add standard closing in case there is no return statement
+ 64:    LDC  2,0(6)	Set return value to 0 
+ 65:     LD  3,-1(1)	Load return address 
+ 66:     LD  1,0(1)	Adjust frame pointer 
+ 67:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,91(7)	Jump to init [backpatch] 
+  0:    JMP  7,67(7)	Jump to init [backpatch] 
 * =========================================
 * INIT
- 92:    LDA  1,0(0)	Set first frame at end of globals 
- 93:     ST  1,0(1)	Store old fp (point to self) 
+ 68:    LDA  1,0(0)	Set first frame at end of globals 
+ 69:     ST  1,0(1)	Store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 94:    LDA  3,1(7)	Return address in ac 
- 95:    JMP  7,-57(7)	Jump to main 
- 96:   HALT  0,0(0)	DONE! 
+ 70:    LDA  3,1(7)	Return address in ac 
+ 71:    JMP  7,-22(7)	Jump to main 
+ 72:   HALT  0,0(0)	DONE! 
 * END INIT

@@ -1,0 +1,6 @@
+Number of warnings: 0
+Number of errors: 0
+------------------------------------
+Loading file: f08.tm
+ERROR: Line 68 (Address: 44)   Illegal opcode: LMP
+Bye.

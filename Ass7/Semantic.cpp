@@ -1219,8 +1219,11 @@ void expStart(TreeNode *tree, SymbolTable *table)
                     {
                         tree->inFunction = true;
                     }
+                    
+                    tree->memlocation = goffset;
                     //used for memory in ASS 6
                     // memory
+                    /*
                     if(tree->isArray == true)
                     {
                         tree->memlocation = goffset - tree->aSize - 2;
@@ -1232,6 +1235,7 @@ void expStart(TreeNode *tree, SymbolTable *table)
                         tree->memlocation = goffset;
                         //goffset--;
                     }
+                     */
                     break;
                 case IdK:
                     
