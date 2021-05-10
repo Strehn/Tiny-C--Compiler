@@ -1,6 +1,6 @@
 Var: x of type char [mem: Global loc: 0 size: 1] [line: 2]
 Sibling: 1  Func: main returns type void [mem: Global loc: 0 size: -2] [line: 4]
-.   Child: 1  Compound [mem: None loc: 0 size: -3] [line: 5]
+.   Child: 1  Compound [mem: None loc: 0 size: -5] [line: 5]
 .   .   Child: 0  Var: y of type char [mem: Local loc: -2 size: 1] [line: 6]
 .   .   Child: 1  Assign: = of array of type char [line: 8]
 .   .   .   Child: 0  Id: x of type char [mem: Global loc: 0 size: 1] [line: 8]

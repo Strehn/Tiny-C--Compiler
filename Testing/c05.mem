@@ -1,7 +1,7 @@
 Var: x of array of type int [mem: Global loc: -1 size: 4] [line: 2]
 Sibling: 1  Var: y of array of type int [mem: Global loc: -5 size: 5] [line: 3]
 Sibling: 2  Func: main returns type void [mem: Global loc: 0 size: -2] [line: 5]
-.   Child: 1  Compound [mem: None loc: 0 size: -2] [line: 6]
+.   Child: 1  Compound [mem: None loc: 0 size: -4] [line: 6]
 .   .   Child: 1  Assign: = of type int [line: 7]
 .   .   .   Child: 0  Op: [ of type int [line: 7]
 .   .   .   .   Child: 0  Id: x of array of type int [mem: Global loc: -1 size: 4] [line: 7]

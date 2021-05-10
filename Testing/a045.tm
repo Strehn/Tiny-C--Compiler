@@ -58,7 +58,7 @@
 * TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set:  -2
+* TOFF set:  -4
 * Compound body
 * EXPRESSION
 * CALL  outputc

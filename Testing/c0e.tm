@@ -58,7 +58,7 @@
 * TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set:  -3
+* TOFF set:  -5
 * Compound body
 * Var
 * EXPRESSION
@@ -69,4 +69,12 @@
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 42:     ST  1,-5(1)	Store fp in ghost frame for  output
+ 42:     ST  1,-7(1)	Store fp in ghost frame for  output
+* TOFF dec:  -8
+* TOFF dec:  -9
+* Here: 
+* Here: 
+ 43:     LD  3,-129136312(1)	Load lhs variable  x
+ 44:    LDA  3,1(1)	increment value of  x
+ 45:     ST  3,-2(1)	Store variable x
+ 46:     ST  3,-9(1)	Push parameter 

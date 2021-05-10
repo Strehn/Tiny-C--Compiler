@@ -1,5 +1,5 @@
 Func: main returns type void [mem: Global loc: 0 size: -2] [line: 2]
-.   Child: 1  Compound [mem: None loc: 0 size: -304] [line: 3]
+.   Child: 1  Compound [mem: None loc: 0 size: -306] [line: 3]
 .   .   Child: 0  Var: x of array of type int [mem: Local loc: -3 size: 301] [line: 4]
 .   .   Sibling: 1  Var: z of type int [mem: Local loc: -303 size: 1] [line: 5]
 .   .   Child: 1  Assign: = of type int [line: 7]

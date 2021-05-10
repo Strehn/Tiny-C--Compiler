@@ -58,7 +58,7 @@
 * TOFF set:  -2
  39:     ST  3,-1(1)	store return address 
 * COMPOUND
-* TOFF set:  -5
+* TOFF set:  -7
 * Compound body
 * Var
 * Var
@@ -83,14 +83,14 @@
 * EXPRESSION
 * EXPRESSION
 * CALL  output
- 46:     ST  1,-11(1)	Store fp in ghost frame for  output
-* TOFF dec:  -12
-* TOFF dec:  -13
+ 46:     ST  1,-13(1)	Store fp in ghost frame for  output
+* TOFF dec:  -14
+* TOFF dec:  -15
 * Here: 
  47:     LD  3,-3(1)	Load variable  y
  48:     ST  3,-2(1)	Store variable x
  49:     ST  3,-4(1)	Store variable z
- 50:     ST  3,-13(1)	Push parameter 
+ 50:     ST  3,-15(1)	Push parameter 
 * EXPRESSION
 * ASSIGN  -=
 * EXPRESSION
@@ -99,24 +99,24 @@
 * EXPRESSION
 * EXPRESSION
 * Param end  output
- 51:    LDA  1,-11(1)	Ghost frame becomes new active frame 
+ 51:    LDA  1,-13(1)	Ghost frame becomes new active frame 
  52:    LDA  3,1(7)	Return address in ac 
  53:    JMP  7,-48(7)	call output
  54:    LDA  3,0(2)	save the result in ac 
 * Call end  output
-* TOFF set:  -11
+* TOFF set:  -13
 * EXPRESSION
 * CALL  outnl
- 55:     ST  1,-11(1)	Store fp in ghost frame for  outnl
-* TOFF dec:  -12
-* TOFF dec:  -13
+ 55:     ST  1,-13(1)	Store fp in ghost frame for  outnl
+* TOFF dec:  -14
+* TOFF dec:  -15
 * Param end  outnl
- 56:    LDA  1,-11(1)	Ghost frame becomes new active frame 
+ 56:    LDA  1,-13(1)	Ghost frame becomes new active frame 
  57:    LDA  3,1(7)	Return address in ac 
  58:    JMP  7,-25(7)	call outnl
  59:    LDA  3,0(2)	save the result in ac 
 * Call end  outnl
-* TOFF set:  -11
+* TOFF set:  -13
 * END COMPOUND
 * Add standard closing in case there is no return statement
  60:    LDC  2,0(6)	Set return value to 0 

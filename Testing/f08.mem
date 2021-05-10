@@ -1,0 +1,14 @@
+Func: cat returns type int [mem: Global loc: 0 size: -2] [line: 2]
+.   Child: 1  Compound [mem: None loc: 0 size: -4] [line: 3]
+.   .   Child: 1  Return [line: 4]
+.   .   .   Child: 0  Const 93 of type int [line: 4]
+Sibling: 1  Func: main returns type void [mem: Global loc: 0 size: -2] [line: 7]
+.   Child: 1  Compound [mem: None loc: 0 size: -4] [line: 8]
+.   .   Child: 1  Call: output of type void [line: 9]
+.   .   .   Child: 0  Op: + of type int [line: 9]
+.   .   .   .   Child: 0  Const 781 of type int [line: 9]
+.   .   .   .   Child: 1  Call: cat of type int [line: 9]
+.   .   Sibling: 1  Call: outnl of type void [line: 10]
+Offset for end of global space: 0 
+Number of warnings: 0
+Number of errors: 0

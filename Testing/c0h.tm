@@ -59,20 +59,20 @@
  39:     ST  3,-1(1)	store return address 
 * PARM
 * COMPOUND
-* TOFF set:  -11
+* TOFF set:  -13
 * Compound body
 * EXPRESSION
 * CALL  output
- 40:     ST  1,-11(1)	Store fp in ghost frame for  output
-* TOFF dec:  -12
-* TOFF dec:  -13
+ 40:     ST  1,-13(1)	Store fp in ghost frame for  output
+* TOFF dec:  -14
+* TOFF dec:  -15
 * Here: 
 * Here: 
- 41:     LD  3,-129136312(1)	Load lhs variable  (null)
+ 41:     LD  3,1936942450(1)	Load lhs variable  (null)
  42:    LDA  3,1(1)	increment value of  (null)
  43:     ST  3,0(1)	Store variable (null)
- 44:     ST  3,-13(1)	Push parameter 
+ 44:     ST  3,-15(1)	Push parameter 
 * EXPRESSION
 * ASSIGN  ++
  45:    LDC  3,3(6)	Load integer constant 
- 46:     ST  3,-13(1)	Push index 
+ 46:     ST  3,-15(1)	Push index 

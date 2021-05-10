@@ -93,6 +93,8 @@ typedef struct treeNode
     bool pop;
     bool isUnary;
     bool noAssign;
+    bool inWhile;
+    bool isIO;
 
     // even more semantic stuff will go here in later assignments.
 } TreeNode;

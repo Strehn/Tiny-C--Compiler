@@ -712,7 +712,7 @@ void declStart(TreeNode *tree, SymbolTable *table)
         {
             //LocalStatic
             tree->memlocation = foffset+2;
-            foffset--;
+            //foffset--;
             goffset--;
             tree->memsize = 1;
         }
@@ -1077,7 +1077,7 @@ void stmtend(TreeNode *tree, SymbolTable *table)
                 scopeUsed(table);
                 table->leave();
             }
-            foffset = foffset + 1;
+            foffset = foffset - 1;
             if(tree->isArray == true)
             {
                 tree->memsize = foffset - 1;
