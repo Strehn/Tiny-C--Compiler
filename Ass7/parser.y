@@ -880,6 +880,9 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                 }
                 
                 toffset = -2;
+                
+                //if no return then -3
+                
                 emitComment((char *)"TOFF set: ", (int *)toffset );
                 emitRM((char *)"ST", 3, -1, 1, (char *)"store return address");
                 break;
@@ -1058,308 +1061,307 @@ void nodegenstart(TreeNode *tree, SymbolTable * table)
                     break;
                 case CallK:
                 //toffset++;
-                                    emitComment((char *)"CALL ", tree->name);
-                                    if(toffset == -4)
+                emitComment((char *)"CALL ", tree->name);
+                if(toffset == -4)
+                {
+                    toffset = -2;
+                }
+                
+                emitRM((char *)"ST", 1, toffset, 1, (char *)"Store fp in ghost frame for ", tree->name);
+                toffset_old = toffset;
+                
+                //toffset = -2;
+                toffset--;
+                emitComment((char *)"TOFF dec: ", (int *) toffset);
+                toffset--;
+                emitComment((char *)"TOFF dec: ", (int *) toffset);
+                
+                /*
+                 .   .   Sibling: 1  Call: output of type void [line: 8]
+                 .   .   .   Child: 0  Assign: ++ of type int [line: 8]
+                 .   .   .   .   Child: 0  Id: x of type int [mem: Local loc: -2 size: 1] [line: 8]
+                 
+                 43:     LD  3,-2(1)    load lhs variable x
+                  44:    LDA  3,1(3)    increment value of x
+                  45:     ST  3,-2(1)    Store variable x
+                  46:     ST  3,-5(1)    Push parameter
+                 */
+                if(tree->child[0] != NULL && tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == AssignK)
+                {
+                    emitComment((char *)"Here: ");
+                    if(tree->child[0]->tokenclass == INC )
+                    {
+                        if(tree->child[0]->child[0] != NULL)
+                        {
+                            emitComment((char *)"Here: ");
+                            lhs = tree->child[0]->child[0];
+                            
+                            emitRM((char *)"LD", 3, rhs->memlocation, 1, (char *)"Load lhs variable ", lhs->name);
+                            emitRM((char *)"LDA", 3, 1, 1, (char *)"increment value of ", lhs->name);
+                            emitRM((char *)"ST", 3, lhs->memlocation , (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
+                            //push parameter
+                            lhs->CallParm = false;
+                            tree->child[0]->CallParm = false;
+                            emitRM((char *)"ST", 3, toffset, 1, (char *)"Push parameter");
+                            return;
+                        }
+                    }
+                }
+                /*
+                 .   .   Sibling: 2  Call: output of type void [line: 11]
+                 .   .   .   Child: 0  Assign: = of type int [line: 11]
+                 .   .   .   .   Child: 0  Id: z of type int [mem: Local loc: -4 size: 1] [line: 11]
+                 .   .   .   .   Child: 1  Assign: = of type int [line: 11]
+                 .   .   .   .   .   Child: 0  Id: x of type int [mem: Local loc: -2 size: 1] [line: 11]
+                 .   .   .   .   .   Child: 1  Id: y of type int [mem: Local loc: -3 size: 1] [line: 11]
+                 */
+                if(tree->child[0]!= NULL && tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == AssignK)
+                {
+                    if(tree->child[0]->child[1] != NULL && tree->child[0]->child[1]->nodekind == ExpK && tree->child[0]->child[1]->subkind.exp == AssignK)
+                    {
+                        // start with farthest right
+                        rhs = tree->child[0]->child[1]->child[1];
+                        lhs = tree->child[0]->child[1]->child[0];
+                        
+                        tree->child[0]->child[1]->noAssign = true;
+                        tree->child[0]->noAssign = true;
+                        // load rhs
+                        emitRM((char *)"LD", 3, rhs->memlocation, 1, (char *)"Load variable ", rhs->name);
+                      
+                        //store lhs
+                        emitRM((char *)"ST", 3, lhs->memlocation , (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
+                        lhs = tree->child[0]->child[0];
+                        // store lhs
+                        emitRM((char *)"ST", 3, lhs->memlocation , (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
+                        //push parameter
+                        rhs->CallParm = false;
+                        lhs->CallParm = false;
+                        tree->CallParm = false;
+                        emitRM((char *)"ST", 3, toffset, 1, (char *)"Push parameter");
+                        
+                        return;
+                    }
+                   
+                }// end of if
+                
+                /*
+                 .   .   Sibling: 3  Call: output of type void [line: 10]
+                 .   .   .   Child: 0  Assign: -= of type int [line: 10]
+                 .   .   .   .   Child: 0  Id: y of type int [mem: Global loc: -1 size: 1] [line: 10]
+                 .   .   .   .   Child: 1  Id: x of type int [mem: Global loc: 0 size: 1] [line: 10]
+                 */
+                if(tree->child[0] != NULL)
+                {
+                    if(tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == AssignK)
+                    {
+                        if(tree->child[0]->child[0]!= NULL && tree->child[0]->child[0]!= NULL)
+                        {
+                            // do nothing
+                            //tree->child[0]->child[0]->CallParm = false;
+                            //tree->child[0]->child[1]->CallParm = false;
+                            //return;
+                        }
+                    }
+                }
+                
+                if(tree->child[0] != NULL)
+                {
+                    if(tree->child[0]->child[0] != NULL)
+                    {
+                        if(tree->child[0]->child[0]->child[0] != NULL)
+                        {
+                            
+                            if(tree->child[0]->child[0]->child[0]->isArray == false)
+                            {
+                                /*
+                                lhs = tree->child[0]->child[0]->child[0];
+                                // not an array just an id
+                                emitRM((char *)"LD", 3, (parmc * -1), 0, (char *)"Load variable", tree->name);
+                                parmc++;
+                                emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
+                                // load left
+                                // push left
+                                emitRM((char *)"LD", 3, (parmc * -1), 0, (char *)"Load variable", tree->name);
+                                // load right
+                                 */
+                            }
+                            else if(tree->child[0]->child[0]->child[0]->isArray == true)
+                            {
+                                lhs = tree->child[0]->child[0]->child[0];
+                                emitRM((char *)"LDA", 3, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Load address of base of array", tree->child[0]->child[0]->child[0]->name);
+                                emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
+                                
+                                if(tree->child[0]->child[0]->child[1] != NULL)
+                                {
+                                    tree->child[0]->child[0]->child[1]->generated = true;
+                                    tree->child[0]->child[0]->child[1]->pop = false;
+                                    tree->child[0]->CallParm = true;
+                                    
+                                    switch(tree->child[0]->child[0]->child[1]->tokenclass)
                                     {
-                                        toffset = -2;
+                                        case CHARCONST:
+                                            emitRM((char *)"LDC", 3, (int)tree->child[0]->child[0]->child[1]->cvalue, 6, (char *)"Load char constant");
+                                            break;
+                                        case STRINGCONST:
+                                            break;
+                                        case NUMCONST:
+                                        case BOOLCONST:
+                                            emitRM((char *)"LDC", 3, tree->child[0]->child[0]->child[1]->value, 6, (char *)"Load integer constant");
+                                            //emitComment((char *)"HERE ");
+                                            break;
                                     }
+                                    emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
                                     
-                                    emitRM((char *)"ST", 1, toffset, 1, (char *)"Store fp in ghost frame for ", tree->name);
-                                    toffset_old = toffset;
+                                    emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
                                     
-                                    //toffset = -2;
+                                    emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
+                                    
+                                    emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
+                                   
                                     toffset--;
-                                    emitComment((char *)"TOFF dec: ", (int *) toffset);
-                                    toffset--;
-                                    emitComment((char *)"TOFF dec: ", (int *) toffset);
-                                    
-                                    /*
-                                     .   .   Sibling: 1  Call: output of type void [line: 8]
-                                     .   .   .   Child: 0  Assign: ++ of type int [line: 8]
-                                     .   .   .   .   Child: 0  Id: x of type int [mem: Local loc: -2 size: 1] [line: 8]
-                                     
-                                     43:     LD  3,-2(1)    load lhs variable x
-                                      44:    LDA  3,1(3)    increment value of x
-                                      45:     ST  3,-2(1)    Store variable x
-                                      46:     ST  3,-5(1)    Push parameter
-                                     */
-                                    if(tree->child[0] != NULL && tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == AssignK)
+                                }
+                                // case
+                                /*
+                                 .   .   Sibling: 2  Call: output of type void [line: 9]
+                                 .   .   .   Child: 0  Op: + of type int [line: 9]
+                                 .   .   .   .   Child: 0  Op: [ of type int [line: 9]
+                                 .   .   .   .   .   Child: 0  Id: x of array of type int [mem: Local loc: -3 size: 4] [line: 9]
+                                 .   .   .   .   .   Child: 1  Const 2 of type int [line: 9]
+                                 .   .   .   .   Child: 1  Op: [ of type int [line: 9]
+                                 .   .   .   .   .   Child: 0  Id: y of array of type int [mem: Local loc: -7 size: 5] [line: 9]
+                                 .   .   .   .   .   Child: 1  Const 1 of type int [line: 9]
+                                 */
+                               if(tree->child[0]->child[1]->child[0] != NULL)
+                                {
+                                    if(tree->child[0]->child[1]->child[0]->isArray == true)
                                     {
-                                        emitComment((char *)"Here: ");
-                                        if(tree->child[0]->tokenclass == INC )
-                                        {
-                                            if(tree->child[0]->child[0] != NULL)
-                                            {
-                                                emitComment((char *)"Here: ");
-                                                lhs = tree->child[0]->child[0];
-                                                
-                                                emitRM((char *)"LD", 3, rhs->memlocation, 1, (char *)"Load lhs variable ", lhs->name);
-                                                emitRM((char *)"LDA", 3, 1, 1, (char *)"increment value of ", lhs->name);
-                                                emitRM((char *)"ST", 3, lhs->memlocation , (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
-                                                //push parameter
-                                                lhs->CallParm = false;
-                                                tree->child[0]->CallParm = false;
-                                                emitRM((char *)"ST", 3, toffset, 1, (char *)"Push parameter");
-                                                return;
-                                            }
-                                        }
-                                    }
-                                    /*
-                                     .   .   Sibling: 2  Call: output of type void [line: 11]
-                                     .   .   .   Child: 0  Assign: = of type int [line: 11]
-                                     .   .   .   .   Child: 0  Id: z of type int [mem: Local loc: -4 size: 1] [line: 11]
-                                     .   .   .   .   Child: 1  Assign: = of type int [line: 11]
-                                     .   .   .   .   .   Child: 0  Id: x of type int [mem: Local loc: -2 size: 1] [line: 11]
-                                     .   .   .   .   .   Child: 1  Id: y of type int [mem: Local loc: -3 size: 1] [line: 11]
-                                     */
-                                    if(tree->child[0]!= NULL && tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == AssignK)
-                                    {
-                                        if(tree->child[0]->child[1] != NULL && tree->child[0]->child[1]->nodekind == ExpK && tree->child[0]->child[1]->subkind.exp == AssignK)
-                                        {
-                                            // start with farthest right
-                                            rhs = tree->child[0]->child[1]->child[1];
-                                            lhs = tree->child[0]->child[1]->child[0];
-                                            
-                                            tree->child[0]->child[1]->noAssign = true;
-                                            tree->child[0]->noAssign = true;
-                                            // load rhs
-                                            emitRM((char *)"LD", 3, rhs->memlocation, 1, (char *)"Load variable ", rhs->name);
-                                          
-                                            //store lhs
-                                            emitRM((char *)"ST", 3, lhs->memlocation , (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
-                                            lhs = tree->child[0]->child[0];
-                                            // store lhs
-                                            emitRM((char *)"ST", 3, lhs->memlocation , (lhs->isGlobal ? 0 : 1), (char *)"Store variable", lhs->name);
-                                            //push parameter
-                                            rhs->CallParm = false;
-                                            lhs->CallParm = false;
-                                            tree->CallParm = false;
-                                            emitRM((char *)"ST", 3, toffset, 1, (char *)"Push parameter");
-                                            
-                                            return;
-                                        }
-                                       
-                                    }// end of if
-                                    
-                                    /*
-                                     .   .   Sibling: 3  Call: output of type void [line: 10]
-                                     .   .   .   Child: 0  Assign: -= of type int [line: 10]
-                                     .   .   .   .   Child: 0  Id: y of type int [mem: Global loc: -1 size: 1] [line: 10]
-                                     .   .   .   .   Child: 1  Id: x of type int [mem: Global loc: 0 size: 1] [line: 10]
-                                     */
-                                    if(tree->child[0] != NULL)
-                                    {
-                                        if(tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == AssignK)
-                                        {
-                                            if(tree->child[0]->child[0]!= NULL && tree->child[0]->child[0]!= NULL)
-                                            {
-                                                // do nothing
-                                                //tree->child[0]->child[0]->CallParm = false;
-                                                //tree->child[0]->child[1]->CallParm = false;
-                                                //return;
-                                            }
-                                        }
-                                    }
-                                    
-                                    if(tree->child[0] != NULL)
-                                    {
-                                        if(tree->child[0]->child[0] != NULL)
-                                        {
-                                            if(tree->child[0]->child[0]->child[0] != NULL)
-                                            {
-                                                
-                                                if(tree->child[0]->child[0]->child[0]->isArray == false)
-                                                {
-                                                    /*
-                                                    lhs = tree->child[0]->child[0]->child[0];
-                                                    // not an array just an id
-                                                    emitRM((char *)"LD", 3, (parmc * -1), 0, (char *)"Load variable", tree->name);
-                                                    parmc++;
-                                                    emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
-                                                    // load left
-                                                    // push left
-                                                    emitRM((char *)"LD", 3, (parmc * -1), 0, (char *)"Load variable", tree->name);
-                                                    // load right
-                                                     */
-                                                }
-                                                else if(tree->child[0]->child[0]->child[0]->isArray == true)
-                                                {
-                                                    lhs = tree->child[0]->child[0]->child[0];
-                                                    emitRM((char *)"LDA", 3, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Load address of base of array", tree->child[0]->child[0]->child[0]->name);
-                                                    emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
-                                                    
-                                                    if(tree->child[0]->child[0]->child[1] != NULL)
-                                                    {
-                                                        tree->child[0]->child[0]->child[1]->generated = true;
-                                                        tree->child[0]->child[0]->child[1]->pop = false;
-                                                        tree->child[0]->CallParm = true;
-                                                        
-                                                        switch(tree->child[0]->child[0]->child[1]->tokenclass)
-                                                        {
-                                                            case CHARCONST:
-                                                                emitRM((char *)"LDC", 3, (int)tree->child[0]->child[0]->child[1]->cvalue, 6, (char *)"Load char constant");
-                                                                break;
-                                                            case STRINGCONST:
-                                                                break;
-                                                            case NUMCONST:
-                                                            case BOOLCONST:
-                                                                emitRM((char *)"LDC", 3, tree->child[0]->child[0]->child[1]->value, 6, (char *)"Load integer constant");
-                                                                //emitComment((char *)"HERE ");
-                                                                break;
-                                                        }
-                                                        emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
-                                                        
-                                                        emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
-                                                        
-                                                        emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
-                                                        
-                                                        emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
-                                                       
-                                                        toffset--;
-                                                    }
-                                                    // case
-                                                    /*
-                                                     .   .   Sibling: 2  Call: output of type void [line: 9]
-                                                     .   .   .   Child: 0  Op: + of type int [line: 9]
-                                                     .   .   .   .   Child: 0  Op: [ of type int [line: 9]
-                                                     .   .   .   .   .   Child: 0  Id: x of array of type int [mem: Local loc: -3 size: 4] [line: 9]
-                                                     .   .   .   .   .   Child: 1  Const 2 of type int [line: 9]
-                                                     .   .   .   .   Child: 1  Op: [ of type int [line: 9]
-                                                     .   .   .   .   .   Child: 0  Id: y of array of type int [mem: Local loc: -7 size: 5] [line: 9]
-                                                     .   .   .   .   .   Child: 1  Const 1 of type int [line: 9]
-                                                     */
-                                                   if(tree->child[0]->child[1]->child[0] != NULL)
-                                                    {
-                                                        if(tree->child[0]->child[1]->child[0]->isArray == true)
-                                                        {
-                                                            lhs = tree->child[0]->child[1]->child[0];
-                                                            rhs = tree->child[0]->child[1]->child[1];
-                                                            emitRM((char *)"LDA", 3, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Load address of base of array", lhs->name);
-                                                            emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
-                                                            
-                                                            //toffset--;
-                                                            
-                                                            if(tree->child[0]->child[1]->child[1] != NULL)
-                                                            {
-                                                                tree->child[0]->child[1]->child[1]->generated = true;
-                                                                tree->child[0]->child[1]->child[1]->pop = false;
-                                                                
-                                                                
-                                                                switch(tree->child[0]->child[1]->child[1]->tokenclass)
-                                                                {
-                                                                    case CHARCONST:
-                                                                        emitRM((char *)"LDC", 3, (int)tree->child[0]->child[1]->child[1]->cvalue, 6, (char *)"Load char constant");
-                                                                        break;
-                                                                    case STRINGCONST:
-                                                                        break;
-                                                                    case NUMCONST:
-                                                                    case BOOLCONST:
-                                                                        emitRM((char *)"LDC", 3, tree->child[0]->child[1]->child[1]->value, 6, (char *)"Load integer constant");
-                                                                        break;
-                                                                }
-                                                                
-                                                                emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
-                                                                
-                                                                emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
-                                                                
-                                                                emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
-                                                                
-                                                                toffset++;
-                                                                emitComment((char *)"TOFF inc: ", (int *) toffset);
-                                                            }
-                                                        }
-                                                        return;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    
-                                    if(tree->child[0] != NULL)
-                                    {
-                                        if(tree->child[0]->child[0] != NULL)
-                                        {
-                                            /*
-                                             .   .   Sibling: 2  Call: outputb of type void [line: 9]
-                                             .   .   .   Child: 0  Op: and of type bool [line: 9]
-                                             .   .   .   .   Child: 0  Id: x of type bool [mem: Local loc: -2 size: 1] [line: 9]
-                                             .   .   .   .   Child: 1  Id: y of type bool [mem: Local loc: -3 size: 1] [line: 9]
-                                             */
-                                            if(tree->child[0]->child[0]->isArray == false)
-                                            {
-                                                /*
-                                                 .   .   Child: 1  Call: output of type void [line: 4]
-                                                 .   .   .   Child: 0  Op: chsign of type int [line: 4]
-                                                 .   .   .   .   Child: 0  Const 666 of type int [line: 4]
-                                                 */
-                                                if(tree->child[0]->child[1] == NULL)
-                                                {
-                                                    emitComment((char *)"TOFF inc: ", (int *) toffset);
-                                                
-                                                    lhs = tree->child[0]->child[0];
-                                                    // load integer constant
-                                                    switch(lhs->tokenclass)
-                                                    {
-                                                        case CHARCONST:
-                                                            emitRM((char *)"LDC", 3, (int)lhs->cvalue, 6, (char *)"Load char constant");
-                                                            break;
-                                                        case STRINGCONST:
-                                                            break;
-                                                        case NUMCONST:
-                                                        case BOOLCONST:
-                                                            emitRM((char *)"LDC", 3, lhs->value, 6, (char *)"Load integer constant");
-                                                            break;
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    /*
-                                                    lhs = tree->child[0]->child[0];
-                                                    rhs = tree->child[0]->child[1];
-                                                    // not an array just an id
-                                                    emitRM((char *)"LD", 3, lhs->memlocation, 0, (char *)"Load variable", lhs->name);
-                                                    parmc++;
-                                                    emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
-                                                    emitRM((char *)"LD", 3, rhs->memlocation , 0, (char *)"Load variable", rhs->name);
-                                                     */
-                                                }
-                                            }
-                                        }
-                                    }
-                                            
-                                            
-                                    if(tree->child[0] != NULL)
-                                    {
-                                        parmc++;
-                                        tree->child[0]->CallParm = true;
+                                        lhs = tree->child[0]->child[1]->child[0];
+                                        rhs = tree->child[0]->child[1]->child[1];
+                                        emitRM((char *)"LDA", 3, lhs->memlocation, (lhs->isGlobal ? 0 : 1), (char *)"Load address of base of array", lhs->name);
+                                        emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
                                         
-                                        if(tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == OpK)
+                                        //toffset--;
+                                        
+                                        if(tree->child[0]->child[1]->child[1] != NULL)
                                         {
-                                           // Push Left Side
-                                           tree->child[0]->child[0]->pop = true;
-                                           if(tree->child[0]->tokenclass == CHSIGN)
-                                           {
-                                               tree->child[0]->child[0]->pop = false;
-                                               tree->child[0]->child[0]->isUnary = true;
-                                           }
+                                            tree->child[0]->child[1]->child[1]->generated = true;
+                                            tree->child[0]->child[1]->child[1]->pop = false;
+                                            
+                                            
+                                            switch(tree->child[0]->child[1]->child[1]->tokenclass)
+                                            {
+                                                case CHARCONST:
+                                                    emitRM((char *)"LDC", 3, (int)tree->child[0]->child[1]->child[1]->cvalue, 6, (char *)"Load char constant");
+                                                    break;
+                                                case STRINGCONST:
+                                                    break;
+                                                case NUMCONST:
+                                                case BOOLCONST:
+                                                    emitRM((char *)"LDC", 3, tree->child[0]->child[1]->child[1]->value, 6, (char *)"Load integer constant");
+                                                    break;
+                                            }
+                                            
+                                            emitRM((char *)"LD", 4, toffset, 1, (char *)"Pop left into ac1");
+                                            
+                                            emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
+                                            
+                                            emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
+                                            
+                                            toffset++;
+                                            emitComment((char *)"TOFF inc: ", (int *) toffset);
                                         }
+                                    }
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if(tree->child[0] != NULL)
+                {
+                    if(tree->child[0]->child[0] != NULL)
+                    {
+                        /*
+                         .   .   Sibling: 2  Call: outputb of type void [line: 9]
+                         .   .   .   Child: 0  Op: and of type bool [line: 9]
+                         .   .   .   .   Child: 0  Id: x of type bool [mem: Local loc: -2 size: 1] [line: 9]
+                         .   .   .   .   Child: 1  Id: y of type bool [mem: Local loc: -3 size: 1] [line: 9]
+                         */
+                        if(tree->child[0]->child[0]->isArray == false)
+                        {
+                            /*
+                             .   .   Child: 1  Call: output of type void [line: 4]
+                             .   .   .   Child: 0  Op: chsign of type int [line: 4]
+                             .   .   .   .   Child: 0  Const 666 of type int [line: 4]
+                             */
+                            if(tree->child[0]->child[1] == NULL)
+                            {
+                                emitComment((char *)"TOFF inc: ", (int *) toffset);
+                            
+                                lhs = tree->child[0]->child[0];
+                                // load integer constant
+                                switch(lhs->tokenclass)
+                                {
+                                    case CHARCONST:
+                                        emitRM((char *)"LDC", 3, (int)lhs->cvalue, 6, (char *)"Load char constant");
+                                        break;
+                                    case STRINGCONST:
+                                        break;
+                                    case NUMCONST:
+                                    case BOOLCONST:
+                                        emitRM((char *)"LDC", 3, lhs->value, 6, (char *)"Load integer constant");
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                /*
+                                lhs = tree->child[0]->child[0];
+                                rhs = tree->child[0]->child[1];
+                                // not an array just an id
+                                emitRM((char *)"LD", 3, lhs->memlocation, 0, (char *)"Load variable", lhs->name);
+                                parmc++;
+                                emitRM((char *)"ST", 3, toffset, 1, (char *)"Push left side");
+                                emitRM((char *)"LD", 3, rhs->memlocation , 0, (char *)"Load variable", rhs->name);
+                                 */
+                            }
+                        }
+                    }
+                }
+                        
+                        
+                if(tree->child[0] != NULL)
+                {
+                    parmc++;
+                    tree->child[0]->CallParm = true;
+                    
+                    if(tree->child[0]->nodekind == ExpK && tree->child[0]->subkind.exp == OpK)
+                    {
+                       // Push Left Side
+                       tree->child[0]->child[0]->pop = true;
+                       if(tree->child[0]->tokenclass == CHSIGN)
+                       {
+                           tree->child[0]->child[0]->pop = false;
+                           tree->child[0]->child[0]->isUnary = true;
+                       }
+                    }
 
-                                    }
-                                    
-                                    if(tree->child[1] != NULL)
-                                    {
-                                        parmc++;
-                                        tree->child[1]->CallParm = true;
-                                        //tree->generated = true;
-                                    }
-                                    
-                                    if(tree->child[2] != NULL)
-                                    {
-                                        parmc++;
-                                        //tree->child[2]->CallParm = true;
-                                    }
-                                    
-                                   break;
+                }
+                
+                if(tree->child[1] != NULL)
+                {
+                    parmc++;
+                    tree->child[1]->CallParm = true;
+                    //tree->generated = true;
+                }
+                
+                if(tree->child[2] != NULL)
+                {
+                    parmc++;
+                    //tree->child[2]->CallParm = true;
+                }
+                
                    break;
                 default:
                     break;

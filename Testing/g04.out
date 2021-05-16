@@ -1,0 +1,6 @@
+WARNING(2): The variable 'z' seems not to be used.
+Number of warnings: 1
+Number of errors: 0
+------------------------------------
+Loading file: g04.tm
+33 ERROR(getDMem): instruction at addr 65 attempting to get out of bounds data memory at loc: -1

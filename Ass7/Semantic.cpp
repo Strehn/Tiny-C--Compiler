@@ -794,6 +794,7 @@ void declStart(TreeNode *tree, SymbolTable *table)
                     tree->child[i]->funcCompound = true;
                 }
             }
+            
             tree->memsize = -2;
             break;
         case ParamK:
